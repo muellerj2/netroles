@@ -1,0 +1,3 @@
+ch.ethz.sn.visone3.roles.impl.blocks.factories.dist.EquivalenceDistanceBundleProvider
+ch.ethz.sn.visone3.roles.impl.blocks.factories.dist.RankedDistanceBundleProvider
+ch.ethz.sn.visone3.roles.impl.blocks.factories.dist.RelationalDistanceBundleProvider

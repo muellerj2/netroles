@@ -1,0 +1,3 @@
+ch.ethz.sn.visone3.roles.impl.blocks.converters.EquivalenceConverterServiceProvider
+ch.ethz.sn.visone3.roles.impl.blocks.converters.RankingConverterServiceProvider
+ch.ethz.sn.visone3.roles.impl.blocks.converters.RelationConverterServiceProvider

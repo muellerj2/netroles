@@ -1,0 +1,80 @@
+import java.nio.file.Paths
+
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+}
+
+plugins {
+  id 'com.github.hierynomus.license' version '0.16.1'
+}
+
+ext.isToSign = project.hasProperty("doSign")
+
+wrapper {
+  gradleVersion = '8.2.1'
+}
+
+allprojects {
+  group 'io.github.muellerj2'
+  version '0.1'
+  
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+
+  license {
+    ext.name = rootProject.name
+    header rootProject.file('LICENSEHEADER')
+    includes(['**/*.java'])
+    mapping {
+      java = 'SLASHSTAR_STYLE' // suppress javadoc checking of license
+    }
+  }
+}
+
+subprojects {
+  apply plugin: 'java-library'
+  apply plugin: 'signing'
+  apply plugin: 'maven-publish'
+
+  java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withSourcesJar()
+    withJavadocJar()
+  }
+  
+  jar {
+    from ("$rootDir") {
+      include "LICENSE"
+    }
+  }
+  
+  sourcesJar {
+    from ("$rootDir") {
+      include "LICENSE"
+    }
+  }
+  
+  javadoc {
+    failOnError false
+    options.tags = [ "implNote" ]
+  }
+  
+  tasks.withType(GenerateModuleMetadata) {
+      enabled = false
+  }
+  
+  test {
+    testLogging.showStandardStreams = true
+    reports {
+      junitXml.required = false
+      html.required = true
+    }
+  }
+}

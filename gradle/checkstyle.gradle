@@ -1,0 +1,21 @@
+// vim:ft=groovy:
+
+apply plugin: 'checkstyle'
+
+checkstyle {
+  toolVersion = '9.3'
+  showViolations = true // suppress stdout
+  ignoreFailures = true  // continue build
+  configFile = file("$rootDir/config/checkstyle/google_checks.xml")
+  sourceSets = [sourceSets.main]
+}
+
+checkstyleTest {
+  enabled = true
+}
+
+tasks.withType(Checkstyle) {
+  reports {
+    html.outputLocation = rootProject.file("build/reports/${project.name}-checkstyle.html")
+  }
+}

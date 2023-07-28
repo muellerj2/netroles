@@ -1,0 +1,4 @@
+ch.ethz.sn.visone3.io.csv.CsvIoService$Edge
+ch.ethz.sn.visone3.io.csv.CsvIoService$Node
+ch.ethz.sn.visone3.io.graphml.GraphmlIoService
+ch.ethz.sn.visone3.io.json.JsonIoService

@@ -1,0 +1,73 @@
+dependencies {
+  api project(':roles-api')
+  api project(':core-api')
+  api project(':lang-api')
+  
+  // logging backend
+  implementation "org.slf4j:slf4j-api:2.0.7"
+  
+  runtimeOnly project(':core-impl')
+  runtimeOnly project(':lang-impl')
+  
+  testImplementation project(':io-api')
+  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+  testRuntimeOnly project(':io-impl')
+  ['slf4j2-impl', 'core'].each { testRuntimeOnly "org.apache.logging.log4j:log4j-$it:2.20.0" }
+}
+
+
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      groupId 'io.github.muellerj2'
+      artifactId 'netroles-engine'
+      from components.java
+
+      pom {
+        name = 'netroles Engine'
+        description = 'netroles role analysis engine'
+        url = 'https://github.com/muellerj2/netroles'
+        licenses {
+          license {
+            name = 'GPL-3.0-or-later'
+            url = 'https://www.gnu.org/licenses/gpl-3.0-standalone.html'
+          }
+        }
+        developers {
+          developer {
+            id = 'muellerj2'
+            name = 'Julian Müller'
+            email = 'julian.mueller@gess.ethz.ch'
+            organization = "ETH Zurich SN Lab"
+            organizationUrl = "https://sn.ethz.ch"
+          }
+        }
+        issueManagement {
+          url = 'https://github.com/muellerj2/netroles/issues'
+          system = 'github'
+        }
+        scm {
+          connection = 'scm:git:git://github.com/muellerj2/netroles.git'
+          developerConnection = 'scm:git:ssh://github.com/muellerj2/netroles.git'
+          url = 'https://github.com/muellerj2/netroles/tree/master'
+        }
+      }
+    }
+  }
+  
+  repositories {
+    maven {
+      name = "buildDirectory"
+      url = rootProject.layout.buildDirectory.dir("repository")
+    }
+  }
+}
+
+
+signing {
+  required {
+    isToSign && gradle.taskGraph.hasTask("publish")
+  }
+  sign publishing.publications
+}

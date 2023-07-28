@@ -1,0 +1,19 @@
+// vim:ft=groovy:
+
+// root project
+rootProject.name = 'netroles'
+
+// modules
+include 'datasets'
+include 'lang-api'
+include 'lang-impl'
+include 'core-api'
+include 'core-impl'
+include 'test-api'
+include 'io-api'
+include 'io-impl'
+include 'roles-api'
+include 'roles-impl'
+
+// relink module paths
+apply from: "$rootDir/gradle/module-path.gradle"

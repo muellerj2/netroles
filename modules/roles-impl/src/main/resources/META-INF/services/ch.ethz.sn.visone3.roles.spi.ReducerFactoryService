@@ -1,0 +1,3 @@
+ch.ethz.sn.visone3.roles.impl.blocks.reducers.eq.EquivalenceReducerFactoryServiceProvider
+ch.ethz.sn.visone3.roles.impl.blocks.reducers.rank.RankingReducerFactoryServiceProvider
+ch.ethz.sn.visone3.roles.impl.blocks.reducers.rel.BinaryRelationReducerFactoryServiceProvider

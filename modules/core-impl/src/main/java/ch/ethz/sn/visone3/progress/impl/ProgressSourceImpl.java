@@ -1,0 +1,79 @@
+/*
+ * This file is part of netroles.
+ *
+ * netroles is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * netroles is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with visone3.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package ch.ethz.sn.visone3.progress.impl;
+
+import ch.ethz.sn.visone3.progress.ProgressSource;
+
+/**
+ * Implementation of {@link ProgressSource} for {@link ProgressMonitorImpl}.
+ */
+public class ProgressSourceImpl implements ProgressSource {
+  private final ProgressMonitorImpl monitor;
+  private final long timeStampCreate;
+  private String message;
+  private long timeStampDie;
+  private int last;
+  private int expected;
+
+  ProgressSourceImpl(final ProgressMonitorImpl monitor) {
+    this.monitor = monitor;
+    timeStampCreate = System.currentTimeMillis();
+    message = "";
+    expected = UNKNOWN;
+  }
+
+  @Override
+  public void updateProgress(final int last, final int expected, final String message) {
+    this.last = last;
+    this.expected = expected;
+    this.message = message;
+    monitor.fire(this);
+  }
+
+  @Override
+  public void close() {
+    timeStampDie = System.currentTimeMillis();
+    monitor.fire(this);
+    monitor.delete(this);
+  }
+
+  @Override
+  public String getMessage() {
+    return message;
+  }
+
+  @Override
+  public long getTimeStampCreate() {
+    return timeStampCreate;
+  }
+
+  @Override
+  public long getTimeStampDie() {
+    return timeStampDie;
+  }
+
+  @Override
+  public int getLast() {
+    return last;
+  }
+
+  @Override
+  public int getExpected() {
+    return expected;
+  }
+}

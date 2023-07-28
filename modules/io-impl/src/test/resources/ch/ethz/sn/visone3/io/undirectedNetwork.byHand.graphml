@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--Written from hand-->
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/1.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/1.0/xaml">
+	<graph id="G" edgedefault="undirected">
+	<key id="d1" for="edge" attr.name="name" attr.type="string"/>
+		<node id="n0"/>
+		<node id="n1"/>
+		<node id="n2"/>
+		<node id="n3"/>
+		<edge id="e0" source="n0" target="n0">
+		  <data key="d1">
+		  The one ring! 2
+		  </data>
+		</edge>
+		<edge id="e1" source="n0" target="n1">
+			<data key="d1">
+    	Test value
+    	</data>
+    </edge>
+		<edge id="e2" source="n2" target="n3" />
+		<edge id="e3" source="n3" target="n2" />
+	</graph>
+</graphml>

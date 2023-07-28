@@ -1,0 +1,3 @@
+ch.ethz.sn.visone3.roles.impl.blocks.factories.EquivalenceBundleServiceProvider
+ch.ethz.sn.visone3.roles.impl.blocks.factories.RankedBundleServiceProvider
+ch.ethz.sn.visone3.roles.impl.blocks.factories.RelationalBundleServiceProvider

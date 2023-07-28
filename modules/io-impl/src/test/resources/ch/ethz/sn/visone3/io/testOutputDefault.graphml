@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="type" attr.type="string" for="graph" id="k0">
+    <default>map</default>
+  </key>
+  <key attr.name="straight" attr.type="int" for="edge" id="k1">
+    <default>0</default>
+  </key>
+  <key attr.name="weight" attr.type="double" for="edge" id="k2"/>
+  <key attr.name="id" attr.type="int" for="edge" id="k3"/>
+  <key attr.name="color" attr.type="string" for="node" id="k4">
+    <default>blue</default>
+  </key>
+  <key attr.name="id" attr.type="int" for="node" id="k5"/>
+  <graph edgedefault="directed" parse.edgeids="canonical" parse.edges="4" parse.nodeids="canonical" parse.nodes="3" parse.order="nodesfirst">
+    <node id="n0">
+      <data key="k5">1</data>
+    </node>
+    <node id="n1">
+      <data key="k5">2</data>
+    </node>
+    <node id="n2">
+      <data key="k5">3</data>
+    </node>
+    <edge id="e0" source="n0" target="n1">
+      <data key="k2">1.0</data>
+      <data key="k3">1</data>
+    </edge>
+    <edge id="e1" source="n1" target="n0">
+      <data key="k2">1.0</data>
+      <data key="k3">2</data>
+    </edge>
+    <edge id="e2" source="n1" target="n2">
+      <data key="k2">2.0</data>
+      <data key="k3">3</data>
+    </edge>
+    <edge id="e3" source="n2" target="n1">
+      <data key="k2">2.0</data>
+      <data key="k3">4</data>
+    </edge>
+  </graph>
+</graphml>

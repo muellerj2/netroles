@@ -1,0 +1,16 @@
+// vim:ft=groovy:
+
+// rebase module directory and build script
+rootProject.children.each { final project ->
+  // directory for modules
+  final File modulesDir = new File(settingsDir, "modules")
+  if (!modulesDir.exists()) modulesDir.mkdir()
+  assert modulesDir.directory
+  // set project directory
+  project.projectDir = new File(modulesDir, project.name)
+  if (!project.projectDir.exists()) project.projectDir.mkdir()
+  assert project.projectDir.directory
+  // rename build file
+  project.buildFileName = "${project.name}.gradle"
+  if (!project.buildFile.exists()) project.buildFile.createNewFile()
+}

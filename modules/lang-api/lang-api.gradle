@@ -1,0 +1,52 @@
+apply plugin: "java"
+apply plugin: 'maven-publish'
+
+dependencies {
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      groupId 'io.github.muellerj2'
+      artifactId 'netroles-lang-api'
+      from components.java
+      
+      pom {
+        name = 'netroles Lang API'
+        description = 'API specifying fundamental utility classes used by netroles'
+        url = 'https://github.com/muellerj2/netroles'
+        licenses {
+          license {
+            name = 'GPL-3.0-or-later'
+            url = 'https://www.gnu.org/licenses/gpl-3.0-standalone.html'
+          }
+        }
+        developers {
+          developer {
+            id = 'muellerj2'
+            name = 'Julian Müller'
+            email = 'julian.mueller@gess.ethz.ch'
+            organization = "ETH Zurich SN Lab"
+            organizationUrl = "https://sn.ethz.ch"
+          }
+        }
+        issueManagement {
+          url = 'https://github.com/muellerj2/netroles/issues'
+          system = 'github'
+        }
+        scm {
+          connection = 'scm:git:git://github.com/muellerj2/netroles.git'
+          developerConnection = 'scm:git:ssh://github.com/muellerj2/netroles.git'
+          url = 'https://github.com/muellerj2/netroles/tree/master'
+        }
+      }
+    }
+  }
+  
+  repositories {
+    maven {
+      name = "buildDirectory"
+      url = rootProject.layout.buildDirectory.dir("repository")
+    }
+  }
+}

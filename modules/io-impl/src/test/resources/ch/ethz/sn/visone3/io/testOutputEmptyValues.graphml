@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="name" attr.type="string" for="edge" id="k0">
+    <default/>
+  </key>
+  <key attr.name="someOtherID" attr.type="int" for="node" id="k1">
+    <default>-2147483648</default>
+  </key>
+  <key attr.name="weight" attr.type="double" for="node" id="k2">
+    <default>NaN</default>
+  </key>
+  <graph edgedefault="directed" parse.edgeids="canonical" parse.edges="4" parse.nodeids="canonical" parse.nodes="3" parse.order="nodesfirst">
+    <node id="n0"/>
+    <node id="n1">
+      <data key="k1">123</data>
+      <data key="k2">666.99</data>
+    </node>
+    <node id="n2">
+      <data key="k1">321</data>
+      <data key="k2">42.0</data>
+    </node>
+    <edge id="e0" source="n0" target="n1"/>
+    <edge id="e1" source="n1" target="n0"/>
+    <edge id="e2" source="n1" target="n2">
+      <data key="k0">Oh hi this won't work...</data>
+    </edge>
+    <edge id="e3" source="n2" target="n1">
+      <data key="k0">pewpwew</data>
+    </edge>
+  </graph>
+</graphml>
