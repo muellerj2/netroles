@@ -10,19 +10,69 @@ Netroles is a library implemented in and provided for Java, requiring Java 8 or 
 
 ## Setup
 
-To analyze networks in Java using the netroles library, the following artifacts should be added to your Java project (available on the Releases page):
+Netroles is available in Maven Central. You can add it by using a dependency management tool, for example, by adding it as a dependency:
+
+```xml
+<dependency>
+    <groupId>io.github.muellerj2</groupId>
+    <artifactId>netroles-api</artifactId>
+    <version>x.y</version>
+	<scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>io.github.muellerj2</groupId>
+    <artifactId>netroles-engine</artifactId>
+    <version>x.y</version>
+	<scope>runtime</scope>
+</dependency>
+```
+
+
+Netroles includes its own implementation of network structures. Optionally, you can add the following artifacts to read networks into netroles' default network representation or write the network representation to files:
+
+```xml
+<dependency>
+    <groupId>io.github.muellerj2</groupId>
+    <artifactId>netroles-io-api</artifactId>
+    <version>x.y</version>
+	<scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>io.github.muellerj2</groupId>
+    <artifactId>netroles-io-engine</artifactId>
+    <version>x.y</version>
+	<scope>runtime</scope>
+</dependency>
+```
+
+In Gradle, you can add these dependencies as follows:
+```gradle
+dependencies {
+  // required
+  implementation "io.github.muellerj2:netroles-api:x.y"
+  runtimeOnly "io.github.muellerj2:netroles-engine:x.y"
+  
+  // optional IO support
+  implementation "io.github.muellerj2:netroles-io-api:x.y"
+  runtimeOnly "io.github.muellerj2:netroles-io-engine:x.y"
+}
+```
+
+Alternatiely, you can add the following artifacts (available on the Releases page) should be added to your Java project manually:
 * netroles-api-*.*.jar
 * netroles-engine-*.*.jar (only needed at runtime)
 * netroles-networks-api-*.*.jar
 * netroles-networks-engine-*.*.jar (only needed at runtime)
+* netroles-io-api-*.*.jar (optional IO support)
+* netroles-io-engine-*.*.jar (optional IO support, only needed at runtime)
 
-In addition, netroles uses [SLF4J](https://www.slf4j.org/) for logging purposes, so you have to add SLF4J and an SLF4J binding to some logging library to your build path.
+In addition, netroles uses [SLF4J](https://www.slf4j.org/) for logging purposes, so you have to add SLF4J and an SLF4J binding to some logging library to your build path. If you also add the optional IO support to your project, you should further add the following additional external libraries:
+* [Univocity parsers](https://github.com/uniVocity/univocity-parsers)
+* [JSON-Java](https://github.com/stleary/JSON-java)
+* [FasterXML Jackson Databind](https://github.com/FasterXML/jackson-databind)
 
-Netroles comes with its own implementation of network structures. Optionally, you can add the following artifacts to read networks into netroles' default network representation or write the network representation to files:
-* netroles-io-api-*.*.jar
-* netroles-io-engine-*.*.jar (only needed at runtime)
 
-Alternatively, you can also use another network representation. By wrapping them in an adapter implementing the NetworkView interface in package ch.ethz.sn.visone3.roles.position, you can also supply such other networks to netroles without any further need for conversion.
+If you prefer to generally make use of a different network data structure than the one included in netroles, you can do so. By wrapping them in an adapter implementing the NetworkView interface in package ch.ethz.sn.visone3.roles.position, you can also supply such network representations to netroles without any further need for conversion.
 
 ## Basic concepts
 
