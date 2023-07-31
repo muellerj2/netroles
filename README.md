@@ -1,5 +1,7 @@
 # netroles
 
+[![DOI](https://zenodo.org/badge/671527401.svg)](https://zenodo.org/badge/latestdoi/671527401)
+
 The netroles library offers tools for analyzing network data in terms of role equivalences and structures.
 
 This library implements many common notions of role equivalences, such as structural, weak or regular equivalence in their standard formulation.  
