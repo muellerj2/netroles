@@ -10,6 +10,7 @@ dependencies {
   testImplementation project(':io-api')
   
   testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
   testRuntimeOnly project(':io-impl')
   testRuntimeOnly project(':datasets')
