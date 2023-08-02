@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with visone3.  If not, see <http://www.gnu.org/licenses/>.
+ * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 package ch.ethz.sn.visone3.roles.impl.blocks.reducers.eq;
 

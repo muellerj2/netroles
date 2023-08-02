@@ -22,6 +22,8 @@ allprojects {
   group 'io.github.muellerj2'
   version '0.2-SNAPSHOT'
   
+  apply plugin: 'com.github.hierynomus.license'
+  
   repositories {
     mavenLocal()
     mavenCentral()
@@ -71,6 +73,7 @@ subprojects {
   }
   
   test {
+    useJUnitPlatform()
     testLogging.showStandardStreams = true
     reports {
       junitXml.required = false
