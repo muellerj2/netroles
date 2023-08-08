@@ -10,6 +10,8 @@ buildscript {
 
 plugins {
   id 'com.github.hierynomus.license' version '0.16.1'
+  id 'jvm-test-suite'
+  id 'jacoco-report-aggregation'
 }
 
 ext.isToSign = project.hasProperty("doSign")
@@ -43,6 +45,7 @@ subprojects {
   apply plugin: 'java-library'
   apply plugin: 'signing'
   apply plugin: 'maven-publish'
+  apply plugin: 'jacoco'
 
   java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -79,5 +82,27 @@ subprojects {
       junitXml.required = false
       html.required = true
     }
+    
+  	finalizedBy jacocoTestReport
   }
+
+  jacocoTestReport {
+    dependsOn test
+  }
+}
+
+dependencies {
+  subprojects.each { jacocoAggregation it }
+}
+
+reporting {
+    reports {
+        testCodeCoverageReport(JacocoCoverageReport) { 
+            testType = TestSuiteType.UNIT_TEST
+        }
+    }
+}
+
+check {
+  dependsOn testCodeCoverageReport
 }
