@@ -34,3 +34,8 @@ jobs:
       uses: gradle/gradle-build-action@v2
       with:
         arguments: build
+    - name: Upload reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-reports
+        path: build/reports/*
