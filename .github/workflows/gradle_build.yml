@@ -55,4 +55,4 @@ jobs:
         folder: build/badges
         branch: profile-badges
         commit-message: badge updated
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
