@@ -10,11 +10,15 @@ name: Java CI Build with Gradle
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - "README.md"
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - "README.md"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -40,3 +44,15 @@ jobs:
         name: build-reports
         path: build/reports/*
         retention-days: 7
+    - name: Create coverage badge
+      uses: cicirello/jacoco-badge-generator@v2
+      with:
+        jacoco-csv-file: build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.csv
+        badges-directory: build/badges
+    - name: Deploy coverage badge to badges branch
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: build/badges
+        branch: profile-badges
+        commit-message: badge updated
+      if: github.event_name == 'pull' && github.ref == 'refs/head/master'

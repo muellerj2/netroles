@@ -1,6 +1,6 @@
 # netroles
 
-[![DOI](https://zenodo.org/badge/671527401.svg)](https://zenodo.org/badge/latestdoi/671527401)
+[![DOI](https://zenodo.org/badge/671527401.svg)](https://zenodo.org/badge/latestdoi/671527401) ![Build CI status](https://github.com/muellerj2/netroles/actions/workflows/gradle_build.yml/badge.svg?branch=main&event=push) ![Coverage](https://github.com/muellerj2/netroles/blob/profile-badges/jacoco.svg?raw=true)
 
 The netroles library offers tools for analyzing network data in terms of role equivalences and structures.
 

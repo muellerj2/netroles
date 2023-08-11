@@ -103,6 +103,12 @@ reporting {
     }
 }
 
+testCodeCoverageReport {
+  reports {
+    xml.required = false
+    csv.required = true
+  }
+}
 check {
   dependsOn testCodeCoverageReport
 }
