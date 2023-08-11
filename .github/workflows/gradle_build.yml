@@ -47,9 +47,9 @@ jobs:
     - name: Create coverage badge
       uses: cicirello/jacoco-badge-generator@v2
       with:
-        jacoco-csv-file: build/reports/jacoco/testCodeCoverageReport.csv
+        jacoco-csv-file: build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.csv
         badges-directory: build/badges
-    - name: Deploy to badges branches
+    - name: Deploy coverage badge to badges branch
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         folder: build/badges
