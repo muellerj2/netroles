@@ -18,22 +18,13 @@
 package ch.ethz.sn.visone3.roles.impl.algorithms;
 
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.function.IntFunction;
-import java.util.function.ToIntFunction;
 
 import ch.ethz.sn.visone3.lang.ConstMapping;
-import ch.ethz.sn.visone3.lang.IntDoubleHeap;
 import ch.ethz.sn.visone3.lang.Mapping;
 import ch.ethz.sn.visone3.lang.Mappings;
 import ch.ethz.sn.visone3.lang.PrimitiveCollections;
-import ch.ethz.sn.visone3.lang.PrimitiveContainers;
 import ch.ethz.sn.visone3.lang.PrimitiveIterable;
 import ch.ethz.sn.visone3.lang.PrimitiveList;
-import ch.ethz.sn.visone3.networks.Direction;
-import ch.ethz.sn.visone3.networks.Network;
-import ch.ethz.sn.visone3.networks.Relationship;
 import ch.ethz.sn.visone3.roles.position.NetworkView;
 
 /**
@@ -223,30 +214,6 @@ public class InteriorAlgorithms {
     }
 
     return blockb;
-  }
-
-  private void countLinksToB(PrimitiveIterable.OfInt bblock, int[] countspointer,
-      IntFunction<? extends Iterable<? extends Relationship>> relationships,
-      ToIntFunction<Relationship> relationshipTarget, ToIntFunction<Relationship> indexer) {
-
-    // Split according to B:
-    // Any vertex connected to B in some way is moved to a new block
-    for (int v : bblock) {
-      for (Relationship r : relationships.apply(v)) {
-        int u = relationshipTarget.applyAsInt(r);
-        if (countstobpointer[u] < 0) {
-          int countspos = countsalloc.allocate();
-          countstobpointer[u] = countspos;
-          counts[countspos] = 1;
-          verticestomove.addInt(u);
-        } else {
-          ++counts[countstobpointer[u]];
-        }
-        if (counts[countstobpointer[u]] == counts[countspointer[indexer.applyAsInt(r)]]) {
-          alllinkstob[u] = true;
-        }
-      }
-    }
   }
 
   private <U> void countLinksToB(PrimitiveIterable.OfInt bblock, int[] countspointer,
@@ -468,30 +435,6 @@ public class InteriorAlgorithms {
     oldqblocklist.clear();
   }
 
-  private void updateCounts(PrimitiveIterable.OfInt bblock, int[] countspointer,
-      IntFunction<? extends Iterable<? extends Relationship>> relationships,
-      ToIntFunction<Relationship> relationshipTarget, ToIntFunction<Relationship> indexer) {
-
-    // set the counts on the relationships incident to B to the number of
-    // edges incident to B
-    for (int v : bblock) {
-      for (Relationship r : relationships.apply(v)) {
-        int u = relationshipTarget.applyAsInt(r);
-        int index = indexer.applyAsInt(r);
-        int oldcountspointer = countspointer[index];
-        if (--counts[oldcountspointer] == 0) {
-          countsalloc.free(oldcountspointer);
-        }
-        countspointer[index] = countstobpointer[u];
-      }
-    }
-
-    for (int u : verticestomove) {
-      countstobpointer[u] = -1;
-    }
-    verticestomove.clear();
-  }
-
   private <U> void updateCounts(PrimitiveIterable.OfInt bblock, int[] countspointer,
       NetworkView<?, U> view) {
 
@@ -516,23 +459,6 @@ public class InteriorAlgorithms {
   }
 
   private void splitByBThreeway(PrimitiveIterable.OfInt bblock, int[] equivalence,
-      int[] countspointer,
-      IntFunction<? extends Iterable<? extends Relationship>> splitRevDirRelationships,
-      ToIntFunction<Relationship> splitRevDirRelationshipTarget,
-      ToIntFunction<Relationship> indexer) {
-
-    // compute new counts and pre-determine split of blocks according to B
-    // afterwards, actually refine the blocks
-    countLinksToB(bblock, countspointer, splitRevDirRelationships, splitRevDirRelationshipTarget,
-        indexer);
-    refineBlocksThreeway(equivalence);
-
-    // update counts for the new x block that consists only of B
-    updateCounts(bblock, countspointer, splitRevDirRelationships, splitRevDirRelationshipTarget,
-        indexer);
-  }
-
-  private void splitByBThreeway(PrimitiveIterable.OfInt bblock, int[] equivalence,
       int[] countspointer, NetworkView<?, ?> view) {
 
     // compute new counts and pre-determine split of blocks according to B
@@ -545,22 +471,6 @@ public class InteriorAlgorithms {
   }
 
   private void splitByBExact(PrimitiveIterable.OfInt bblock, int[] equivalence, int[] countspointer,
-      IntFunction<? extends Iterable<? extends Relationship>> splitRevDirRelationships,
-      ToIntFunction<Relationship> splitRevDirRelationshipTarget,
-      ToIntFunction<Relationship> indexer) {
-
-    // compute new counts and pre-determine split of blocks according to B
-    // afterwards, actually refine the blocks
-    countLinksToB(bblock, countspointer, splitRevDirRelationships, splitRevDirRelationshipTarget,
-        indexer);
-    refineBlocksCounts(equivalence);
-
-    // update counts for the new x block that consists only of B
-    updateCounts(bblock, countspointer, splitRevDirRelationships, splitRevDirRelationshipTarget,
-        indexer);
-  }
-
-  private void splitByBExact(PrimitiveIterable.OfInt bblock, int[] equivalence, int[] countspointer,
       NetworkView<?, ?> view) {
 
     // compute new counts and pre-determine split of blocks according to B
@@ -570,15 +480,6 @@ public class InteriorAlgorithms {
 
     // update counts for the new x block that consists only of B
     updateCounts(bblock, countspointer, view);
-  }
-
-  private static interface RefinementStep {
-
-    public void apply(InteriorAlgorithms state, PrimitiveIterable.OfInt bblock, int[] equivalence,
-        int[] countspointer,
-        IntFunction<? extends Iterable<? extends Relationship>> splitRevDirRelationships,
-        ToIntFunction<Relationship> splitRevDirRelationshipTarget,
-        ToIntFunction<Relationship> indexer);
   }
 
   private static interface NewRefinementStep {
@@ -630,92 +531,6 @@ public class InteriorAlgorithms {
     return Mappings.wrapModifiableInt(result);
   }
 
-  private static void computeInteriorImpl(Network network, int[] equivalence, Direction dir,
-      ToIntFunction<Relationship> indexer, RefinementStep refStep) {
-    computeInteriorImpl(network, equivalence, dir == Direction.INCOMING, dir == Direction.OUTGOING,
-        indexer, refStep);
-  }
-
-  private static void computeInteriorImpl(Network network, int[] equivalence, boolean incoming,
-      boolean outgoing, ToIntFunction<Relationship> indexer, RefinementStep refStep) {
-
-    // Initialization
-    int n = network.asRelation().countUnionDomain();
-    int nRelationships = network.asRelation().countRelationships();
-
-    if (nRelationships == 0) {
-      return;
-    }
-
-    int maxColor = 0;
-    for (int c : equivalence) {
-      maxColor = Math.max(maxColor, c);
-    }
-
-    // pointer counters for incoming and outgoing relationships
-    // will be used depending on direction
-    int[] countsinpointer = incoming ? new int[nRelationships] : null;
-    int[] countsoutpointer = outgoing ? new int[nRelationships] : null;
-
-    InteriorAlgorithms state = new InteriorAlgorithms(n, nRelationships, maxColor + 1, incoming,
-        outgoing);
-
-    state.initializeQBlocks(n, equivalence, maxColor + 1);
-
-    state.counts[0] = Integer.MAX_VALUE;
-
-    {
-      // initial b block is whole equivalence
-      PrimitiveIterable.OfInt bblock = Mappings.wrapUnmodifiable(state.qtovertids, 0, n);
-
-      if (incoming) {
-        refStep.apply(state, bblock, equivalence, countsinpointer,
-            network.asRelation()::getRelationshipsFrom, (r) -> r.getRight(), indexer);
-      }
-      if (outgoing) {
-        refStep.apply(state, bblock, equivalence, countsoutpointer,
-            network.asRelation()::getRelationshipsTo, (r) -> r.getLeft(), indexer);
-      }
-
-      state.countsalloc.free(0);
-    }
-
-    while (!state.clist.isEmpty()) {
-
-      // Get next block which we have to test stability of the equivalence
-      // on
-      int blockb = state.popBBlock();
-
-      // Split according to this block, such that the remaining blocks are
-      // stable with respect to it
-      // Do it for both directions
-
-      // Trick: The algorithm might shuffle the nodes around, so the order
-      // is not guaranteed
-      // but it will never move nodes from block B outside of
-      // [bblockstart, bblockend)
-      int bblockstart = state.qstart[blockb];
-      int bblockend = state.qend[blockb];
-      PrimitiveIterable.OfInt bblock = Mappings.wrapUnmodifiable(state.qtovertids, bblockstart,
-          bblockend);
-
-      if (incoming) {
-        refStep.apply(state, bblock, equivalence, countsinpointer,
-            network.asRelation()::getRelationshipsFrom, (r) -> r.getRight(), indexer);
-      }
-      if (outgoing) {
-        refStep.apply(state, bblock, equivalence, countsoutpointer,
-            network.asRelation()::getRelationshipsTo, (r) -> r.getLeft(), indexer);
-      }
-    }
-
-    // dirty! breaks the state of the RegularInterior object
-    // but we don't use it anymore, so let's just reuse the memory space
-    int[] colorstore = state.qtox;
-    Arrays.fill(colorstore, -1);
-    Equivalences.normalizePartition(equivalence, colorstore);
-
-  }
 
   private static void computeInteriorImpl(int n, NetworkView<?, ?>[] views,
       int[] equivalence, NewRefinementStep refStep) {
@@ -790,195 +605,6 @@ public class InteriorAlgorithms {
     int[] colorstore = state.qtox;
     Arrays.fill(colorstore, -1);
     Equivalences.normalizePartition(equivalence, colorstore);
-  }
-
-  /**
-   * Computes the regular interior on the given network with categorical edge weights. Runs in O(m
-   * log^2 n + n) time and needs O(m + n) additional space.
-   * 
-   * @param network
-   *          the network
-   * @param equivalence
-   *          an equivalence on the vertices
-   * @param dir
-   *          the link directions to consider
-   * @param edgeclasses
-   *          the edge classes associated to the edges
-   * @return the regular interior of the given equivalence on the network.
-   */
-  public static int[] computeRegularInterior(Network network, int[] equivalence, Direction dir,
-      int[] edgeclasses) {
-    return computeInterior(network, equivalence, dir, edgeclasses,
-        InteriorAlgorithms::splitByBThreeway);
-  }
-
-  /**
-   * Computes the exact interior on the given network with categorical edge weights. Runs in O(m
-   * log^2 n + n) time and needs O(m + n) additional space.
-   * 
-   * @param network
-   *          the network
-   * @param equivalence
-   *          an equivalence on the vertices
-   * @param dir
-   *          the link directions to consider
-   * @param edgeclasses
-   *          the edge classes associated to the edges
-   * @return the regular interior of the given equivalence on the network.
-   */
-  public static int[] computeExactInterior(Network network, int[] equivalence, Direction dir,
-      int[] edgeclasses) {
-    return computeInterior(network, equivalence, dir, edgeclasses,
-        InteriorAlgorithms::splitByBExact);
-  }
-
-  private static int[] computeInterior(Network network, int[] equivalence, Direction dir,
-      int[] edgeclasses, RefinementStep refStep) {
-    int[] result = Arrays.copyOf(equivalence, equivalence.length);
-    if (network.isDirected()) {
-      computeInteriorImpl(network, result, dir, edgeclasses, (r) -> r.getIndex(), refStep);
-    } else {
-      computeInteriorImpl(network, result, dir, edgeclasses,
-          (r) -> 2 * r.getIndex() + (r.getRight() > r.getLeft() ? 1 : 0), refStep);
-    }
-    return result;
-  }
-
-  private static void computeInteriorImpl(Network network, int[] equivalence, Direction dir,
-      int[] edgeclasses, ToIntFunction<Relationship> indexer, RefinementStep refStep) {
-
-    int n = network.asRelation().countUnionDomain();
-    EdgeClassManager manager = new EdgeClassManager(n, edgeclasses);
-
-    computeInteriorImpl(network, equivalence, dir, indexer,
-        (state, bblock, innerequivalence, countspointer, splitRevDirRelationships,
-            splitRevDirRelationshipTarget, innerindexer) -> edgeClassRefinement(state, bblock,
-                innerequivalence, countspointer, splitRevDirRelationships,
-                splitRevDirRelationshipTarget, innerindexer, refStep, manager));
-  }
-
-  private static void edgeClassRefinement(InteriorAlgorithms state, PrimitiveIterable.OfInt bblock,
-      int[] equivalence, int[] countspointer,
-      IntFunction<? extends Iterable<? extends Relationship>> splitRevDirRelationships,
-      ToIntFunction<Relationship> splitRevDirRelationshipTarget,
-      ToIntFunction<Relationship> indexer, RefinementStep innerStep, EdgeClassManager manager) {
-
-    manager.setBBlock(bblock, splitRevDirRelationships);
-    PrimitiveIterable.OfInt subblock;
-    while ((subblock = manager.getEdgeClassBlock()) != null) {
-      innerStep.apply(state, subblock, equivalence, countspointer,
-          manager::getEdgeClassRelationships, splitRevDirRelationshipTarget, indexer);
-    }
-  }
-
-  private static class EdgeClassIterator implements Iterator<Relationship> {
-    private Iterator<? extends Relationship> baseiterator_;
-    private Relationship currentrelationship;
-    private int currentedgeclass;
-    private int[] edgeclasses_;
-
-    public EdgeClassIterator(Iterator<? extends Relationship> iterator, int[] edgeclasses) {
-      baseiterator_ = iterator;
-      edgeclasses_ = edgeclasses;
-      moveNext();
-    }
-
-    public void setClass(int edgeclass) {
-      currentedgeclass = edgeclass;
-    }
-
-    public Relationship peekNext() {
-      return currentrelationship;
-    }
-
-    @Override
-    public boolean hasNext() {
-      return currentrelationship != null
-          && currentedgeclass == edgeclasses_[currentrelationship.getIndex()];
-    }
-
-    @Override
-    public Relationship next() {
-      if (!hasNext())
-        throw new NoSuchElementException();
-      Relationship curr = currentrelationship;
-      moveNext();
-      return curr;
-    }
-
-    public void moveNext() {
-      currentrelationship = baseiterator_.hasNext() ? baseiterator_.next() : null;
-    }
-  }
-
-  private static class EdgeClassManager {
-    private EdgeClassIterator[] firstPassIterators;
-    private EdgeClassIterator[] secondPassIterators;
-
-    private int[] bblock;
-    private int bblocksize;
-
-    private IntDoubleHeap heap;
-
-    private final int[] edgeclasses_;
-
-    private int passcount;
-
-    public EdgeClassManager(int n, int[] edgeclasses) {
-      bblock = new int[n];
-      firstPassIterators = new EdgeClassIterator[n];
-      secondPassIterators = new EdgeClassIterator[n];
-      heap = PrimitiveContainers.fixedUniverseIntDoubleMinHeap(n);
-      edgeclasses_ = edgeclasses;
-    }
-
-    public void setBBlock(PrimitiveIterable.OfInt bblock,
-        IntFunction<? extends Iterable<? extends Relationship>> relationships) {
-      for (int u : bblock) {
-        Iterable<? extends Relationship> relIterable = relationships.apply(u);
-
-        firstPassIterators[u] = new EdgeClassIterator(relIterable.iterator(), edgeclasses_);
-        if (firstPassIterators[u].peekNext() != null) {
-          secondPassIterators[u] = new EdgeClassIterator(relIterable.iterator(), edgeclasses_);
-          heap.upsert(u, edgeclasses_[firstPassIterators[u].peekNext().getIndex()]);
-        }
-      }
-    }
-
-    public PrimitiveIterable.OfInt getEdgeClassBlock() {
-
-      for (int i = 0; i < bblocksize; ++i) {
-        int u = bblock[i];
-        if (firstPassIterators[u].peekNext() != null) {
-          heap.upsert(u, edgeclasses_[firstPassIterators[u].peekNext().getIndex()]);
-        }
-      }
-
-      if (heap.isEmpty()) {
-        return null;
-      }
-      int curredgeclass = edgeclasses_[firstPassIterators[heap.peek()].peekNext().getIndex()];
-      bblocksize = 0;
-      do {
-        int u = heap.pop();
-        bblock[bblocksize++] = u;
-        firstPassIterators[u].setClass(curredgeclass);
-        secondPassIterators[u].setClass(curredgeclass);
-      } while (!heap.isEmpty()
-          && edgeclasses_[firstPassIterators[heap.peek()].peekNext().getIndex()] == curredgeclass);
-
-      passcount = 0;
-
-      return () -> {
-        ++passcount;
-        return Mappings.wrapUnmodifiable(bblock, 0, bblocksize).iterator();
-      };
-    }
-
-    public Iterable<? extends Relationship> getEdgeClassRelationships(int u) {
-      return () -> passcount < 2 ? firstPassIterators[u] : secondPassIterators[u];
-    }
-
   }
 
 }
