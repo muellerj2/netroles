@@ -16,6 +16,18 @@
  */
 package ch.ethz.sn.visone3.roles.test.blocks;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Random;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.ToIntBiFunction;
+import java.util.function.ToIntFunction;
+import java.util.stream.StreamSupport;
+
+import org.junit.jupiter.api.Test;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.Mapping;
 import ch.ethz.sn.visone3.lang.Mappings;
@@ -38,18 +50,6 @@ import ch.ethz.sn.visone3.roles.structures.BinaryRelations;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 import ch.ethz.sn.visone3.roles.structures.Rankings;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
-
-import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Random;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.ToIntBiFunction;
-import java.util.function.ToIntFunction;
-import java.util.stream.StreamSupport;
 
 public class DistanceOperatorsTest {
 
@@ -105,6 +105,7 @@ public class DistanceOperatorsTest {
         { z, z, z, z, z, 1, 1, 1, 1, 1, 1, z }, //
         { z, z, z, z, z, z, 1, 1, 1, 1, 1, 1, z }, //
         { z, z, z, z, z, z, 1, 1, 1, 1, 1, 1, 1, z }, //
+        { z, z, z, z, z, z, z, z, z, z, z, z, z, z, z }, //
     };
 
     final WeightedNetwork<? extends Integer, ? extends Mapping<? extends Integer>> s = MatrixSource
@@ -6704,7 +6705,7 @@ public class DistanceOperatorsTest {
   @Test
   public void testRegularDistanceBlocks() {
 
-    ConstMapping.OfInt eqInput = Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3);
+    ConstMapping.OfInt eqInput = Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3, 1);
     Ranking rankInput = Rankings.fromEquivalence(eqInput);
     BinaryRelation relInput = BinaryRelations.fromEquivalence(eqInput);
     Function<TransposableNetworkView<Relationship, Relationship>, BiPredicate<Relationship, Relationship>> predEqInputView = (outView) -> (rshipi, rshipj) ->
