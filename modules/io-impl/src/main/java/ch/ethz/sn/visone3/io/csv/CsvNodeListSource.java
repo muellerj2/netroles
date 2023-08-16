@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -79,11 +78,8 @@ public class CsvNodeListSource implements SourceFormat, Source<String> {
     name2range.put(varName, range);
   }
 
-  /**
-   * Parses the CSV input.
-   */
   @Override
-  public SourceFormat parse() {
+  public SourceFormat parse() throws IOException {
     final CsvParser parser = new CsvParser(UnivocitySettings.SETTINGS);
     parser.beginParsing(in);
 
@@ -100,7 +96,7 @@ public class CsvNodeListSource implements SourceFormat, Source<String> {
     // find source and target columns
     final int nodeCol = header.indexOf(nameNode);
     if (nodeCol < 0) {
-      throw new IllegalStateException("could not find node column\n" + "known: "
+      throw new IOException("could not find node column\n" + "known: "
           + String.join(", ", header) + "\n" + "searching: " + nameNode);
     }
     if (name2range.remove(nameNode) != null) {
@@ -109,12 +105,12 @@ public class CsvNodeListSource implements SourceFormat, Source<String> {
 
     // create ranges and lists
     final RangedList<?>[] rangedMappings = new RangedList[row.length];
-    final Range<?>[] ranges = new Range[row.length];
-    final PrimitiveList<?>[] mappings = new PrimitiveList[row.length];
-    for (int i = 0; i < ranges.length; i++) {
-      rangedMappings[i] = new RangedList<>(name2range.get(header.get(i)));
+    for (int i = 0; i < rangedMappings.length; i++) {
+      Range<?> range = name2range.get(header.get(i));
+      if (range != null) {
+        rangedMappings[i] = new RangedList<>(range);
+      }
     }
-    LOG.info("ranges: {}", Arrays.toString(ranges));
 
     // read
     try (ProgressSource p = ProgressProvider.getMonitor().newSource()) {
@@ -126,9 +122,9 @@ public class CsvNodeListSource implements SourceFormat, Source<String> {
           // add monadic attributes
           p.updateProgress(v);
           for (int i = 0; i < row.length; i++) {
-            if (ranges[i] != null) {
-              if (v >= mappings[i].size()) {
-                mappings[i].setSize(null, v + 1);
+            if (rangedMappings[i] != null) {
+              if (v >= rangedMappings[i].getList().size()) {
+                rangedMappings[i].getList().setSize(null, v + 1);
               }
               rangedMappings[i].setListAt(v, row[i]);
             }
@@ -143,15 +139,16 @@ public class CsvNodeListSource implements SourceFormat, Source<String> {
       // fill the monadic mappings map
       p.updateProgress(1, 3);
       monadic = new LinkedHashMap<>();
-      for (int i = 0; i < ranges.length; i++) {
-        if (ranges[i] != null) {
+      int maxId = ids.getMapping().values().stream().mapToInt(Integer::intValue).max().orElse(-1) + 1;
+      for (int i = 0; i < rangedMappings.length; i++) {
+        if (rangedMappings[i] != null) {
           PrimitiveList<?> mapping = rangedMappings[i].getList();
-          mapping.setSize(null, ids.size());
+          mapping.setSize(null, maxId);
           monadic.put(header.get(i), mapping);
         }
       }
       // save the original node ids
-      final RangedList<?> nodeIds = new RangedList<>(rangeNodeId);
+      final RangedList<?> nodeIds = new RangedList<>(rangeNodeId, maxId);
       for (final Map.Entry<String, Integer> e : ids.entrySet()) {
         nodeIds.setListAt(e.getValue().intValue(), e.getKey());
       }

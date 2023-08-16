@@ -19,13 +19,16 @@ package ch.ethz.sn.visone3.io.test;
 
 import static ch.ethz.sn.visone3.test.NetworkAsserts.assertNetwork;
 import static ch.ethz.sn.visone3.test.NetworkAsserts.boxed;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ch.ethz.sn.visone3.io.IoProvider;
+import ch.ethz.sn.visone3.io.IoService;
+import ch.ethz.sn.visone3.io.Sink;
 import ch.ethz.sn.visone3.io.Source;
 import ch.ethz.sn.visone3.io.SourceFormat;
-import ch.ethz.sn.visone3.io.json.JsonSource;
 import ch.ethz.sn.visone3.lang.Mapping;
 import ch.ethz.sn.visone3.lang.Mappings;
 import ch.ethz.sn.visone3.lang.PrimitiveList;
@@ -35,11 +38,12 @@ import ch.ethz.sn.visone3.networks.impl.AsciiDumper;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class JsonSourceTest {
+public class JsonTest {
   @Test
   public void testReadOneMode() throws IOException {
     final String FILE = "{\"vertices\": [" +
@@ -56,7 +60,10 @@ public class JsonSourceTest {
       {z, z, 2}, //
       {0, z, z} //
     };
-    try (Source<?> conf = new JsonSource(new ByteArrayInputStream(FILE.getBytes()))) {
+
+    final IoService jsonService = IoProvider.getService("json");
+    
+    try (Source<?> conf = jsonService.newSource(new ByteArrayInputStream(FILE.getBytes()))) {
       final SourceFormat source = conf.parse();
 
       final Mapping<? extends Integer> g = Mappings.cast(Integer.class, source.monadic().get("g"));
@@ -66,6 +73,21 @@ public class JsonSourceTest {
       Mapping<?> value = source.dyadic().get("value");
       assertTrue(value instanceof PrimitiveList.OfDouble, "Expected double type for value mapping");
       assertNetwork(boxed(adj), network, (PrimitiveList.OfDouble) value);
+
+      final ByteArrayOutputStream out = new ByteArrayOutputStream();
+      try (final Sink sink = jsonService.newSink(out)) {
+        sink.incidence(network);
+        sink.node("g", g);
+        sink.link("value", value);
+      }
+      
+      try (final Source<?> conf2 = jsonService.newSource(new ByteArrayInputStream(out.toByteArray()))) {
+        SourceFormat source2 = conf2.parse();
+        assertEquals(network, source2.incidence());
+        assertArrayEquals(value.stream().toArray(),
+            Mappings.cast(Number.class, source2.dyadic().get("value")).stream().map(Number::doubleValue).toArray());
+        assertEquals(g, source2.monadic().get("g"));
+      }
     }
   }
 
@@ -77,15 +99,18 @@ public class JsonSourceTest {
       "{\"g\":3}], \"edges\":[" +
       "{\"source\":0,\"target\":1,\"value\":1}," +
       "{\"source\":1,\"target\":2,\"value\":10000000000}," +
-      "{\"source\":2,\"target\":0,\"value\":0}]}";
+      "{\"source\":2,\"target\":0,\"value\":0}]," +
+      "\"type\":\"directed\"}";
 
     final Long[][] adj = new Long[][]{
       {null, 1L, null}, //
       {null, null, 10_000_000_000L}, //
       {0L, null, null} //
     };
+    
+    final IoService jsonService = IoProvider.getService("json");
 
-    try (Source<?> conf = new JsonSource(new ByteArrayInputStream(FILE.getBytes()))) {
+    try (Source<?> conf = jsonService.newSource(new ByteArrayInputStream(FILE.getBytes()))) {
       final SourceFormat source = conf.parse();
 
       final Mapping<? extends Long> g = Mappings.cast(Long.class, source.monadic().get("g"));
@@ -97,6 +122,20 @@ public class JsonSourceTest {
       Mapping<?> value = source.dyadic().get("value");
       assertTrue(value instanceof PrimitiveList.OfLong, "Expected long type for mapping value");
       assertNetwork(adj, network, (PrimitiveList.OfLong)value);
+      
+      final ByteArrayOutputStream out = new ByteArrayOutputStream();
+      try (final Sink sink = jsonService.newSink(out)) {
+        sink.incidence(network);
+        sink.node("g", g);
+        sink.link("value", value);
+      }
+      
+      try (final Source<?> conf2 = jsonService.newSource(new ByteArrayInputStream(out.toByteArray()))) {
+        SourceFormat source2 = conf2.parse();
+        assertEquals(network, source2.incidence());
+        assertEquals(value, source2.dyadic().get("value"));
+        assertEquals(g, source2.monadic().get("g"));
+      }
     }
   }
 
@@ -116,7 +155,9 @@ public class JsonSourceTest {
       {0, null, null} //
     };
 
-    try (Source<?> conf = new JsonSource(new ByteArrayInputStream(FILE.getBytes()))) {
+    final IoService jsonService = IoProvider.getService("json");
+    
+    try (Source<?> conf = jsonService.newSource(new ByteArrayInputStream(FILE.getBytes()))) {
       final SourceFormat source = conf.parse();
 
       final Mapping<? extends Integer> g1 = Mappings.cast(Integer.class, source.monadic().get("g1"));
@@ -131,6 +172,18 @@ public class JsonSourceTest {
       Mapping<?> w2 = source.dyadic().get("w2");
       assertTrue(w2 instanceof PrimitiveList, "Expected generic type for mapping w2");
       assertFalse(w2.getComponentType().isPrimitive(), "Expected non-primitive component type for mapping w2");
+
+      final ByteArrayOutputStream out = new ByteArrayOutputStream();
+      try (final Sink sink = jsonService.newSink(out)) {
+        sink.incidence(network);
+        sink.link("value", w2);
+      }
+      
+      try (final Source<?> conf2 = jsonService.newSource(new ByteArrayInputStream(out.toByteArray()))) {
+        SourceFormat source2 = conf2.parse();
+        assertEquals(network, source2.incidence());
+        assertEquals(w2, source2.dyadic().get("value"));
+      }
     }
   }
 }

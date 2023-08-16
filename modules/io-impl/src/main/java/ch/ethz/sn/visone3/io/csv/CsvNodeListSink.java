@@ -53,18 +53,14 @@ public class CsvNodeListSink extends AbstractSink implements AutoCloseable {
   @Override
   public void close() throws IOException {
     try {
-      if (monadic.isEmpty()) {
-        return;
-      }
       out.append(cell(NODE));
-      final int n = monadic.values().iterator().next().size();
+      final int n = monadic.isEmpty() ? 0 : monadic.values().iterator().next().size();
       for (final Map.Entry<String, ConstMapping<?>> e : monadic.entrySet()) {
         Networks.checkVertexMapSize(n, e.getValue(), e.getKey());
         out.append(delimiter).append(cell(e.getKey()));
       }
       out.append("\n");
       for (int i = 0; i < n; i++) {
-  
         out.append(cell(String.valueOf(i)));
         for (final ConstMapping<?> map : monadic.values()) {
           out.append(delimiter).append(cell(String.valueOf(map.get(i))));

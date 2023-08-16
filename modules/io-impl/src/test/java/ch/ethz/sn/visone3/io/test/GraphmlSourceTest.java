@@ -145,6 +145,7 @@ public class GraphmlSourceTest {
     try (InputStream in = cl.getResourceAsStream(graph);
         Source<?> source = new GraphmlSource(in)) {
       final SourceFormat sourceFormat = source.parse();
+      @SuppressWarnings("unused")
       final Mapping<? extends Integer> multiplicity = Mappings.cast(Integer.class, sourceFormat.dyadic().get(GraphmlSource.MULTIPLICITY));
     }
   }
