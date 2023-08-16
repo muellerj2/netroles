@@ -17,15 +17,15 @@
 
 package ch.ethz.sn.visone3.lang;
 
-import ch.ethz.sn.visone3.lang.spi.IteratorFacade;
-import ch.ethz.sn.visone3.lang.spi.LangProvider;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.PrimitiveIterator;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
+
+import ch.ethz.sn.visone3.lang.spi.IteratorFacade;
+import ch.ethz.sn.visone3.lang.spi.LangProvider;
 
 /**
  * Provides some commonly required types of iterators and iterables.
@@ -65,9 +65,8 @@ public final class Iterators {
   /**
    * Returns an iterator over a single integer.
    * 
-   * @param value
-   *          the integer value
-   * @return iterator over the integer value
+   * @param value the integer value.
+   * @return iterator over the integer value.
    */
   public static PrimitiveIterator.OfInt singletonItrInt(final int value) {
     return new PrimitiveIterator.OfInt() {
@@ -92,9 +91,8 @@ public final class Iterators {
   /**
    * Returns an iterable over a single integer.
    * 
-   * @param value
-   *          the integer value
-   * @return iterable over the integer value
+   * @param value the integer value.
+   * @return iterable over the integer value.
    */
   public static PrimitiveIterable.OfInt singletonInt(final int value) {
     return () -> singletonItrInt(value);
@@ -120,12 +118,12 @@ public final class Iterators {
   }
 
   /**
-   * Derives a view of an iterator retaining all elements for which {@code filter} produces true.
+   * Derives a view of an iterator retaining all elements for which {@code filter}
+   * produces true.
    * 
-   * @param iterator
-   *          the iterator
-   * @param filter
-   *          the filter predicate
+   * @param iterator the iterator.
+   * @param filter   the filter predicate.
+   * @param <T>      the element type of the iterator.
    * @return the filtered iterator.
    */
   public static <T> Iterator<T> filter(Iterator<T> iterator, Predicate<? super T> filter) {
@@ -133,12 +131,12 @@ public final class Iterators {
   }
 
   /**
-   * Derives a view of an iterable retaining all elements for which {@code filter} produces true.
+   * Derives a view of an iterable retaining all elements for which {@code filter}
+   * produces true.
    * 
-   * @param iterable
-   *          the iterable
-   * @param filter
-   *          the filter predicate
+   * @param iterable the iterable.
+   * @param filter   the filter predicate.
+   * @param <T>      the element type of the iterable.
    * @return the filtering view
    */
   public static <T> Iterable<T> filter(Iterable<T> iterable, Predicate<? super T> filter) {
@@ -146,54 +144,54 @@ public final class Iterators {
   }
 
   /**
-   * Derives a view of an iterator retaining all elements for which {@code filter} produces true.
+   * Derives a view of an iterator retaining all elements for which {@code filter}
+   * produces true.
    * 
-   * @param iterator
-   *          the iterator
-   * @param filter
-   *          the filter predicate
-   * @return the filtering view
+   * @param iterator the iterator.
+   * @param filter   the filter predicate.
+   * @return the filtering view.
    */
-  public static <T> PrimitiveIterator.OfInt filter(PrimitiveIterator.OfInt iterator,
+  public static PrimitiveIterator.OfInt filter(PrimitiveIterator.OfInt iterator,
       IntPredicate filter) {
     return facade().filter(iterator, filter);
   }
 
   /**
-   * Derives a view of an iterable retaining all elements for which {@code filter} produces true.
+   * Derives a view of an iterable retaining all elements for which {@code filter}
+   * produces true.
    * 
-   * @param iterable
-   *          the iterable
-   * @param filter
-   *          the filter predicate
-   * @return the filtering view
+   * @param iterable the iterable.
+   * @param filter   the filter predicate.
+   * @return the filtering view.
    */
-  public static <T> PrimitiveIterable.OfInt filter(PrimitiveIterable.OfInt iterable,
+  public static PrimitiveIterable.OfInt filter(PrimitiveIterable.OfInt iterable,
       IntPredicate filter) {
     return facade().filter(iterable, filter);
   }
 
   /**
-   * Derives a view of an iterator mapping each of its element with the supplied function.
+   * Derives a view of an iterator mapping each of its element with the supplied
+   * function.
    * 
-   * @param iterator
-   *          the iterator
-   * @param map
-   *          the mapping function
-   * @return the mapping view of the iterator
+   * @param iterator the iterator.
+   * @param map      the mapping function.
+   * @param <T>      the element type of the iterator.
+   * @param <R>      the result type of the function.
+   * @return the mapping view of the iterator.
    */
   public static <T, R> Iterator<R> map(Iterator<T> iterator, Function<? super T, R> map) {
     return facade().map(iterator, map);
   }
 
   /**
-   * Derives a view of an iterable mapping each of its element with the supplied function.
+   * Derives a view of an iterable mapping each of its element with the supplied
+   * function.
    * 
-   * @param iterable
-   *          the iterable
-   * @param map
-   *          the mapping function
-   * @return the mapping view of the iterable
+   * @param iterable the iterable.
+   * @param map      the mapping function.
+   * @param <T>      the element type of the iterable.
+   * @param <R>      the result type of the function.
+   * @return the mapping view of the iterable.
    */
   public static <T, R> Iterable<R> map(Iterable<T> iterable, Function<? super T, R> map) {
     return facade().map(iterable, map);
@@ -202,11 +200,10 @@ public final class Iterators {
   /**
    * Concatenates two iterators into a single one.
    * 
-   * @param first
-   *          the first iterator
-   * @param second
-   *          the second iterator
-   * @return the concatenated iterator
+   * @param first  the first iterator.
+   * @param second the second iterator.
+   * @param <T>    the common element type of the two iterators.
+   * @return the concatenated iterator.
    */
   public static <T> Iterator<T> concat(Iterator<? extends T> first, Iterator<? extends T> second) {
     return facade().concat(first, second);
@@ -215,11 +212,10 @@ public final class Iterators {
   /**
    * Concatenates two iterables into a single one.
    * 
-   * @param first
-   *          the first iterable
-   * @param second
-   *          the second iterable
-   * @return the concatenated iterable
+   * @param first  the first iterable.
+   * @param second the second iterable.
+   * @param <T>    the common element type of the two iterables.
+   * @return the concatenated iterable.
    */
   public static <T> Iterable<T> concat(Iterable<? extends T> first, Iterable<? extends T> second) {
     return facade().concat(first, second);
@@ -228,11 +224,9 @@ public final class Iterators {
   /**
    * Concatenates two integer iterators into a single one.
    * 
-   * @param first
-   *          the first iterator
-   * @param second
-   *          the second iterator
-   * @return the concatenated iterator
+   * @param first  the first iterator.
+   * @param second the second iterator.
+   * @return the concatenated iterator.
    */
   public static PrimitiveIterator.OfInt concat(PrimitiveIterator.OfInt first,
       PrimitiveIterator.OfInt second) {
@@ -242,11 +236,9 @@ public final class Iterators {
   /**
    * Concatenates two integer iterables into a single one.
    * 
-   * @param first
-   *          the first iterable
-   * @param second
-   *          the second iterable
-   * @return the concatenated iterable
+   * @param first  the first iterable.
+   * @param second the second iterable.
+   * @return the concatenated iterable.
    */
   public static PrimitiveIterable.OfInt concat(PrimitiveIterable.OfInt first,
       PrimitiveIterable.OfInt second) {

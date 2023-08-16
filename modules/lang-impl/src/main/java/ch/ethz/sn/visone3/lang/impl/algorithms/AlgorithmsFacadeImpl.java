@@ -20,6 +20,9 @@ import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.Mapping;
 import ch.ethz.sn.visone3.lang.spi.AlgorithmsFacade;
 
+/**
+ * Facade to implemented algorithms working on containers and arrays.
+ */
 public final class AlgorithmsFacadeImpl implements AlgorithmsFacade {
 
   @Override

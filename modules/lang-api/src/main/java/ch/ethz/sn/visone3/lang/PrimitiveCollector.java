@@ -27,15 +27,13 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 
 /**
- * Collector interface for primitive type. {@see Collector} for details on the basic interface.
- *
- * @param <T>
- *          the type of input elements to the reduction operation
- * @param <A>
- *          the mutable accumulation type of the reduction operation (often hidden as an
- *          implementation detail)
- * @param <R>
- *          the result type of the reduction operation
+ * Collector interface for primitive type. See {@link Collector} for details on
+ * the basic interface.
+ * 
+ * @param <T> the type of input elements to the reduction operation
+ * @param <A> the mutable accumulation type of the reduction operation (often
+ *            hidden as an implementation detail)
+ * @param <R> the result type of the reduction operation
  */
 public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
 
@@ -62,28 +60,19 @@ public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
   Class<R> resultType();
 
   /**
-   * Returns a new primitive collector described by the given {@code supplier}, {@code accumlator},
-   * {@code combiner}, and {@code finisher} functions.
+   * Returns a new primitive collector described by the given {@code supplier},
+   * {@code accumlator}, {@code combiner}, and {@code finisher} functions.
    * 
-   * @param <T>
-   *          the type of input elements for the collector
-   * @param <A>
-   *          the intermediate accumulation type of the collector
-   * @param <R>
-   *          the final result type of the collector
-   * @param supplier
-   *          the supplier function for the collector
-   * @param accumulator
-   *          the accumulator function for the collector
-   * @param combiner
-   *          the (consuming) combiner function for the collector
-   * @param finisher
-   *          the finisher function for the collector
-   * @param resultType
-   *          the class object describing the result type
-   * @param characteristics
-   *          the collector characteristics
-   * @return the new primitive collector
+   * @param <T>             the type of input elements for the collector
+   * @param <A>             the intermediate accumulation type of the collector
+   * @param <R>             the final result type of the collector
+   * @param supplier        the supplier function for the collector
+   * @param accumulator     the accumulator function for the collector
+   * @param combiner        the (consuming) combiner function for the collector
+   * @param finisher        the finisher function for the collector
+   * @param resultType      the class object describing the result type
+   * @param characteristics the collector characteristics
+   * @return the new primitive collector.
    */
   static <T, A, R> PrimitiveCollector<T, A, R> of(Supplier<A> supplier,
       BiConsumer<A, T> accumulator, BiConsumer<A, A> combiner, Function<A, R> finisher,
@@ -93,25 +82,19 @@ public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
   }
 
   /**
-   * Returns a new primitive collector described by the given {@code supplier}, {@code accumlator},
-   * and {@code combiner} functions. The collector has the
+   * Returns a new primitive collector described by the given {@code supplier},
+   * {@code accumlator}, and {@code combiner} functions. The collector has the
    * {@code Collector.Characteristics.IDENTITY_FINISH} characteristic.
    * 
-   * @param <T>
-   *          the type of input elements for the collector
-   * @param <A>
-   *          the intermediate accumulation and result type of the collector
-   * @param supplier
-   *          the supplier function for the collector
-   * @param accumulator
-   *          the accumulator function for the collector
-   * @param combiner
-   *          the (consuming) combiner function for the collector
-   * @param resultType
-   *          the class object describing the result type
-   * @param characteristics
-   *          the collector characteristics
-   * @return the new primitive collector
+   * @param <T>             the type of input elements for the collector.
+   * @param <A>             the intermediate accumulation and result type of the
+   *                        collector.
+   * @param supplier        the supplier function for the collector.
+   * @param accumulator     the accumulator function for the collector.
+   * @param combiner        the (consuming) combiner function for the collector.
+   * @param resultType      the class object describing the result type.
+   * @param characteristics the collector characteristics.
+   * @return the new primitive collector.
    */
   static <T, A> PrimitiveCollector<T, A, A> of(Supplier<A> supplier, BiConsumer<A, T> accumulator,
       BiConsumer<A, A> combiner, Class<A> resultType, Characteristics... characteristics) {
@@ -122,11 +105,9 @@ public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
   /**
    * Primitive collector interface specifically for integer input elements.
    * 
-   * @param <A>
-   *          the mutable accumulation type of the reduction operation (often hidden as an
-   *          implementation detail)
-   * @param <R>
-   *          the result type of the reduction operation
+   * @param <A> the mutable accumulation type of the reduction operation (often
+   *            hidden as an implementation detail)
+   * @param <R> the result type of the reduction operation
    */
   interface OfInt<A, R> extends PrimitiveCollector<Integer, A, R> {
 
@@ -143,23 +124,20 @@ public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
     }
 
     /**
-     * Returns a new integer collector described by the given {@code supplier}, {@code accumlator},
-     * and {@code combiner} functions. The collector has the
+     * Returns a new integer collector described by the given {@code supplier},
+     * {@code accumlator}, and {@code combiner} functions. The collector has the
      * {@code Collector.Characteristics.IDENTITY_FINISH} characteristic.
      * 
-     * @param <A>
-     *          the intermediate accumulation and result type of the collector
-     * @param supplier
-     *          the supplier function for the collector
-     * @param accumulator
-     *          the accumulator function for the collector
-     * @param combiner
-     *          the (consuming) combiner function for the collector
-     * @param resultType
-     *          the class object describing the result type
-     * @param characteristics
-     *          the collector characteristics
-     * @return the new primitive collector
+     * @param <A>             the intermediate accumulation of the collector.
+     * @param <R>             the result type of the collector.
+     * @param supplier        the supplier function for the collector.
+     * @param accumulator     the accumulator function for the collector.
+     * @param combiner        the (consuming) combiner function for the collector.
+     * @param finisher        the finishing function for the collector producing the
+     *                        result.
+     * @param resultType      the class object describing the result type.
+     * @param characteristics the collector characteristics.
+     * @return the new primitive collector.
      */
     static <A, R> PrimitiveCollector.OfInt<A, R> of(Supplier<A> supplier,
         ObjIntConsumer<A> accumulator, BiConsumer<A, A> combiner, Function<A, R> finisher,
@@ -169,23 +147,18 @@ public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
     }
 
     /**
-     * Returns a new integer collector described by the given {@code supplier}, {@code accumlator},
-     * and {@code combiner} functions. The collector has the
+     * Returns a new integer collector described by the given {@code supplier},
+     * {@code accumlator}, and {@code combiner} functions. The collector has the
      * {@code Collector.Characteristics.IDENTITY_FINISH} characteristic.
      * 
-     * @param <A>
-     *          the intermediate accumulation and result type of the collector
-     * @param supplier
-     *          the supplier function for the collector
-     * @param accumulator
-     *          the accumulator function for the collector
-     * @param combiner
-     *          the (consuming) combiner function for the collector
-     * @param resultType
-     *          the class object describing the result type
-     * @param characteristics
-     *          the collector characteristics
-     * @return the new primitive collector
+     * @param <A>             the intermediate accumulation and result type of the
+     *                        collector.
+     * @param supplier        the supplier function for the collector.
+     * @param accumulator     the accumulator function for the collector.
+     * @param combiner        the (consuming) combiner function for the collector.
+     * @param resultType      the class object describing the result type.
+     * @param characteristics the collector characteristics.
+     * @return the new primitive collector.
      */
     static <A> PrimitiveCollector.OfInt<A, A> of(Supplier<A> supplier,
         ObjIntConsumer<A> accumulator, BiConsumer<A, A> combiner, Class<A> resultType,
@@ -199,11 +172,9 @@ public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
   /**
    * Primitive collector interface specifically for long input elements.
    * 
-   * @param <A>
-   *          the mutable accumulation type of the reduction operation (often hidden as an
-   *          implementation detail)
-   * @param <R>
-   *          the result type of the reduction operation
+   * @param <A> the mutable accumulation type of the reduction operation (often
+   *            hidden as an implementation detail)
+   * @param <R> the result type of the reduction operation
    */
   interface OfLong<A, R> extends PrimitiveCollector<Long, A, R> {
 
@@ -224,19 +195,16 @@ public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
      * {@code accumlator}, and {@code combiner} functions. The collector has the
      * {@code Collector.Characteristics.IDENTITY_FINISH} characteristic.
      * 
-     * @param <A>
-     *          the intermediate accumulation and result type of the collector
-     * @param supplier
-     *          the supplier function for the collector
-     * @param accumulator
-     *          the accumulator function for the collector
-     * @param combiner
-     *          the (consuming) combiner function for the collector
-     * @param resultType
-     *          the class object describing the result type
-     * @param characteristics
-     *          the collector characteristics
-     * @return the new primitive collector
+     * @param <A>             the intermediate accumulation type of the collector.
+     * @param <R>             the result type of the collector.
+     * @param supplier        the supplier function for the collector.
+     * @param accumulator     the accumulator function for the collector.
+     * @param combiner        the (consuming) combiner function for the collector.
+     * @param finisher        the finishing function for the collector producing the
+     *                        result.
+     * @param resultType      the class object describing the result type.
+     * @param characteristics the collector characteristics.
+     * @return the new primitive collector.
      */
     static <A, R> PrimitiveCollector.OfLong<A, R> of(Supplier<A> supplier,
         ObjLongConsumer<A> accumulator, BiConsumer<A, A> combiner, Function<A, R> finisher,
@@ -250,19 +218,14 @@ public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
      * {@code accumlator}, and {@code combiner} functions. The collector has the
      * {@code Collector.Characteristics.IDENTITY_FINISH} characteristic.
      * 
-     * @param <A>
-     *          the intermediate accumulation and result type of the collector
-     * @param supplier
-     *          the supplier function for the collector
-     * @param accumulator
-     *          the accumulator function for the collector
-     * @param combiner
-     *          the (consuming) combiner function for the collector
-     * @param resultType
-     *          the class object describing the result type
-     * @param characteristics
-     *          the collector characteristics
-     * @return the new primitive collector
+     * @param <A>             the intermediate accumulation and result type of the
+     *                        collector.
+     * @param supplier        the supplier function for the collector.
+     * @param accumulator     the accumulator function for the collector.
+     * @param combiner        the (consuming) combiner function for the collector.
+     * @param resultType      the class object describing the result type.
+     * @param characteristics the collector characteristics.
+     * @return the new primitive collector.
      */
     static <A> PrimitiveCollector.OfLong<A, A> of(Supplier<A> supplier,
         ObjLongConsumer<A> accumulator, BiConsumer<A, A> combiner, Class<A> resultType,
@@ -276,11 +239,9 @@ public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
   /**
    * Primitive collector interface specifically for long input elements.
    * 
-   * @param <A>
-   *          the mutable accumulation type of the reduction operation (often hidden as an
-   *          implementation detail)
-   * @param <R>
-   *          the result type of the reduction operation
+   * @param <A> the mutable accumulation type of the reduction operation (often
+   *            hidden as an implementation detail)
+   * @param <R> the result type of the reduction operation
    */
   interface OfDouble<A, R> extends PrimitiveCollector<Double, A, R> {
 
@@ -297,23 +258,20 @@ public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
     }
 
     /**
-     * Returns a new double collector described by the given {@code supplier}, {@code accumlator},
-     * and {@code combiner} functions. The collector has the
+     * Returns a new double collector described by the given {@code supplier},
+     * {@code accumlator}, and {@code combiner} functions. The collector has the
      * {@code Collector.Characteristics.IDENTITY_FINISH} characteristic.
      * 
-     * @param <A>
-     *          the intermediate accumulation and result type of the collector
-     * @param supplier
-     *          the supplier function for the collector
-     * @param accumulator
-     *          the accumulator function for the collector
-     * @param combiner
-     *          the (consuming) combiner function for the collector
-     * @param resultType
-     *          the class object describing the result type
-     * @param characteristics
-     *          the collector characteristics
-     * @return the new primitive collector
+     * @param <A>             the intermediate accumulation of the collector.
+     * @param <R>             the result type of the collector.
+     * @param supplier        the supplier function for the collector.
+     * @param accumulator     the accumulator function for the collector.
+     * @param combiner        the (consuming) combiner function for the collector.
+     * @param finisher        the finishing function for the collector producing the
+     *                        result.
+     * @param resultType      the class object describing the result type.
+     * @param characteristics the collector characteristics.
+     * @return the new primitive collector.
      */
     static <A, R> PrimitiveCollector.OfDouble<A, R> of(Supplier<A> supplier,
         ObjDoubleConsumer<A> accumulator, BiConsumer<A, A> combiner, Function<A, R> finisher,
@@ -323,23 +281,18 @@ public interface PrimitiveCollector<T, A, R> extends Collector<T, A, R> {
     }
 
     /**
-     * Returns a new double collector described by the given {@code supplier}, {@code accumlator},
-     * and {@code combiner} functions. The collector has the
+     * Returns a new double collector described by the given {@code supplier},
+     * {@code accumlator}, and {@code combiner} functions. The collector has the
      * {@code Collector.Characteristics.IDENTITY_FINISH} characteristic.
      * 
-     * @param <A>
-     *          the intermediate accumulation and result type of the collector
-     * @param supplier
-     *          the supplier function for the collector
-     * @param accumulator
-     *          the accumulator function for the collector
-     * @param combiner
-     *          the (consuming) combiner function for the collector
-     * @param resultType
-     *          the class object describing the result type
-     * @param characteristics
-     *          the collector characteristics
-     * @return the new primitive collector
+     * @param <A>             the intermediate accumulation and result type of the
+     *                        collector.
+     * @param supplier        the supplier function for the collector.
+     * @param accumulator     the accumulator function for the collector.
+     * @param combiner        the (consuming) combiner function for the collector.
+     * @param resultType      the class object describing the result type.
+     * @param characteristics the collector characteristics.
+     * @return the new primitive collector.
      */
     static <A> PrimitiveCollector.OfDouble<A, A> of(Supplier<A> supplier,
         ObjDoubleConsumer<A> accumulator, BiConsumer<A, A> combiner, Class<A> resultType,

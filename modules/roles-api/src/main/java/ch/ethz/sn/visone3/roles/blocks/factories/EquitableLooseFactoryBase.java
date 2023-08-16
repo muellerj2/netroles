@@ -16,21 +16,27 @@
  */
 package ch.ethz.sn.visone3.roles.blocks.factories;
 
+/**
+ * This base interface defines the signatures of methods to configure whether
+ * the role notion is of the ``loose'' or ``equitable'' type.
+ * 
+ * @param <T> the full type of the factory.
+ */
 public interface EquitableLooseFactoryBase<T extends EquitableLooseFactoryBase<T>> {
 
   /**
-   * Sets the role structure to be configured as the ``loose'' type (i.e., it does not compare
-   * numbers of ties).
+   * Sets that the configured role notion is supposed to be of the ``loose'' type
+   * (i.e., it should not compare numbers of ties [of the same kind]).
    * 
-   * @return this factory
+   * @return this factory.
    */
   T loose();
 
   /**
-   * Sets the role structure to be configured as the ``equitable'' type (i.e., tie numbers must
-   * match exactly).
+   * Sets that the configured role notion is supposed to be of the ``equitable''
+   * type (i.e., tie numbers must match exactly).
    * 
-   * @return this factory
+   * @return this factory.
    */
   T equitable();
 }

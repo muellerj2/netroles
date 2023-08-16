@@ -17,6 +17,9 @@
 
 package ch.ethz.sn.visone3.networks.impl;
 
+import java.util.Iterator;
+import java.util.function.Function;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.networks.DirectedGraph;
 import ch.ethz.sn.visone3.networks.Network;
@@ -24,9 +27,9 @@ import ch.ethz.sn.visone3.networks.Relation;
 import ch.ethz.sn.visone3.networks.Relationship;
 import ch.ethz.sn.visone3.networks.UndirectedGraph;
 
-import java.util.Iterator;
-import java.util.function.Function;
-
+/**
+ * This class offers methods to quickly produce dumps of mappings and networks.
+ */
 public final class AsciiDumper {
   private static final int WIDTH_HINT = 80;
   private static final int CELL_WIDTH = 4;
@@ -191,8 +194,8 @@ public final class AsciiDumper {
   /**
    * Produces a single-line dump of a mapping.
    * 
-   * @param map
-   *          the mapping.
+   * @param map the mapping.
+   * @param <T> the mapping type.
    * @return the dump string
    */
   public static <T> String singleLine(final ConstMapping<T> map) {
@@ -202,10 +205,9 @@ public final class AsciiDumper {
   /**
    * Produces a single-line dump of a mapping with specified maximum length.
    * 
-   * @param map
-   *          the mapping.
-   * @param widthHint
-   *          the maximum length.
+   * @param map       the mapping.
+   * @param widthHint hint for the maximum length of the dump string.
+   * @param <T>       the mapping type.
    * @return the dump string
    */
   public static <T> String singleLine(final ConstMapping<T> map, final int widthHint) {

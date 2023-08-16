@@ -17,6 +17,18 @@
 
 package ch.ethz.sn.visone3.networks.impl;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.function.IntBinaryOperator;
+import java.util.function.ToIntFunction;
+import java.util.stream.IntStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.IntPair;
 import ch.ethz.sn.visone3.lang.Iterators;
@@ -38,25 +50,34 @@ import ch.ethz.sn.visone3.networks.ReorderableNetwork;
 import ch.ethz.sn.visone3.networks.ReorderableUndirectedGraph;
 import ch.ethz.sn.visone3.networks.UndirectedGraph;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.function.IntBinaryOperator;
-import java.util.function.ToIntFunction;
-import java.util.stream.IntStream;
-
+/**
+ * Implements an undirected network by using a constant number of integer
+ * arrays.
+ */
 public class UndirectedNetworkImpl
     implements Network, Relation, UndirectedGraph, Serializable {
   private static final Logger LOG = LoggerFactory.getLogger(UndirectedNetworkImpl.class);
   private static final long serialVersionUID = 1931123468620173444L;
+
+  /**
+   * array containing the accumulated degree up to each node i, i.e., the sum over
+   * the degrees from 0 to i-1.
+   */
   protected final int[] accDegree;
+
+  /**
+   * list of neighbor nodes, sorted by the reference node.
+   */
   protected int[] neighbors;
+
+  /**
+   * list of edge ids, sorted in a matching way to the neighbors.
+   */
   protected int[] edgeIds;
+
+  /**
+   * number of loops in the network.
+   */
   protected final int loopCount;
 
   private UndirectedNetworkImpl(final int[] accDegree, final int[] neighbors, final int[] edgeIds,
@@ -290,6 +311,9 @@ public class UndirectedNetworkImpl
     int edge(int edge, int self, int opposite);
   }
 
+  /**
+   * Builder class to produce an undirected network of this implementation.
+   */
   public static class Builder implements NetworkBuilder {
     final LongMap<Integer> hash = PrimitiveContainers.longTreeMap();
     final PrimitiveList.OfInt degrees = Mappings.newIntList(Magic.CAP_NODES); // n

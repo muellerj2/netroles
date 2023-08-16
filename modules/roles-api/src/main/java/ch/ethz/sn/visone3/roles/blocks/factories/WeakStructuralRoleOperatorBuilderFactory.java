@@ -20,6 +20,23 @@ import ch.ethz.sn.visone3.roles.blocks.builders.RoleOperatorBuilder;
 import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 
+/**
+ * This class defines the factory interface for builders of role operators based
+ * on the notion of weak structural equivalence. Since the notion of weak
+ * structural equivalence is only guaranteed to produce equivalences and
+ * rankings if both directions in a network are considered, the factory for weak
+ * structural equivalence asks to be supplied with views on the network covering
+ * both directions.
+ * 
+ * <p>
+ * If desired, it is possible to only supply a single direction, and doing so is
+ * unproblematic in the undirected case, this is unproblematic, as both
+ * directions appear the same. If consideration of a single direction is not
+ * sufficient, however, some post-conditions might not be satisfied (e.g., the
+ * result might not be transitive).
+ * 
+ * @param <U> the role structure type.
+ */
 public interface WeakStructuralRoleOperatorBuilderFactory<U> {
 
   /**

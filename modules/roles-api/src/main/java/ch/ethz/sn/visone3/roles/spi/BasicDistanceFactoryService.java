@@ -18,8 +18,16 @@ package ch.ethz.sn.visone3.roles.spi;
 
 import ch.ethz.sn.visone3.roles.blocks.factories.BasicDistanceOperatorFactory;
 
+/**
+ * Service providing access to factories producing basic distance operators.
+ */
 public interface BasicDistanceFactoryService {
 
+  /**
+   * Returns a factory for constructing basic distance operators.
+   * 
+   * @return the factory.
+   */
   BasicDistanceOperatorFactory getFactory();
 
 }

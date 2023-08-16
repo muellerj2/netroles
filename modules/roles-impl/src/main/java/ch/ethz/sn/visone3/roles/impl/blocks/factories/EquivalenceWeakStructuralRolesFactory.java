@@ -17,6 +17,8 @@
 
 package ch.ethz.sn.visone3.roles.impl.blocks.factories;
 
+import java.util.Comparator;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.ConstMapping.OfInt;
 import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
@@ -28,9 +30,7 @@ import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
 
-import java.util.Comparator;
-
-public class EquivalenceWeakStructuralRolesFactory
+class EquivalenceWeakStructuralRolesFactory
     implements RoleOperatorBuilderFactory<ConstMapping.OfInt>,
     WeakStructuralRoleOperatorBuilderFactory<ConstMapping.OfInt> {
 

@@ -19,6 +19,9 @@ package ch.ethz.sn.visone3.algorithms;
 
 import java.util.ServiceLoader;
 
+/**
+ * Makes available network algorithms provided by a registered service.
+ */
 public final class AlgoProvider implements AlgoService {
   private static AlgoProvider INSTANCE;
   private static Traversal traversal;
@@ -27,6 +30,8 @@ public final class AlgoProvider implements AlgoService {
 
   /**
    * Get singleton.
+   * 
+   * @return the singleton.
    */
   public static AlgoProvider getInstance() {
     if (INSTANCE == null) {

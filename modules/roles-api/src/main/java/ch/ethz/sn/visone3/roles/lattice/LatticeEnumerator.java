@@ -26,19 +26,91 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+/**
+ * This class implements an algorithm to search a lattice for fixed points of a
+ * non-increasing or non-decreasing monotone function. By non-increasing, we
+ * mean that {@code f(x) &lt;= x} for all x, and by non-decreasing, we man
+ * {@code f(x) &gt;= x} for all x.
+ * 
+ * <p>
+ * The algorithm performs significantly better than conventional brute force on
+ * the lattices of binary relations, equivalences and rankings, as long as the
+ * fixed points are few among the elements in the lattice. It also provides
+ * better worst-case guarantees on the time spent until finding the next fixed
+ * point than brute force.
+ * 
+ * <p>
+ * For a description of the algorithm, see
+ * 
+ * <p>
+ * Julian Müller (2023). Enumerating Tarski fixed points of binary relations.
+ * arXiv:2308.07923.
+ * 
+ * <p>
+ * This algorithm is an optimized and improved version of the algorithm
+ * described in:
+ * 
+ * <p>
+ * Federico Echenique (2007). Finding all equilibria in games of strategic
+ * complements. Journal of Economic Theory 135(1):514-532.
+ * doi:10.1016/j.jet.2006.06.001
+ */
 public class LatticeEnumerator {
 
   private LatticeEnumerator() {
 
   }
 
+  /**
+   * Enhanced enumerator for immediate children of a lattice element (i.e., lower
+   * or upper covers). Besides enumeration of such covers, it also allows to check
+   * for any descendant of the element whether it is a descendant of an immediate
+   * child that has been enumerated earlier.
+   * 
+   * @param <U> immediate child type needed for checking.
+   * @param <T> immediate child type produced by iteration (subtype of the type
+   *            for checking).
+   */
   public interface ImmediateChildEnumerator<U, T extends U> extends Iterator<T> {
 
+    /**
+     * Checks if the lattice element {@code val} is the descendant of an immediate
+     * child that is produced by the enumeration before
+     * {@code mustBeProducedBefore}.
+     * 
+     * @param val                  a descendant of the parent of enumerated
+     *                             immediate children.
+     * @param mustBeProducedBefore an immediate child of the parent.
+     * @return true if {@code val} is a descendant of an immediate child of the
+     *         parent which is produced by this enumeration before
+     *         {@code mustBeProducedBefore}.
+     */
     public boolean isThereAncestorWhichIsImmediateChildProducedBefore(U val,
         U mustBeProducedBefore);
   }
 
-  public static <T> Iterable<T> enumerateLattice(UnaryOperator<T> closureOrInterior,
+  /**
+   * Constructs an iterable to enumerate the fixed point lattice of a
+   * non-increasing or non-decreasing monotone function.
+   * 
+   * @param <T>               the type of lattice elements.
+   * @param monotoneFunction  non-increasing or non-decreasing monotone function.
+   * @param initial           the initial lattice element to start the search for
+   *                          fixed points among its descendants from.
+   * @param enumeratorFactory factory used to construct enumerators for immediate
+   *                          children (lower covers if function is
+   *                          non-increasing, upper covers if non-decreasing) of
+   *                          lattice elements.
+   * @param skipElement       predicate that says whether this element and its
+   *                          descendants should be skipped during the fixed point
+   *                          search.
+   * @return an iterable that enumerates all fixed points of
+   *         {@code monotoneFunction} on the lattices that are descendants of
+   *         {@code initial} in the lattice (according to the orientation of the
+   *         monotone function) and which are not skipped according to the
+   *         predicate.
+   */
+  public static <T> Iterable<T> enumerateLattice(UnaryOperator<T> monotoneFunction,
       Supplier<T> initial, Function<T, ImmediateChildEnumerator<T, ? extends T>> enumeratorFactory,
       Predicate<T> skipElement) {
     return () -> new Iterator<T>() {
@@ -86,7 +158,7 @@ public class LatticeEnumerator {
       private void findNext() {
         boolean forward = false;
         if (first) {
-          activePath.add(closureOrInterior.apply(initial.get()));
+          activePath.add(monotoneFunction.apply(initial.get()));
           first = false;
           forward = true;
         }
@@ -110,7 +182,7 @@ public class LatticeEnumerator {
               .get(activePathEnumerators.size() - 1);
           while (immediateChildEnumerator.hasNext()) {
             T child = immediateChildEnumerator.next();
-            T nearestFixedPoint = closureOrInterior.apply(child);
+            T nearestFixedPoint = monotoneFunction.apply(child);
             processingChildrenList.set(processingChildrenList.size() - 1, child);
             boolean skip = false;
             if (isNewlyDiscoveredFixedPoint(nearestFixedPoint)

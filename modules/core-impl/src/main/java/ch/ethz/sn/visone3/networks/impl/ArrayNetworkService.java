@@ -20,6 +20,9 @@ import ch.ethz.sn.visone3.networks.DyadType;
 import ch.ethz.sn.visone3.networks.NetworkBuilder;
 import ch.ethz.sn.visone3.networks.NetworkService;
 
+/**
+ * Service making the network implementations available via the API.
+ */
 public class ArrayNetworkService implements NetworkService {
 
   @Override

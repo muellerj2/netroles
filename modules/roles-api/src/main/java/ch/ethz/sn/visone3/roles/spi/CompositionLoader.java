@@ -18,6 +18,9 @@ package ch.ethz.sn.visone3.roles.spi;
 
 import java.util.ServiceLoader;
 
+/**
+ * Provides access to the service for producing general composition operators.
+ */
 public class CompositionLoader {
 
   private CompositionLoader() {
@@ -27,10 +30,20 @@ public class CompositionLoader {
   private static final CompositionLoader INSTANCE = new CompositionLoader();
   private ServiceLoader<CompositionService> loader;
 
+  /**
+   * Get the singleton instance.
+   * 
+   * @return the instance.
+   */
   public static CompositionLoader getInstance() {
     return INSTANCE;
   }
 
+  /**
+   * Get the loaded service.
+   * 
+   * @return the service.
+   */
   public CompositionService getService() {
     return loader.iterator().next();
   }

@@ -21,6 +21,9 @@ import ch.ethz.sn.visone3.roles.blocks.RoleConverter;
 import ch.ethz.sn.visone3.roles.spi.ConverterService;
 import ch.ethz.sn.visone3.roles.structures.RelationBase;
 
+/**
+ * Service making conversion operations producing equivalence outputs available.
+ */
 public class EquivalenceConverterServiceProvider implements ConverterService {
 
   @SuppressWarnings({ "rawtypes", "unchecked" })

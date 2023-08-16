@@ -22,6 +22,12 @@ import ch.ethz.sn.visone3.roles.blocks.builders.RoleOperatorBuilder;
 import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 
+/**
+ * Factory to produce builders for role operators based on the specified views
+ * on network positions.
+ * 
+ * @param <U> role structure type.
+ */
 public interface RoleOperatorBuilderFactory<U>
     extends BuilderFactory<RoleOperator<U>> {
 

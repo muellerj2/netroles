@@ -19,10 +19,31 @@ package ch.ethz.sn.visone3.roles.impl.blocks.factories;
 
 import ch.ethz.sn.visone3.roles.blocks.builders.OperatorBuilderBase;
 
-public abstract class AbstractOperatorBuilderBase<T, U, V extends OperatorBuilderBase<T, U, V, W, X, Y>, W, X, Y> implements OperatorBuilderBase<T, U, V, W, X, Y> {
+/**
+ * Implements builder functions handling comparator(-like) refinements to the
+ * constructed role operator.
+ * 
+ * @param <T> network incidence/dyad type
+ * @param <U> role structure type
+ * @param <V> subclass builder type
+ * @param <W> type for weak comparator
+ * @param <X> type for partial order comparator
+ * @param <Y> type for comparison bipredicate
+ */
+public abstract class AbstractOperatorBuilderBase<T, U, V extends OperatorBuilderBase<T, U, V, W, X, Y>, W, X, Y>
+    implements OperatorBuilderBase<T, U, V, W, X, Y> {
 
+  /**
+   * Reference to specified weak comparator object.
+   */
   protected W weakComp;
+  /**
+   * Reference to specified partial order comparator object.
+   */
   protected X partialComp;
+  /**
+   * Reference to specified comparison bipredicate.
+   */
   protected Y biPred;
   
   @SuppressWarnings("unchecked")

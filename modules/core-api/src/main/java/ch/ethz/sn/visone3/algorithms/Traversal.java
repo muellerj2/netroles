@@ -16,11 +16,11 @@
  */
 package ch.ethz.sn.visone3.algorithms;
 
+import java.util.function.IntFunction;
+
 import ch.ethz.sn.visone3.lang.Mapping;
 import ch.ethz.sn.visone3.lang.PrimitiveIterable;
 import ch.ethz.sn.visone3.networks.Edge;
-
-import java.util.function.IntFunction;
 
 /**
  * Full and limited length graph traversals.
@@ -104,6 +104,9 @@ public interface Traversal {
    * Traversal listener.
    */
   interface Visitor {
+    /**
+     * Visitor that does nothing.
+     */
     Visitor NULL = new Visitor() {
       @Override
       public void startSearch(final int node) {

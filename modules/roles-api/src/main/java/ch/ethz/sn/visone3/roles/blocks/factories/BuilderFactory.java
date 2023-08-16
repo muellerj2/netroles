@@ -21,11 +21,18 @@ import ch.ethz.sn.visone3.roles.blocks.builders.OperatorBuilder;
 import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 
+/**
+ * Factory to produce builders for role operators.
+ * 
+ * @param <U> the role structure type.
+ */
 public interface BuilderFactory<U> extends BuilderFactoryBase<U> {
 
+  @Override
   <T> OperatorBuilder<T, U, ?> of(int numNodes,
       NetworkView<? extends T, ? extends T> positionView);
 
+  @Override
   <T> OperatorBuilder<T, U, ?> of(int numNodes,
       TransposableNetworkView<? extends T, ? extends T> positionView);
 

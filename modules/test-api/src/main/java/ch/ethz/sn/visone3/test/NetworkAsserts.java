@@ -47,6 +47,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
+/**
+ * Provides utility methods to assert network structure in unit tests.
+ */
 public final class NetworkAsserts {
   private static final Logger LOG = LoggerFactory.getLogger(NetworkAsserts.class);
 
@@ -55,6 +58,10 @@ public final class NetworkAsserts {
 
   /**
    * Convert to boxed types replacing {@link Double#NaN} with {@code null}.
+   * 
+   * @param matrix unboxed matrix.
+   * @return matrix of boxed doubles where {@link Double#NaN} was replaced by
+   *         {@code null}.
    */
   public static Double[][] boxed(final double[][] matrix) {
     final Double[][] box = new Double[matrix.length][];
@@ -73,6 +80,11 @@ public final class NetworkAsserts {
 
   /**
    * Mirror a diagonal matrix and return the full matrix.
+   * 
+   * @param diag the diagonal matrix.
+   * @param ctor constructor for new array.
+   * @param <T> array element type.
+   * @return square matrix derived from the diagonal matrix.
    */
   public static <T> T[][] diagonal2square(final T[][] diag, final IntFunction<T[][]> ctor) {
     final int n = diag.length;
@@ -89,6 +101,11 @@ public final class NetworkAsserts {
 
   /**
    * Assert every perspective of a network against an adjacency matrix.
+   * 
+   * @param expected expected adjacency matrix of network.
+   * @param actual   actual network structure.
+   * @param map      actual weights on network links.
+   * @param <T>      link weight type.
    */
   public static <T> void assertNetwork(final T[][] expected, final Network actual,
       final ConstMapping<T> map) {
@@ -103,6 +120,11 @@ public final class NetworkAsserts {
 
   /**
    * Assert the directed graph perspective against an adjacency matrix.
+   * 
+   * @param expected expected adjacency matrix of network.
+   * @param actual   actual network structure.
+   * @param map      actual weights on network links.
+   * @param <T>      link weight type.
    */
   public static <T> void assertDirectedGraph(final T[][] expected, final Network actual,
       final ConstMapping<T> map) {
@@ -135,6 +157,11 @@ public final class NetworkAsserts {
 
   /**
    * Assert the undirected graph perspective against an adjacency matrix.
+   * 
+   * @param expected expected adjacency matrix of network.
+   * @param actual   actual network structure.
+   * @param map      actual weights on network links.
+   * @param <T>      link weight type.
    */
   public static <T> void assertUndirectedGraph(final T[][] expected, final Network actual,
       final ConstMapping<T> map) {
@@ -174,6 +201,11 @@ public final class NetworkAsserts {
 
   /**
    * Assert the relation perspective against an adjacency matrix.
+   * 
+   * @param expected expected adjacency matrix of network.
+   * @param actual   actual network structure.
+   * @param map      actual weights on network links.
+   * @param <T>      link weight type.
    */
   public static <T> void assertRelation(final T[][] expected, final Network actual,
       final ConstMapping<T> map) {
@@ -302,6 +334,11 @@ public final class NetworkAsserts {
 
   /**
    * Assert the matrix perspective against an adjacency matrix.
+   * 
+   * @param expected expected adjacency matrix of network.
+   * @param actual   actual network structure.
+   * @param map      actual weights on network links.
+   * @param <T>      link weight type.
    */
   public static <T> void assertMatrix(final T[][] expected, final Network actual,
       final ConstMapping<T> map) {

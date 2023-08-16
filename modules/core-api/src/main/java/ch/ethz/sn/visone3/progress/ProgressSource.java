@@ -61,6 +61,9 @@ public interface ProgressSource extends AutoCloseable {
     }
   };
 
+  /**
+   * Describes an unknown expected total progress score.
+   */
   int UNKNOWN = -1;
 
   /**

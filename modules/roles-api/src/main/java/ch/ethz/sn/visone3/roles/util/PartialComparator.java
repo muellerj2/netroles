@@ -22,13 +22,12 @@ import java.util.Comparator;
 /**
  * A comparison function which imposes a preorder on a collection of objects.
  * 
- * @param <T>
- *          the type of objects that may be compared by this comparator
+ * @param <T> the type of objects that may be compared by this comparator.
  */
+@FunctionalInterface
 public interface PartialComparator<T> {
   /**
    * Represents the four kinds of possible results when comparing objects under an imposed preorder.
-   * 
    */
   public enum ComparisonResult {
     /**
@@ -64,10 +63,11 @@ public interface PartialComparator<T> {
   PartialComparator.ComparisonResult compare(T lhs, T rhs);
 
   /**
-   * Represents a java.util.Comparator imposing a weak order as a PartialComparator object.
+   * Represents a {@link Comparator} imposing a weak order as a PartialComparator
+   * object.
    * 
-   * @param comparator
-   *          the comparator
+   * @param <T>        the type of objects compared by the comparator.
+   * @param comparator the comparator.
    * @return the representation as an instance of PartialComparator
    */
   public static <T> PartialComparator<T> fromComparator(Comparator<T> comparator) {

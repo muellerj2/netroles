@@ -17,6 +17,8 @@
 
 package ch.ethz.sn.visone3.roles.impl.blocks.factories;
 
+import java.util.Comparator;
+
 import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 import ch.ethz.sn.visone3.roles.blocks.builders.RoleOperatorBuilder;
 import ch.ethz.sn.visone3.roles.blocks.factories.EquitableLooseRoleOperatorBuilderFactory;
@@ -27,9 +29,7 @@ import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
 
-import java.util.Comparator;
-
-public class RankedRegularRolesFactory
+class RankedRegularRolesFactory
     extends ExactLooseBuilderFactoryBase<EquitableLooseRoleOperatorBuilderFactory<Ranking>>
     implements EquitableLooseRoleOperatorBuilderFactory<Ranking> {
 

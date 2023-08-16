@@ -16,17 +16,25 @@
  */
 package ch.ethz.sn.visone3.roles.blocks.factories;
 
+/**
+ * This base interface defines the signature of the methods to configure an
+ * intermediate level of strictness between the ``loose'' and ``equitable''
+ * types of matching.
+ * 
+ * @param <T> the full type of the factory.
+ */
 public interface VariablePFactoryBase<T extends VariablePFactoryBase<T>>
     extends EquitableLooseFactoryBase<T> {
 
   /**
-   * Sets the role structure to be configured with the specified degree of strictness. Generally, a
-   * degree of strictness p means that k edges can match up to p*k other edges without resulting in
-   * any error.
+   * Sets that the configured role notion is supposed to be of the specified
+   * degree of strictness. A degree of strictness p means that k ties of one node
+   * can match up to p*k ties of the other node without resulting in any
+   * substitution/matching error, as long as these ties could be matched based on
+   * all other criteria.
    *
-   * @param p
-   *          the degree of strictness
-   * @return this factory
+   * @param p the degree of strictness.
+   * @return this factory.
    */
   T strictness(int p);
 }

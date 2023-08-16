@@ -19,7 +19,7 @@ package ch.ethz.sn.visone3.roles.impl.blocks.factories.dist;
 import ch.ethz.sn.visone3.roles.blocks.bundles.GenericDistanceFactoryBundle;
 import ch.ethz.sn.visone3.roles.blocks.factories.GenericDistanceBuilderFactory;
 
-public class GenericDistanceFactoryBundleImpl implements GenericDistanceFactoryBundle {
+class GenericDistanceFactoryBundleImpl implements GenericDistanceFactoryBundle {
 
   @Override
   public <T> GenericDistanceBuilderFactory<T> factory() {

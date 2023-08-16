@@ -19,6 +19,12 @@ package ch.ethz.sn.visone3.roles.blocks.factories;
 
 import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 
+/**
+ * Provides the common basic role operators plus symmetrization and inversion
+ * operators.
+ * 
+ * @param <T> role structure type.
+ */
 public interface BasicSymmetrizableRoleOperatorFactory<T> extends BasicRoleOperatorFactory<T> {
 
   /**

@@ -22,6 +22,21 @@ import ch.ethz.sn.visone3.roles.blocks.builders.GenericOperatorBuilder;
 import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 
+/**
+ * Factory to produce builders for generic, heavily user-customizable operators
+ * based on the specified views on network positions.
+ * 
+ * <p>
+ * This factory produces builders that allow to define the traits of the
+ * produced operators and set comparators among ties that can depend on the
+ * input role structure. The comparator is used to restrict and thus refine the
+ * substitution between ties. This dependence on the input role structure
+ * greatly extends the possibilities for users to customize the role operator
+ * compared to other provided operators that always use the same fixed
+ * comparator for all input role structures.
+ * 
+ * @param <U> role structure type.
+ */
 public interface GenericBuilderFactory<U, V extends Operator<U, ?>>
     extends BuilderFactoryBase<V> {
 

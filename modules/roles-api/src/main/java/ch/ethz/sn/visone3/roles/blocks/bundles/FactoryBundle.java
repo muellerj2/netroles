@@ -20,6 +20,20 @@ package ch.ethz.sn.visone3.roles.blocks.bundles;
 import ch.ethz.sn.visone3.roles.blocks.Operator;
 import ch.ethz.sn.visone3.roles.blocks.factories.BuilderFactory;
 
+/**
+ * Bundle of factories for producing operators according to some common
+ * substitution mechanism or notion of role.
+ * 
+ * @param <T> role structure type.
+ * @param <U> output type of the operator.
+ * @param <V> operator type.
+ * @param <X> factory type for operator builders supporting the notions of
+ *            regular, equitable, weak, and weakly equitable roles.
+ * @param <Y> factory type for operator builders supporting the notion of strong
+ *            structural roles.
+ * @param <Z> factory type for operator builders supporting the notion of weak
+ *            structural roles.
+ */
 public interface FactoryBundle<T, U, V extends Operator<T, U>, //
     X extends BuilderFactory<V>, Y extends BuilderFactory<V>, Z> {
   /**

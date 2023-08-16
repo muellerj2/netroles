@@ -17,6 +17,9 @@
 
 package ch.ethz.sn.visone3.roles.lattice;
 
+import java.util.Arrays;
+import java.util.NoSuchElementException;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.IntPair;
 import ch.ethz.sn.visone3.lang.Mapping;
@@ -31,15 +34,23 @@ import ch.ethz.sn.visone3.roles.structures.Ranking;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilders;
 
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+/**
+ * Provides implements of enumerators for lower and upper covers on the lattices
+ * of binary relations, equivalences and rankings.
+ */
+public class LatticeCoverEnumerators {
 
-public class SuccessorAndPredecessorIterators {
-
-  private SuccessorAndPredecessorIterators() {
+  private LatticeCoverEnumerators() {
   }
 
-  public static ImmediateChildEnumerator<BinaryRelation, BinaryRelation> successorRelations(
+  /**
+   * Returns an enumerator of upper covers of {@code rel} on the lattice of binary
+   * relations.
+   * 
+   * @param rel the binary relation.
+   * @return an enumerator of upper covers of {@code rel}.
+   */
+  public static ImmediateChildEnumerator<BinaryRelation, BinaryRelation> upperCoversBinaryRelations(
       BinaryRelation rel) {
     return new ImmediateChildEnumerator<BinaryRelation, BinaryRelation>() {
 
@@ -123,7 +134,14 @@ public class SuccessorAndPredecessorIterators {
     };
   }
 
-  public static ImmediateChildEnumerator<BinaryRelation, BinaryRelation> predecessorRelations(
+  /**
+   * Returns an enumerator of lower covers of {@code rel} on the lattice of binary
+   * relations.
+   * 
+   * @param rel the binary relation.
+   * @return an enumerator of lower covers of {@code rel}.
+   */
+  public static ImmediateChildEnumerator<BinaryRelation, BinaryRelation> lowerCoversBinaryRelations(
       BinaryRelation rel) {
     return new ImmediateChildEnumerator<BinaryRelation, BinaryRelation>() {
 
@@ -203,7 +221,14 @@ public class SuccessorAndPredecessorIterators {
     };
   }
 
-  public static ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> successorEquivalences(
+  /**
+   * Returns an enumerator of upper covers of {@code parent} on the lattice of
+   * equivalences.
+   * 
+   * @param parent the equivalence.
+   * @return an enumerator of upper covers of {@code parent}.
+   */
+  public static ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> upperCoversEquivalences(
       ConstMapping.OfInt parent) {
     return new ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt>() {
 
@@ -306,7 +331,14 @@ public class SuccessorAndPredecessorIterators {
     };
   }
 
-  public static ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> predecessorEquivalences(
+  /**
+   * Returns an enumerator of lower covers of {@code parent} on the lattice of
+   * equivalences.
+   * 
+   * @param parent the equivalence.
+   * @return an enumerator of lower covers of {@code parent}.
+   */
+  public static ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> lowerCoversEquivalences(
       ConstMapping.OfInt parent) {
     return new ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt>() {
 
@@ -476,7 +508,14 @@ public class SuccessorAndPredecessorIterators {
     };
   }
 
-  public static ImmediateChildEnumerator<Ranking, Ranking> successorRankings(Ranking ranking) {
+  /**
+   * Returns an enumerator of upper covers of {@code ranking} on the lattice of
+   * rankings.
+   * 
+   * @param ranking the ranking.
+   * @return an enumerator of upper covers of {@code ranking}.
+   */
+  public static ImmediateChildEnumerator<Ranking, Ranking> upperCoversRankings(Ranking ranking) {
     return new ImmediateChildEnumerator<Ranking, Ranking>() {
 
       private ConstMapping.OfInt equivalence;
@@ -638,7 +677,14 @@ public class SuccessorAndPredecessorIterators {
     };
   }
 
-  public static ImmediateChildEnumerator<Ranking, Ranking> predecessorRankings(Ranking ranking) {
+  /**
+   * Returns an enumerator of lower covers of {@code ranking} on the lattice of
+   * rankings.
+   * 
+   * @param ranking the ranking.
+   * @return an enumerator of lower covers of {@code ranking}.
+   */
+  public static ImmediateChildEnumerator<Ranking, Ranking> lowerCoversRankings(Ranking ranking) {
     return new ImmediateChildEnumerator<Ranking, Ranking>() {
 
       private ConstMapping.OfInt equivalence;

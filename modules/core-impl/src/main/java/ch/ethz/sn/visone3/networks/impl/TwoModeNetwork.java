@@ -17,6 +17,18 @@
 
 package ch.ethz.sn.visone3.networks.impl;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.function.IntBinaryOperator;
+import java.util.function.ToIntFunction;
+import java.util.stream.IntStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.IntPair;
 import ch.ethz.sn.visone3.lang.LongMap;
@@ -39,25 +51,34 @@ import ch.ethz.sn.visone3.networks.UndirectedGraph;
 import ch.ethz.sn.visone3.progress.ProgressProvider;
 import ch.ethz.sn.visone3.progress.ProgressSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.function.IntBinaryOperator;
-import java.util.function.ToIntFunction;
-import java.util.stream.IntStream;
-
+/**
+ * Implements a two-mode network by using a constant number of integer arrays.
+ */
 public class TwoModeNetwork
     implements Network, Relation, UndirectedGraph, Serializable {
   private static final Logger LOG = LoggerFactory.getLogger(TwoModeNetwork.class);
   private static final long serialVersionUID = 1931123468620173444L;
+
+  /**
+   * number of nodes in the left domain (i.e., without affiliations in the right
+   * domain)
+   */
   private final int numNodes;
+
+  /**
+   * array containing the accumulated degree up to each node or affiliation i,
+   * i.e., the sum over the degrees from 0 to i-1.
+   */
   protected final int[] accDegree;
+
+  /**
+   * list of neighbor nodes/affiliations, sorted by the reference node.
+   */
   protected int[] neighbors;
+
+  /**
+   * list of edge ids, sorted in a matching way to the neighbors.
+   */
   protected int[] edgeIds;
 
   private TwoModeNetwork(final int numNodes, final int[] accDegree, final int[] neighbors,
@@ -80,6 +101,14 @@ public class TwoModeNetwork
     }
   }
 
+  /**
+   * Produces a relationship object from the specified edge data.
+   * 
+   * @param edge     the edge index
+   * @param self     the node in the left domain
+   * @param opposite the affiliation in the right domain
+   * @return the relationship object
+   */
   protected Relationship itrFrom(final int edge, final int self, final int opposite) {
     // TODO test left and right from
     return new RelationshipImpl(edge, self, opposite, opposite - countLeftDomain());
@@ -313,6 +342,9 @@ public class TwoModeNetwork
     int edge(int edge, int self, int opposite);
   }
 
+  /**
+   * Builder class to produce a two-mode network of this implementation.
+   */
   public static class Builder implements NetworkBuilder {
     final LongMap<Integer> hash = PrimitiveContainers.longTreeMap();
     final PrimitiveList.OfInt degrees = Mappings.newIntList(Magic.CAP_NODES); // n

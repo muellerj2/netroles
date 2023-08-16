@@ -18,8 +18,17 @@ package ch.ethz.sn.visone3.roles.spi;
 
 import ch.ethz.sn.visone3.roles.blocks.bundles.GenericDistanceFactoryBundle;
 
+/**
+ * Service providing a bundle of factories for generic, heavily
+ * user-customizable distance operators.
+ */
 public interface GenericDistanceBundleService {
 
+  /**
+   * Returns the factory bundle for generic distance operators.
+   * 
+   * @return the factory bundle.
+   */
   GenericDistanceFactoryBundle getBundle();
 
 }

@@ -26,6 +26,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+/**
+ * Service class making JSON source and sink available to others.
+ */
 public class JsonIoService implements IoService {
   private static final String[] SUPPORTED_TYPES = new String[] {"json"};
 

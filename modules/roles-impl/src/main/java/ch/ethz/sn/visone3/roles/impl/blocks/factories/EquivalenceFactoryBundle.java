@@ -25,7 +25,7 @@ import ch.ethz.sn.visone3.roles.blocks.factories.EquitableLooseRoleOperatorBuild
 import ch.ethz.sn.visone3.roles.blocks.factories.RoleOperatorBuilderFactory;
 import ch.ethz.sn.visone3.roles.blocks.factories.WeakStructuralRoleOperatorBuilderFactory;
 
-public class EquivalenceFactoryBundle implements
+class EquivalenceFactoryBundle implements
     RoleOperatorFactoryBundle<ConstMapping.OfInt, EquitableLooseRoleOperatorBuilderFactory<ConstMapping.OfInt>, EquitableLooseGenericRoleOperatorBuilderFactory<ConstMapping.OfInt>, BasicRoleOperatorFactory<ConstMapping.OfInt>, WeakStructuralRoleOperatorBuilderFactory<ConstMapping.OfInt>> {
 
   @Override

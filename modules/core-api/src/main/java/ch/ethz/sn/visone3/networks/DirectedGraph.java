@@ -148,12 +148,14 @@ public interface DirectedGraph extends Graph {
   int countEdges();
 
   /**
-   * Returns a single edge connection {@code source} with {@code target}.
+   * Returns a single edge connection of {@code source} with {@code target}.
    *
-   * @return an edge object representing an edge from {@code source} to {@code target}, or null if
-   *         no such edge exists.
-   * @implNote Defaults to linear search, so better use {@link #getEdges(int)} and search multiple
-   *           at once if possible.
+   * @param source the source node.
+   * @param target the target node.
+   * @return an edge object representing an edge from {@code source} to
+   *         {@code target}, or null if no such edge exists.
+   * @implNote Defaults to linear search, so better use {@link #getEdges(int)} and
+   *           search multiple at once if possible.
    */
   default Edge getEdge(final int source, final int target) {
     for (final Edge e : getEdges(source)) {

@@ -28,12 +28,25 @@ import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * CSV edge list sink. First column represents the nodes via their associated
+ * integer indices.
+ */
 public class CsvNodeListSink extends AbstractSink implements AutoCloseable {
+  /**
+   * The name of the node column.
+   */
   public static final String NODE = "node";
   private final BufferedWriter out;
   private final Map<String, ConstMapping<?>> monadic;
   private final char delimiter;
 
+  /**
+   * Constructs the sink.
+   * 
+   * @param out       the stream to output to.
+   * @param delimiter the delimiter used in the CSV.
+   */
   public CsvNodeListSink(final OutputStream out, final char delimiter) {
     this.delimiter = delimiter;
     this.out = IoStreams.writer(out);

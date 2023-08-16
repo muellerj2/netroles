@@ -17,23 +17,25 @@
 
 package ch.ethz.sn.visone3.roles.blocks.builders;
 
-import ch.ethz.sn.visone3.roles.blocks.Operator;
-import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
-import ch.ethz.sn.visone3.roles.util.PartialComparator;
-
 import java.util.Comparator;
 import java.util.function.BiPredicate;
 import java.util.function.ToIntBiFunction;
 import java.util.function.ToIntFunction;
 
+import ch.ethz.sn.visone3.roles.blocks.Operator;
+import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
+import ch.ethz.sn.visone3.roles.util.PartialComparator;
+
 /**
- * This builder constructs an operator producing pairwise distances of nodes based on network
- * position, role structure, and the chosen substitution mechanism between ties.
+ * This builder constructs an operator producing pairwise distances of nodes
+ * based on network position, role structure, and the chosen substitution
+ * mechanism between ties. The builder provides settings for comparators, which
+ * restrict and thus refine the set of substitutions between ties, as well as
+ * cost functions, which assign costs for substitution pairs of ties or failing
+ * to substitute a tie at all.
  * 
- * @param <T>
- *          type for ties
- * @param <U>
- *          type for role structure
+ * @param <T> type for ties.
+ * @param <U> type for role structure.
  */
 public interface DistanceOperatorBuilder<T, U> extends
     OperatorBuilder<T, Operator<U, IntDistanceMatrix>, DistanceOperatorBuilder<T, U>>,

@@ -176,153 +176,179 @@ public interface MappingsFacade {
   /**
    * Create an empty primitive list for the given component type.
    *
-   * @param componentType
-   *          Component type of the list
-   * @return A primitive array list instance if {@code componentType} is a reference type or a
-   *         supported primitive type.
-   * @throws UnsupportedOperationException
-   *           if the component type is a primitive type for which no specialized primitive list is
-   *           available (i.e., throws for all primitive types but int, boolean and double)
+   * @param componentType class object representing the value/component type of
+   *                      the list.
+   * @param <T>           value type.
+   * @return A primitive array list instance if {@code componentType} is a
+   *         reference type or a supported primitive type.
+   * @throws UnsupportedOperationException if the component type is a primitive
+   *                                       type for which no specialized primitive
+   *                                       list is available (i.e., throws for all
+   *                                       primitive types but int, boolean and
+   *                                       double)
    */
   <T> PrimitiveList<T> newList(Class<T> componentType);
 
   /**
-   * Create an empty primitive list with specified capacity for the given component type.
+   * Create an empty primitive list with specified capacity for the given
+   * component type.
    *
-   * @param componentType
-   *          Component type of the list
-   * @param capacity
-   *          Initial capacity
-   * @return A primitive array list instance if {@code componentType} is a reference type or a
-   *         supported primitive type.
-   * @throws UnsupportedOperationException
-   *           if the component type is a primitive type for which no specialized primitive list is
-   *           available (i.e., throws for all primitive types but int, boolean and double)
+   * @param componentType class object representing the value/component type of
+   *                      the list.
+   * @param capacity      initial capacity.
+   * @param <T>           value type.
+   * @return A primitive array list instance if {@code componentType} is a
+   *         reference type or a supported primitive type.
+   * @throws UnsupportedOperationException if the component type is a primitive
+   *                                       type for which no specialized primitive
+   *                                       list is available (i.e., throws for all
+   *                                       primitive types but int, boolean and
+   *                                       double)
    */
   <T> PrimitiveList<T> newList(Class<T> componentType, int capacity);
 
   /**
-   * Create a new primitive list for the given component type, filled with the specified number of a
-   * given initial value.
+   * Create a new primitive list for the given component type, filled with the
+   * specified number of a given initial value.
    *
-   * @param componentType
-   *          Component type of the list
-   * @return A primitive array list instance if {@code componentType} is a reference type or a
-   *         supported primitive type.
-   * @throws UnsupportedOperationException
-   *           if the component type is a primitive type for which no specialized primitive list is
-   *           available (i.e., throws for all primitive types but int, boolean and double)
+   * @param componentType class object representing the value/component type of
+   *                      the list.
+   * @param value         initial value.
+   * @param size          initial size of the list with all elements initialized
+   *                      to {@code value}.
+   * @param <T>           value type.
+   * @return A primitive array list instance if {@code componentType} is a
+   *         reference type or a supported primitive type.
+   * @throws UnsupportedOperationException if the component type is a primitive
+   *                                       type for which no specialized primitive
+   *                                       list is available (i.e., throws for all
+   *                                       primitive types but int, boolean and
+   *                                       double)
    */
   <T> PrimitiveList<T> newList(Class<T> componentType, T value, int size);
 
   /**
-   * Create a new primitive list for the given component type from the given values.
+   * Create a new primitive list for the given component type from the given
+   * values.
    * 
    * <p>
    * Note: The list is allowed to reuse the storage of the passed array.
    *
-   * @param componentType
-   *          Component type of the list
-   * @param values
-   *          Initial values
-   * @return A primitive array list instance if {@code componentType} is a reference type or a
-   *         supported primitive type.
-   * @throws UnsupportedOperationException
-   *           if the component type is a primitive type (because automatic unboxing is not
-   *           provided)
+   * @param componentType class object representing the value/component type of
+   *                      the list.
+   * @param values        initial values.
+   * @param <T>           value type.
+   * @return A primitive array list instance if {@code componentType} is a
+   *         reference type or a supported primitive type.
+   * @throws UnsupportedOperationException if the component type is a primitive
+   *                                       type (because automatic unboxing is not
+   *                                       provided)
    */
   <T> PrimitiveList<T> newList(Class<T> componentType, T[] values);
 
   /**
-   * Create a new primitive list for the given component type from the given values in the
-   * {@code array} object.
+   * Create a new primitive list for the given component type from the given
+   * values in the {@code array} object.
    * 
    * <p>
    * Note: The list is allowed to reuse the storage of the passed array.
    *
-   * @param componentType
-   *          Component type of the list
-   * @param array
-   *          An array object containing the initial values
-   * @return A primitive array list instance if {@code componentType} is a reference type or a
-   *         supported primitive type.
-   * @throws UnsupportedOperationException
-   *           if the component type is a primitive type for which no specialized primitive list is
-   *           available (i.e., throws for all primitive types but int, boolean and double)
+   * @param componentType class object representing the value/component type of
+   *                      the list.
+   * @param array         An array object containing the initial values.
+   * @param <T>           value type.
+   * @return A primitive array list instance if {@code componentType} is a
+   *         reference type or a supported primitive type.
+   * @throws UnsupportedOperationException if the component type is a primitive
+   *                                       type for which no specialized primitive
+   *                                       list is available (i.e., throws for all
+   *                                       primitive types but int, boolean and
+   *                                       double)
    */
   <T> PrimitiveList<T> newListFromArray(Class<T> componentType, Object array);
 
   /**
-   * Create a new primitive list for the given component type, filled with the specified number of
-   * the component type's default value.
+   * Create a new primitive list for the given component type, filled with the
+   * specified number of the component type's default value.
    *
-   * @param componentType
-   *          Component type of the list
-   * @return A primitive array list instance if {@code componentType} is a reference type or a
-   *         supported primitive type.
-   * @throws UnsupportedOperationException
-   *           if the component type is a primitive type for which no specialized primitive list is
-   *           available (i.e., throws for all primitive types but int, boolean and double)
+   * @param componentType class object representing the value/component type of
+   *                      the list.
+   * @param size          initial size.
+   * @param <T>           value type.
+   * @return A primitive array list instance of the specified size filled with the
+   *         value type's default file if {@code componentType} is a reference
+   *         type or a supported primitive type.
+   * @throws UnsupportedOperationException if the component type is a primitive
+   *                                       type for which no specialized primitive
+   *                                       list is available (i.e., throws for all
+   *                                       primitive types but int, boolean and
+   *                                       double)
    */
   <T> PrimitiveList<T> newListOfSize(Class<T> componentType, int size);
 
   /**
-   * Create an empty primitive list for the given component type, or its wrapper type if the
-   * component type is primitive and no specialized primitive list is available for the specified
-   * primitive component type.
+   * Create an empty primitive list for the given component type, or its wrapper
+   * type if the component type is primitive and no specialized primitive list is
+   * available for the specified primitive component type.
    *
-   * @param componentType
-   *          Component type of the list
-   * @return A primitive array list instance
+   * @param componentType class object representing the value/component type of
+   *                      the list.
+   * @param <T>           value type.
+   * @return A primitive array list instance.
    */
   <T> PrimitiveList<T> newListAutoboxing(Class<T> componentType);
 
   /**
-   * Create an empty primitive list with the specified initial capacity for the given component
-   * type, or its wrapper type if the component type is primitive and no specialized primitive list
-   * is available for the specified primitive component type.
+   * Create an empty primitive list with the specified initial capacity for the
+   * given component type, or its wrapper type if the component type is primitive
+   * and no specialized primitive list is available for the specified primitive
+   * component type.
    *
-   * @param componentType
-   *          Component type of the list
-   * @return A primitive array list instance
+   * @param componentType class object representing the value/component type of
+   *                      the list.
+   * @param capacity      initial capacity of the list.
+   * @param <T>           value type.
+   * @return A primitive array list instance.
    */
   <T> PrimitiveList<T> newListAutoboxing(Class<T> componentType, int capacity);
 
   /**
-   * Create a new primitive list for the given component type, or its wrapper type if the component
-   * type is primitive and no specialized primitive list is available for the specified primitive
-   * component type. The primitive list is filled with the specified number of the given initial
-   * value.
+   * Create a new primitive list for the given component type, or its wrapper type
+   * if the component type is primitive and no specialized primitive list is
+   * available for the specified primitive component type. The primitive list is
+   * filled with the specified number of the given initial value.
    *
-   * @param componentType
-   *          Component type of the list
-   * @param value
-   *          Initial value
-   * @param size
-   *          Initial size
-   * @return A primitive array list instance
+   * @param componentType class object representing the value/component type of
+   *                      the list.
+   * @param value         initial value.
+   * @param size          initial size.
+   * @param <T>           value type.
+   * @return A primitive array list instance of the specified size with all
+   *         elements initialized to {@code value}.
    */
   <T> PrimitiveList<T> newListAutoboxing(Class<T> componentType, T value, int size);
 
   /**
-   * Create a new primitive list for the given component type, or its wrapper type if the component
-   * type is primitive and no specialized primitive list is available for the specified primitive
-   * component type. The primitive list is filled with the specified number of the list's component
-   * type's default value, i.e.:
+   * Create a new primitive list for the given component type, or its wrapper type
+   * if the component type is primitive and no specialized primitive list is
+   * available for the specified primitive component type. The primitive list is
+   * filled with the specified number of the list's component type's default
+   * value, i.e.:
    * <ul>
-   * <li>If {@code componentType} is a supported primitive type, fill it with zeros, that type's
-   * default value</li>
-   * <li>If {@code componentType} is a reference type, fill it with nulls, a reference type's
-   * default value</li>
-   * <li>If {@code componentType} is an unsupported primitive type, fill it with nulls, the wrapper
-   * type's default value
+   * <li>If {@code componentType} is a supported primitive type, fill it with
+   * zeros, that type's default value</li>
+   * <li>If {@code componentType} is a reference type, fill it with nulls, a
+   * reference type's default value</li>
+   * <li>If {@code componentType} is an unsupported primitive type, fill it with
+   * nulls, the wrapper type's default value
    * </ul>
    * 
-   * @param componentType
-   *          Component type of the list
-   * @param size
-   *          Initial size
-   * @return A primitive array list instance
+   * @param componentType class object representing the value/component type of
+   *                      the list.
+   * @param size          initial size
+   * @param <T>           value type.
+   * @return A primitive array list instance of the specified size with elements
+   *         initialized as described.
    */
   <T> PrimitiveList<T> newListOfSizeAutoboxing(Class<T> componentType, int size);
 
@@ -407,51 +433,57 @@ public interface MappingsFacade {
   PrimitiveCollector.OfDouble<?, PrimitiveList.OfDouble> toDoubleList();
 
   /**
-   * Returns a {@link PrimitiveCollector} that collects the input elements into a new
-   * {@link PrimitiveList} for the supplied component type.
+   * Returns a {@link PrimitiveCollector} that collects the input elements into a
+   * new {@link PrimitiveList} for the supplied component type.
    * 
    * <p>
-   * If the supplied component type is one of the primitive types {@code int}, {@code long}, or
-   * {@code double}, returns a {@link PrimitiveCollector.OfInt}, {@link PrimitiveCollector.OfLong}
-   * or {@link PrimitiveCollector.OfDouble} that collect into a {@link PrimitiveList.OfInt},
-   * {@link PrimitiveList.OfLong} or {@link PrimitiveList.OfDouble}, respectively. If the component
-   * type is any other primitive type, throws an exception. For any other type, returns a
-   * {@link PrimitiveCollector} that collects into a {@link PrimitiveList} for that component type.
+   * If the supplied component type is one of the primitive types {@code int},
+   * {@code long}, or {@code double}, returns a {@link PrimitiveCollector.OfInt},
+   * {@link PrimitiveCollector.OfLong} or {@link PrimitiveCollector.OfDouble} that
+   * collect into a {@link PrimitiveList.OfInt}, {@link PrimitiveList.OfLong} or
+   * {@link PrimitiveList.OfDouble}, respectively. If the component type is any
+   * other primitive type, throws an exception. For any other type, returns a
+   * {@link PrimitiveCollector} that collects into a {@link PrimitiveList} for
+   * that component type.
    * 
    * <p>
-   * Note that the list of supported primitive component types might be extended in the future.
+   * Note that the list of supported primitive component types might be extended
+   * in the future.
    * 
-   * @param componentType
-   *          the component type of the {@link PrimitiveList} to collect into
-   * @return a {@link PrimitiveCollector} which collects all the input elements into a
-   *         {@link PrimitiveList} in encounter order
-   * @throws UnsupportedOperationException
-   *           if the component type is primitive and not one of the supported primitive component
-   *           types
+   * @param componentType the class object representing the type of the values to
+   *                      collect into the {@link PrimitiveList}
+   * @param <T>           type of collected values.
+   * @return a {@link PrimitiveCollector} which collects all the input elements
+   *         into a {@link PrimitiveList} in encounter order
+   * @throws UnsupportedOperationException if the component type is primitive but
+   *                                       not one of the supported primitive
+   *                                       component types
    */
   <T> PrimitiveCollector<T, ?, ? extends PrimitiveList<T>> toList(Class<T> componentType);
 
   /**
-   * Returns a {@link PrimitiveCollector} that collects the input elements into a new
-   * {@link PrimitiveList} for the supplied component type.
+   * Returns a {@link PrimitiveCollector} that collects the input elements into a
+   * new {@link PrimitiveList} for the supplied component type.
    * 
    * <p>
-   * If the supplied component type is one of the primitive types {@code int}, {@code long}, or
-   * {@code double}, returns a {@link PrimitiveCollector.OfInt}, {@link PrimitiveCollector.OfLong}
-   * or {@link PrimitiveCollector.OfDouble} that collect into a {@link PrimitiveList.OfInt},
-   * {@link PrimitiveList.OfLong} or {@link PrimitiveList.OfDouble}, respectively. If the component
-   * type is any other primitive type, it produces a collector for the wrapper type. For any other
-   * type, returns a {@link PrimitiveCollector} that collects into a {@link PrimitiveList} for that
-   * component type.
+   * If the supplied component type is one of the primitive types {@code int},
+   * {@code long}, or {@code double}, returns a {@link PrimitiveCollector.OfInt},
+   * {@link PrimitiveCollector.OfLong} or {@link PrimitiveCollector.OfDouble} that
+   * collect into a {@link PrimitiveList.OfInt}, {@link PrimitiveList.OfLong} or
+   * {@link PrimitiveList.OfDouble}, respectively. If the component type is any
+   * other primitive type, it produces a collector for the wrapper type. For any
+   * other type, returns a {@link PrimitiveCollector} that collects into a
+   * {@link PrimitiveList} for that component type.
    * 
    * <p>
-   * Note that the list of primitive component types with specialized primitive lists and collectors
-   * might be extended in the future.
+   * Note that the list of primitive component types with specialized primitive
+   * lists and collectors might be extended in the future.
    * 
-   * @param componentType
-   *          the component type of the {@link PrimitiveList} to collect into
-   * @return a {@link PrimitiveCollector} which collects all the input elements into a
-   *         {@link PrimitiveList} in encounter order
+   * @param componentType the class object representing the type of the values to
+   *                      collect into the {@link PrimitiveList}
+   * @param <T>           type of collected values.
+   * @return a {@link PrimitiveCollector} which collects all the input elements
+   *         into a {@link PrimitiveList} in encounter order
    */
   <T> PrimitiveCollector<T, ?, ? extends PrimitiveList<T>> toListAutoboxing(Class<T> componentType);
 }

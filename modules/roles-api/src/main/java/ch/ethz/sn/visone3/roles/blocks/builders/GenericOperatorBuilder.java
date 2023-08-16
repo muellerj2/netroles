@@ -17,23 +17,28 @@
 
 package ch.ethz.sn.visone3.roles.blocks.builders;
 
-import ch.ethz.sn.visone3.roles.blocks.Operator;
-import ch.ethz.sn.visone3.roles.blocks.OperatorTraits;
-import ch.ethz.sn.visone3.roles.util.PartialComparator;
-
 import java.util.Comparator;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
+import ch.ethz.sn.visone3.roles.blocks.Operator;
+import ch.ethz.sn.visone3.roles.blocks.OperatorTraits;
+import ch.ethz.sn.visone3.roles.util.PartialComparator;
+
 /**
- * This builder constructs an operator producing producing role structures based on network
- * structure and a user-specified substitution mechanism which can depend on the input role
- * structure.
+ * This builder constructs an operator producing role structures based on
+ * network structure and a user-customizable substitution mechanism that can
+ * depend on the input role structure.
  * 
- * @param <T>
- *          type for ties
- * @param <U>
- *          type for role structure
+ * <p>
+ * This builder allows to specify the traits of the resulting operators, and
+ * configure a comparator between ties that can depend on the input role
+ * structure. This dependence on the input role structure greatly extends the
+ * possibilities for user customization compared to the other provided builders
+ * for operators.
+ * 
+ * @param <T> type for ties
+ * @param <U> type for role structure
  */
 public interface GenericOperatorBuilder<T, U, V extends Operator<U, ?>, //
     W extends GenericOperatorBuilder<T, U, V, W>>

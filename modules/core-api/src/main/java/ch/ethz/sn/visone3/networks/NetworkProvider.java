@@ -19,6 +19,9 @@ package ch.ethz.sn.visone3.networks;
 
 import java.util.ServiceLoader;
 
+/**
+ * Makes network data structures provided by a registered service accessible.
+ */
 public final class NetworkProvider {
   private static NetworkProvider INSTANCE;
 

@@ -18,7 +18,7 @@ package ch.ethz.sn.visone3.roles.impl.blocks.factories;
 
 import ch.ethz.sn.visone3.roles.blocks.factories.EquitableLooseFactoryBase;
 
-public abstract class ExactLooseBuilderFactoryBase<T extends EquitableLooseFactoryBase<T>>
+abstract class ExactLooseBuilderFactoryBase<T extends EquitableLooseFactoryBase<T>>
     implements EquitableLooseFactoryBase<T> {
 
   private boolean exact = false;

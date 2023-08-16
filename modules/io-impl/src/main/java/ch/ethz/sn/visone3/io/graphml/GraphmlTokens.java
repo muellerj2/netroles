@@ -20,7 +20,7 @@ package ch.ethz.sn.visone3.io.graphml;
 /**
  * GraphML Tokens.
  */
-public final class GraphmlTokens {
+final class GraphmlTokens {
   public static final String GRAPHML = "graphml";
   public static final String GRAPH = "graph";
   public static final String EDGE = "edge";

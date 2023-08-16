@@ -172,6 +172,9 @@ public final class MatrixSource {
     return new WeightedNetwork<>(builder.build(), map);
   }
 
+  /**
+   * Produces weighted networks from double matrices.
+   */
   public static final class OfDouble {
 
     private OfDouble() {

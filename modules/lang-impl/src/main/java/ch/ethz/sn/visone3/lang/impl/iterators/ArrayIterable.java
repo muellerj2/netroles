@@ -22,14 +22,18 @@ import java.util.Iterator;
 /**
  * Iterable over a generic array.
  * 
- * @param <T>
- *          value type of the array.
+ * @param <T> value type of the array.
  */
 public final class ArrayIterable<T> implements Iterable<T> {
   private final T[] array;
   private final int begin;
   private final int end;
 
+  /**
+   * Constructs an iterable over an array.
+   * 
+   * @param array the array.
+   */
   public ArrayIterable(final T[] array) {
     this(array, 0, array.length);
   }
@@ -37,10 +41,9 @@ public final class ArrayIterable<T> implements Iterable<T> {
   /**
    * Construct an iterable over a range.
    *
-   * @param begin
-   *          Start index (inclusive).
-   * @param end
-   *          End index (exclusive).
+   * @param array the array.
+   * @param begin Start index (inclusive).
+   * @param end   End index (exclusive).
    */
   public ArrayIterable(final T[] array, final int begin, final int end) {
     this.array = array;

@@ -23,6 +23,11 @@ import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
 import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 
+/**
+ * Factory to produce builders for distance operators.
+ * 
+ * @param <U> the input role structure type.
+ */
 public interface DistanceBuilderFactory<U> extends DistanceBuilderFactoryBase<U>,
     BuilderFactory<Operator<U, IntDistanceMatrix>> {
 

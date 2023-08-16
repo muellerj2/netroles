@@ -16,7 +16,19 @@
  */
 package ch.ethz.sn.visone3.roles.impl.structures;
 
+/**
+ * Represents a predicate for two integer arguments.
+ */
 @FunctionalInterface
 public interface BiIntPredicate {
+
+  /**
+   * Evaluates the predicate.
+   * 
+   * @param x first argument.
+   * @param y second argument.
+   * @return true if the predicate evaluates positively for these arguments, false
+   *         otherwise.
+   */
   boolean testInt(int x, int y);
 }

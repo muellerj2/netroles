@@ -27,7 +27,13 @@ public class Relations {
   }
 
   /**
-   * Determines whether two binary relations consist of the same pairs.
+   * Determines whether two relations have the same domains and contain the same
+   * pairs.
+   * 
+   * @param lhs the first relation.
+   * @param rhs the second relation
+   * @return true if the two relations have the same domains and contain the same
+   *         pairs, otherwise false.
    */
   public static boolean equals(RelationBase lhs, RelationBase rhs) {
     if (lhs == rhs) {
@@ -53,9 +59,8 @@ public class Relations {
   /**
    * Determines the hash code of a binary relation.
    * 
-   * @param relation
-   *          the relation
-   * @return the hash code
+   * @param relation the relation.
+   * @return the hash code.
    */
   public static int hashCode(RelationBase relation) {
     final int existing = Boolean.hashCode(true);
@@ -73,8 +78,7 @@ public class Relations {
   /**
    * Produces a string representation of a relation.
    * 
-   * @param relation
-   *          the relation.
+   * @param relation the relation.
    * @return the string representation.
    */
   public static String toString(RelationBase relation) {

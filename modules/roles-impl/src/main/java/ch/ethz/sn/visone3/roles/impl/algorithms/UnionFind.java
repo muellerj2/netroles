@@ -20,11 +20,12 @@ package ch.ethz.sn.visone3.roles.impl.algorithms;
 import java.util.Arrays;
 
 /**
- * UnionFind on consecutive integers from 0 to n. That way no hashing is required.
- * <p>
+ * UnionFind on consecutive integers from 0 to n. That way no hashing is
+ * required.
+ * 
  * <ul>
- * <li>Find: Determine which subset a particular element is in. This can be used for determining if
- * two elements are in the same subset.</li>
+ * <li>Find: Determine which subset a particular element is in. This can be used
+ * for determining if two elements are in the same subset.</li>
  * <li>Union: Join two subsets into a single subset.</li>
  * </ul>
  */

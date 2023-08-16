@@ -17,9 +17,9 @@
 
 package ch.ethz.sn.visone3.networks;
 
-import ch.ethz.sn.visone3.lang.ConstMapping;
-
 import java.util.Objects;
+
+import ch.ethz.sn.visone3.lang.ConstMapping;
 
 /**
  * Network utilities.
@@ -56,9 +56,12 @@ public final class Networks {
   // }
 
   /**
-   * Fails with an {@link IllegalArgumentException} if the network is a 2-mode network.
+   * Fails with an {@link IllegalArgumentException} if the network is a 2-mode
+   * network.
    *
-   * @return the relation view of the {@code network}.
+   * @param network the network to check.
+   * @return the {@code network}.
+   * @throws IllegalArgumentException if the network is not one-mode.
    */
   public static Network requireOneMode(final Network network) {
     if (network.isTwoMode()) {
@@ -68,9 +71,12 @@ public final class Networks {
   }
 
   /**
-   * Fails with an {@link IllegalArgumentException} if the network is a 1-mode network.
+   * Fails with an {@link IllegalArgumentException} if the network is a 1-mode
+   * network.
    *
-   * @return the relation view of the {@code network}.
+   * @param network the network to check.
+   * @return the {@code network}.
+   * @throws IllegalArgumentException if the network is not two-mode.
    */
   public static Network requireTwoMode(final Network network) {
     if (!network.isTwoMode()) {
@@ -82,7 +88,9 @@ public final class Networks {
   /**
    * Fails with an {@link IllegalArgumentException} if the network is directed.
    *
+   * @param network the network to check.
    * @return the undirected graph view of the {@code network}.
+   * @throws IllegalArgumentException if the network is directed.
    */
   public static UndirectedGraph requireUndirectedGraph(final Network network) {
     if (network.isDirected()) {
@@ -92,9 +100,12 @@ public final class Networks {
   }
 
   /**
-   * Fails with an {@link IllegalArgumentException} if the network is not directed.
+   * Fails with an {@link IllegalArgumentException} if the network is not
+   * directed.
    *
+   * @param network the network to check.
    * @return the directed graph view of the {@code network}.
+   * @throws IllegalArgumentException if the network is not directed.
    */
   public static DirectedGraph requireDirectedGraph(final Network network) {
     if (!network.isDirected()) {
@@ -104,10 +115,15 @@ public final class Networks {
   }
 
   /**
-   * Fails with an {@link IllegalArgumentException} if the mapping size does not match a vertex
-   * mapping.
+   * Fails with an {@link IllegalArgumentException} if the mapping size does not
+   * match a vertex mapping.
    *
-   * @return the {@code mapping}
+   * @param network the network to check the mapping for.
+   * @param mapping the mapping to check.
+   * @param <T>     the mapping type.
+   * @return the {@code mapping}.
+   * @throws IllegalArgumentException if the mapping size is not equal to the
+   *                                  number of vertices.
    */
   public static <T extends ConstMapping<?>> T requireVertexMapping(
     final Network network, final T mapping
@@ -117,10 +133,17 @@ public final class Networks {
   }
 
   /**
-   * Fails with an {@link IllegalArgumentException} if the mapping size does not match a vertex
-   * mapping.
+   * Fails with an {@link IllegalArgumentException} if the mapping size does not
+   * match a vertex mapping.
    *
-   * @return the {@code mapping}
+   * @param network the network to check the mapping for.
+   * @param mapping the mapping to check.
+   * @param message an optional explanatory message included in the exception
+   *                reason.
+   * @param <T>     the mapping type.
+   * @return the {@code mapping}.
+   * @throws IllegalArgumentException if the mapping size is not equal to the
+   *                                  number of vertices.
    */
   public static <T extends ConstMapping<?>> T requireVertexMapping(
     final Network network, final T mapping, final String message
@@ -130,10 +153,17 @@ public final class Networks {
   }
 
   /**
-   * Fails with an {@link IllegalArgumentException} if the mapping size does not match the specified
-   * number of vertices.
+   * Fails with an {@link IllegalArgumentException} if the mapping size does not
+   * match the specified number of vertices.
    *
-   * @return the {@code mapping}
+   * @param numVertices the number of vertices in the network.
+   * @param mapping     the mapping to check.
+   * @param message     an optional explanatory message included in the exception
+   *                    reason.
+   * @param <T>         the mapping type.
+   * @return the {@code mapping}.
+   * @throws IllegalArgumentException if the mapping size is not equal to the
+   *                                  number of vertices.
    */
   public static <T extends ConstMapping<?>> T checkVertexMapSize(
     final int numVertices, final T mapping, final String message
@@ -146,10 +176,15 @@ public final class Networks {
   }
 
   /**
-   * Fails with an {@link IllegalArgumentException} if the mapping size does not match a link
-   * mapping.
+   * Fails with an {@link IllegalArgumentException} if the mapping size does not
+   * match a link mapping.
    *
-   * @return the {@code mapping}
+   * @param network the network to check the mapping for.
+   * @param mapping the mapping to check.
+   * @param <T>     the mapping type.
+   * @return the {@code mapping}.
+   * @throws IllegalArgumentException if the mapping size is not equal to the
+   *                                  number of links.
    */
   public static <T extends ConstMapping<?>> T requireLinkMapping(
     final Network network, final T mapping
@@ -163,10 +198,15 @@ public final class Networks {
   }
 
   /**
-   * Fails with an {@link IllegalArgumentException} if the mapping size does not match a link
-   * mapping.
+   * Fails with an {@link IllegalArgumentException} if the mapping size does not
+   * match a link mapping.
    *
-   * @return the {@code mapping}
+   * @param graph   the graph to check the mapping for.
+   * @param mapping the mapping to check.
+   * @param <T>     the mapping type.
+   * @return the {@code mapping}.
+   * @throws IllegalArgumentException if the mapping size is not equal to the
+   *                                  number of edges.
    */
   public static <T extends ConstMapping<?>> T requireLinkMapping(
     final Graph graph, final T mapping

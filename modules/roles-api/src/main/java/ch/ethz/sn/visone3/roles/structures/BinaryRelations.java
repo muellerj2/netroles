@@ -74,9 +74,8 @@ public class BinaryRelations {
   /**
    * Generates a binary relation representation from a matrix.
    * 
-   * @param mat
-   *          the matrix
-   * @return the binary relation representation
+   * @param mat the matrix.
+   * @return the binary relation representation.
    */
   public static BinaryRelation fromMatrix(boolean[][] mat) {
     return BUILDERSERVICE.relationFromMatrix(mat);

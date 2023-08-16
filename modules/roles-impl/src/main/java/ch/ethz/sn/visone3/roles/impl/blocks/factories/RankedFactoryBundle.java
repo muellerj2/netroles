@@ -25,7 +25,7 @@ import ch.ethz.sn.visone3.roles.blocks.factories.RoleOperatorBuilderFactory;
 import ch.ethz.sn.visone3.roles.blocks.factories.WeakStructuralRoleOperatorBuilderFactory;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
-public class RankedFactoryBundle implements
+class RankedFactoryBundle implements
     RoleOperatorFactoryBundle<Ranking, EquitableLooseRoleOperatorBuilderFactory<Ranking>, EquitableLooseGenericRoleOperatorBuilderFactory<Ranking>, BasicSymmetrizableRoleOperatorFactory<Ranking>, WeakStructuralRoleOperatorBuilderFactory<Ranking>> {
 
   @Override

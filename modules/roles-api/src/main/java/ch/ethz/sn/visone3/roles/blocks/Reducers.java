@@ -74,10 +74,7 @@ public class Reducers {
       .getFactory(BinaryRelation.class);
 
   /**
-   * Factory interface to produce common reducers on integer matrices.
-   *
-   * @param <T>
-   *          the type of objects underlying the lattice
+   * Factory interface to produce common reducers on integer distance matrices.
    */
   public interface DistanceFactory {
     /**

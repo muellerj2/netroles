@@ -77,10 +77,21 @@ import javax.xml.parsers.SAXParserFactory;
  */
 public class GraphmlSource implements Source<Object>, AutoCloseable {
   private static final Logger LOG = LoggerFactory.getLogger(GraphmlSource.class);
+  /**
+   * Name of the generated multiplicity mapping.
+   */
   public static final String MULTIPLICITY = "_multiplicity";
+  /**
+   * Name of the generated nested mapping.
+   */
   public static final String NESTED = "_nested";
   private final InputStream inputStream;
 
+  /**
+   * Constructs the source.
+   * 
+   * @param inputStream the stream to read from.
+   */
   public GraphmlSource(final InputStream inputStream) {
     this.inputStream = inputStream;
   }

@@ -52,7 +52,7 @@ import ch.ethz.sn.visone3.roles.blocks.RoleOperators;
 import ch.ethz.sn.visone3.roles.impl.algorithms.Equivalences;
 import ch.ethz.sn.visone3.roles.lattice.LatticeEnumerator.ImmediateChildEnumerator;
 import ch.ethz.sn.visone3.roles.lattice.StableRolesEnumeration;
-import ch.ethz.sn.visone3.roles.lattice.SuccessorAndPredecessorIterators;
+import ch.ethz.sn.visone3.roles.lattice.LatticeCoverEnumerators;
 import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelations;
@@ -179,8 +179,8 @@ public class LatticeTest {
             .toArray()));
 
     Set<ConstMapping.OfInt> foundPredecessors = new HashSet<>();
-    ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> predEnumerator = SuccessorAndPredecessorIterators
-        .predecessorEquivalences(equivalence);
+    ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> predEnumerator = LatticeCoverEnumerators
+        .lowerCoversEquivalences(equivalence);
     int count = 0;
     boolean previouslyIteratedAncestor = false;
 
@@ -217,8 +217,8 @@ public class LatticeTest {
     assertThrows(NoSuchElementException.class, () -> predEnumerator.next());
 
     Set<ConstMapping.OfInt> foundSuccessors = new HashSet<>();
-    ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> succEnumerator = SuccessorAndPredecessorIterators
-        .successorEquivalences(equivalence);
+    ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> succEnumerator = LatticeCoverEnumerators
+        .upperCoversEquivalences(equivalence);
     count = 0;
     previouslyIteratedAncestor = false;
     while (succEnumerator.hasNext()) {
@@ -301,8 +301,8 @@ public class LatticeTest {
     BinaryRelation refinedRelation = BinaryRelations.fromMatrix(refinedArray);
 
     Set<BinaryRelation> foundPredecessors = new HashSet<>();
-    ImmediateChildEnumerator<BinaryRelation, BinaryRelation> predEnumerator = SuccessorAndPredecessorIterators
-        .predecessorRelations(binrel);
+    ImmediateChildEnumerator<BinaryRelation, BinaryRelation> predEnumerator = LatticeCoverEnumerators
+        .lowerCoversBinaryRelations(binrel);
     int count = 0;
     boolean previouslyIteratedAncestor = false;
 
@@ -337,8 +337,8 @@ public class LatticeTest {
     assertThrows(NoSuchElementException.class, () -> predEnumerator.next());
 
     Set<BinaryRelation> foundSuccessors = new HashSet<>();
-    ImmediateChildEnumerator<BinaryRelation, BinaryRelation> succEnumerator = SuccessorAndPredecessorIterators
-        .successorRelations(binrel);
+    ImmediateChildEnumerator<BinaryRelation, BinaryRelation> succEnumerator = LatticeCoverEnumerators
+        .upperCoversBinaryRelations(binrel);
     count = 0;
     previouslyIteratedAncestor = false;
     while (succEnumerator.hasNext()) {
@@ -549,8 +549,8 @@ public class LatticeTest {
     Ranking refinedRanking2 = rankingFromOrderedPartition(refinedEquivalence, refinedArray2);
 
     Set<Ranking> foundPredecessors = new HashSet<>();
-    ImmediateChildEnumerator<Ranking, Ranking> predEnumerator = SuccessorAndPredecessorIterators
-        .predecessorRankings(ranking);
+    ImmediateChildEnumerator<Ranking, Ranking> predEnumerator = LatticeCoverEnumerators
+        .lowerCoversRankings(ranking);
     int count = 0;
     boolean previouslyIteratedAncestor1 = false;
     boolean previouslyIteratedAncestor2 = false;
@@ -604,8 +604,8 @@ public class LatticeTest {
     assertThrows(NoSuchElementException.class, () -> predEnumerator.next());
 
     Set<Ranking> foundSuccessors = new HashSet<>();
-    ImmediateChildEnumerator<Ranking, Ranking> succEnumerator = SuccessorAndPredecessorIterators
-        .successorRankings(ranking);
+    ImmediateChildEnumerator<Ranking, Ranking> succEnumerator = LatticeCoverEnumerators
+        .upperCoversRankings(ranking);
     count = 0;
     previouslyIteratedAncestor1 = false;
     previouslyIteratedAncestor2 = false;

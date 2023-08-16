@@ -22,7 +22,10 @@ import ch.ethz.sn.visone3.roles.blocks.factories.BasicDistanceOperatorFactory;
 import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
 import ch.ethz.sn.visone3.roles.impl.structures.LazyIntDistanceMatrixImpl;
 
-public class BasicDistanceOperatorFactoryImpl implements BasicDistanceOperatorFactory {
+/**
+ * Factory class for some basic operations on distances.
+ */
+class BasicDistanceOperatorFactoryImpl implements BasicDistanceOperatorFactory {
 
   @Override
   public Operator<IntDistanceMatrix, IntDistanceMatrix> symmetrizeAdd() {

@@ -17,11 +17,11 @@
 
 package ch.ethz.sn.visone3.networks;
 
-import ch.ethz.sn.visone3.lang.PrimitiveIterable;
-
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import ch.ethz.sn.visone3.lang.PrimitiveIterable;
 
 /**
  * Undirected graph perspective on a network.
@@ -96,10 +96,15 @@ public interface UndirectedGraph extends Graph {
   int countLoops();
 
   /**
-   * Return a single edge connection {@code source} with {@code target}.
+   * Return a single edge connection {@code vertex1} with {@code vertex2}.
    *
-   * @implNote Defaults to linear search, so better use {@link #getEdges(int)} and to multiple at
-   * once if possible.
+   * @param vertex1 the first vertex.
+   * @param vertex2 the second vertex.
+   * @return an edge object representing an edge between {@code vertex1} and
+   *         {@code vertex2}, or null if no such edge exists.
+   * 
+   * @implNote Defaults to linear search, so better use {@link #getEdges(int)} and
+   *           to multiple at once if possible.
    */
   default Edge getEdge(final int vertex1, final int vertex2) {
     for (final Edge e : getEdges(vertex1)) {

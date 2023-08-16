@@ -16,6 +16,14 @@
  */
 package ch.ethz.sn.visone3.roles.blocks.factories;
 
+/**
+ * Factory to produce builders for role operators based on the specified views
+ * on network positions and a chosen setting of ``loose'', ``equitable'' or
+ * intermediate degree of ``strictness`` for the tie substitution in pairwise
+ * comparison.
+ * 
+ * @param <U> role structure type.
+ */
 public interface VariableRoleOperatorBuilderFactory<U>
     extends RoleOperatorBuilderFactory<U>,
     VariablePFactoryBase<VariableRoleOperatorBuilderFactory<U>> {

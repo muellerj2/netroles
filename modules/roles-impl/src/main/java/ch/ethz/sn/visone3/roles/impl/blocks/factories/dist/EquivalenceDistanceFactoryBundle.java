@@ -22,7 +22,7 @@ import ch.ethz.sn.visone3.roles.blocks.bundles.DistanceFactoryBundle;
 import ch.ethz.sn.visone3.roles.blocks.factories.DistanceBuilderFactory;
 import ch.ethz.sn.visone3.roles.blocks.factories.VariableDistanceBuilderFactory;
 
-public class EquivalenceDistanceFactoryBundle implements DistanceFactoryBundle<ConstMapping.OfInt> {
+class EquivalenceDistanceFactoryBundle implements DistanceFactoryBundle<ConstMapping.OfInt> {
 
   @Override
   public VariableDistanceBuilderFactory<ConstMapping.OfInt> regular() {

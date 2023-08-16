@@ -24,7 +24,7 @@ import ch.ethz.sn.visone3.roles.blocks.factories.VariableGenericRoleOperatorBuil
 import ch.ethz.sn.visone3.roles.blocks.factories.VariableRoleOperatorBuilderFactory;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 
-public class RelationalFactoryBundle implements
+class RelationalFactoryBundle implements
     RoleOperatorFactoryBundle<BinaryRelation, VariableRoleOperatorBuilderFactory<BinaryRelation>, VariableGenericRoleOperatorBuilderFactory<BinaryRelation>, BasicCloseableRoleOperatorFactory<BinaryRelation>, RoleOperatorBuilderFactory<BinaryRelation>> {
 
   @Override

@@ -28,6 +28,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+/**
+ * Contains service classes making the CSV source and sink classes available in the API.
+ */
 public class CsvIoService {
   private static final Logger LOG = LoggerFactory.getLogger(Edge.class);
 
@@ -39,6 +42,9 @@ public class CsvIoService {
     }
   }
 
+  /**
+   * Service class for node list CSV.
+   */
   public static class Node implements IoService {
     private static final String[] SUPPORTED_TYPES = new String[] {"nodelist.csv", "nodes.csv"};
 
@@ -62,6 +68,9 @@ public class CsvIoService {
     }
   }
 
+  /**
+   * Service class for edge list CSV.
+   */
   public static class Edge implements IoService {
     private static final String[] SUPPORTED_TYPES = new String[] {"edgelist.csv", "edges.csv"};
 

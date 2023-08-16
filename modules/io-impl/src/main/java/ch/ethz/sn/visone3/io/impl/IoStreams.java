@@ -24,14 +24,27 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
+/**
+ * Provides utility methods for streams.
+ */
 public final class IoStreams {
   private IoStreams() {
   }
 
+  /**
+   * Produces a buffered writer wrapping the specified output stream.
+   * @param stream the output stream.
+   * @return a buffered writer wrapping the output stream.
+   */
   public static BufferedWriter writer(final OutputStream stream) {
     return new BufferedWriter(new OutputStreamWriter(stream));
   }
 
+  /**
+   * Produces a buffered reader wrapping the specified input stream.
+   * @param stream the input stream.
+   * @return a buffered reader wrapping the input stream.
+   */
   public static BufferedReader reader(final InputStream stream) {
     return new BufferedReader(new InputStreamReader(stream));
   }

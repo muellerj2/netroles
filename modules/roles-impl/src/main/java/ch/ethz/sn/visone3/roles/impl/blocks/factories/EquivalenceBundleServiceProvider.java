@@ -26,6 +26,10 @@ import ch.ethz.sn.visone3.roles.blocks.factories.RoleOperatorBuilderFactory;
 import ch.ethz.sn.visone3.roles.blocks.factories.WeakStructuralRoleOperatorBuilderFactory;
 import ch.ethz.sn.visone3.roles.spi.RoleOperatorBundleService;
 
+/**
+ * Service providing access to a collection of factories for constructing
+ * operators on equivalences.
+ */
 public class EquivalenceBundleServiceProvider implements RoleOperatorBundleService {
 
   @SuppressWarnings("unchecked")

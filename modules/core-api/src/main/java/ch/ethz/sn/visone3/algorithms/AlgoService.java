@@ -17,10 +17,28 @@
 
 package ch.ethz.sn.visone3.algorithms;
 
+/**
+ * Service implementing a few basic algorithms related to networks.
+ */
 public interface AlgoService {
+  /**
+   * Provides algorithms to traverse networks.
+   * 
+   * @return provider of traversal algorithms.
+   */
   Traversal traversals();
 
+  /**
+   * Provides algorithms to analyze connectedness of networks.
+   * 
+   * @return provider of connectedness algorithms.
+   */
   Connectedness connectedness();
 
+  /**
+   * Provides algorithms for some simple statistics.
+   * 
+   * @return provider of simple statistical algorithms.
+   */
   Stats stats();
 }

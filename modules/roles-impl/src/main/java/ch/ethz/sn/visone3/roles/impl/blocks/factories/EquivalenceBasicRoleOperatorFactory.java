@@ -23,7 +23,10 @@ import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 import ch.ethz.sn.visone3.roles.blocks.factories.BasicRoleOperatorFactory;
 import ch.ethz.sn.visone3.roles.impl.algorithms.Equivalences;
 
-public class EquivalenceBasicRoleOperatorFactory
+/**
+ * Factory class for some basic operations on equivalences.
+ */
+class EquivalenceBasicRoleOperatorFactory
     implements BasicRoleOperatorFactory<ConstMapping.OfInt> {
 
   @Override

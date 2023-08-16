@@ -18,7 +18,21 @@ package ch.ethz.sn.visone3.roles.spi;
 
 import ch.ethz.sn.visone3.roles.blocks.bundles.DistanceFactoryBundle;
 
+/**
+ * Service offering bundles of factories for distance operators on role
+ * structures.
+ */
 public interface DistanceBundleService {
 
+  /**
+   * Returns a bundle of factories for distance operators on the specified role
+   * structure type, or {@code null} if this service does not support this type of
+   * role structure.
+   * 
+   * @param <U>           the role structure type.
+   * @param structureType class object representing the role structure type.
+   * @return the bundle of factories or {@code null} if this service does not
+   *         support this kind of role structure.
+   */
   <U> DistanceFactoryBundle<U> getBundle(Class<U> structureType);
 }

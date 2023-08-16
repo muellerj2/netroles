@@ -42,16 +42,18 @@ public interface NetworkBuilder {
   /**
    * Adds a new edge or looks up the index of an existing edge.
    *
-   * @return A non-negative id if this is first occurrence of the edge. If the edge is already
-   * present returns {@code -id-1)}. So already existing edge return a negative id and {@code -id-1}
-   * is the real edge id.
+   * @param source the source node of the edge.
+   * @param target the target node of the edge.
+   * @return A non-negative id if this is first occurrence of the edge. If the
+   *         edge is already present returns {@code -id-1)}, which means
+   *         {@code -result-1} is the real edge id.
    */
   int addEdge(int source, int target);
 
   /**
    * Returns true if this accepts directed network information.
    * 
-   * @return true if it accepts directed network information, false othewise.
+   * @return true if it accepts directed network information, false otherwise.
    */
   boolean acceptsDirected();
 

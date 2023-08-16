@@ -113,6 +113,8 @@ public interface Network {
    *
    * @param fill     Default value for all values.
    * @param diagonal Default value for the diagonal.
+   * @param mapping  The values observed at edges.
+   * @param <T>      Type of observed values.
    * @return new adjacency matrix.
    */
   <T> T[][] asMatrix(final T fill, final T diagonal, final ConstMapping<T> mapping);
@@ -125,10 +127,11 @@ public interface Network {
   NetworkBuilder builder();
 
   /**
-   * Checks if two networks are from the same implementation and their incidence structure is
-   * equal.
+   * Checks if two networks are from the same implementation and their incidence
+   * structure is equal.
    *
-   * @return if structure is equal
+   * @param network the network whose structure is to be compared.
+   * @return true if structure is equal, otherwise false.
    */
   boolean structureEquals(Network network);
 }

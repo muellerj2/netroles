@@ -18,7 +18,17 @@ package ch.ethz.sn.visone3.roles.spi;
 
 import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
 
+/**
+ * Service offering operations on distance matrices.
+ */
 public interface DistanceMatrixBuilderService {
 
+  /**
+   * Constructs a distance matrix representation from a two-dimensional integer
+   * array.
+   * 
+   * @param matrix the two-dimensional integer array.
+   * @return the distance matrix representation.
+   */
   public IntDistanceMatrix fromMatrix(int[][] matrix);
 }

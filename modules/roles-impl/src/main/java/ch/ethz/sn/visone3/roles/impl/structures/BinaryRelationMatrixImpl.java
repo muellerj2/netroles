@@ -17,6 +17,10 @@
 
 package ch.ethz.sn.visone3.roles.impl.structures;
 
+import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
+import java.util.function.IntBinaryOperator;
+
 import ch.ethz.sn.visone3.lang.Mappings;
 import ch.ethz.sn.visone3.lang.PrimitiveIterable.OfInt;
 import ch.ethz.sn.visone3.lang.PrimitiveList;
@@ -24,10 +28,9 @@ import ch.ethz.sn.visone3.roles.structures.RelationBase;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
 import ch.ethz.sn.visone3.roles.structures.Relations;
 
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
-import java.util.function.IntBinaryOperator;
-
+/**
+ * Implementation of a binary relation or ranking backed by a dense matrix.
+ */
 public class BinaryRelationMatrixImpl
     implements BinaryRelationOrRanking, ReducibleRelationOrRanking {
 
@@ -37,6 +40,12 @@ public class BinaryRelationMatrixImpl
   private int hashCode_;
   private boolean hasHashCode_ = false;
 
+  /**
+   * Constructs a binary relation from a two-dimensional boolean matrix.
+   * 
+   * @param matrix the underlying matrix, such that the pair (i, j) is contained
+   *               in the binary relation if {@code matrix[i][j]} is true.
+   */
   public BinaryRelationMatrixImpl(boolean[][] matrix) {
     size_ = matrix.length;
     ranking_ = new boolean[size_ * size_];
@@ -190,19 +199,38 @@ public class BinaryRelationMatrixImpl
     return Relations.toString(this);
   }
 
+  /**
+   * Builder to construct a {@link BinaryRelationMatrixImpl} object.
+   */
   public static class Builder implements RelationBuilder<ReducibleRelationOrRanking> {
 
     private PrimitiveList.OfInt sources_ = Mappings.newIntList();
     private PrimitiveList.OfInt targets_ = Mappings.newIntList();
     int domain = 0;
 
+    /**
+     * Constructs a new builder.
+     */
     public Builder() {
     }
 
+    /**
+     * Constructs a new builder with the specified initial size of the binary
+     * relation's underlying domain.
+     * 
+     * @param domainSize the initial size of the domain underlying the binary
+     *                   relation.
+     */
     public Builder(int domainSize) {
       ensureDomainSize(domainSize);
     }
 
+    /**
+     * Ensures that the underlying domain of the binary relation has at least the
+     * specified size.
+     * 
+     * @param size the minimal size of the binary relation's underlying domain.
+     */
     public void ensureDomainSize(int size) {
       domain = Math.max(domain, size);
     }

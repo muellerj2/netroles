@@ -22,22 +22,22 @@ import ch.ethz.sn.visone3.networks.Network;
 
 import java.io.IOException;
 
+/**
+ * Specifies which and how parts of a data container are written to a stream.
+ */
 public interface Sink extends AutoCloseable {
   /**
    * Set the incidence structure to store.
    * 
-   * @param network
-   *          the incidence structure.
+   * @param network the incidence structure.
    */
   void incidence(Network network);
 
   /**
    * Set scalar values.
    * 
-   * @param name
-   *          Variable name.
-   * @param value
-   *          Assigned value.
+   * @param name  variable name.
+   * @param value assigned value.
    */
   void global(String name, Object value);
 
@@ -45,11 +45,11 @@ public interface Sink extends AutoCloseable {
   /**
    * Set default for monadic values.
    *
-   * @param name
-   *          Variable name.
-   * @param def
-   *          Default value. If {@code null} clears any previous assignment. If the sink supports
-   *          sparse storage, occurrences of this value are not stored.
+   * @param name variable name.
+   * @param def  default value. If {@code null} clears any previous assignment. If
+   *             the sink supports sparse storage, occurrences of this value are
+   *             not stored.
+   * @param <T>  type of the values.
    */
   default <T> void nodeDefault(final String name, final T def) {
     node(name, def, null);
@@ -58,10 +58,9 @@ public interface Sink extends AutoCloseable {
   /**
    * Set monadic values.
    *
-   * @param name
-   *          Variable name.
-   * @param monadic
-   *          Node mapping. If {@code null} clears any previous assignment.
+   * @param name    variable name.
+   * @param monadic node mapping. If {@code null} clears any previous assignment.
+   * @param <T>     type of the values.
    */
   default <T> void node(final String name, final ConstMapping<T> monadic) {
     node(name, null, monadic);
@@ -70,13 +69,12 @@ public interface Sink extends AutoCloseable {
   /**
    * Set monadic values.
    *
-   * @param name
-   *          Variable name.
-   * @param def
-   *          Default value. If {@code null} clears any previous assignment. If the sink supports
-   *          sparse storage, occurrences of this value are not stored.
-   * @param monadic
-   *          Node mapping. If {@code null} clears any previous assignment.
+   * @param name    variable name.
+   * @param def     default value. If {@code null} clears any previous assignment.
+   *                If the sink supports sparse storage, occurrences of this value
+   *                are not stored.
+   * @param monadic node mapping. If {@code null} clears any previous assignment.
+   * @param <T>     type of the values.
    */
   <T> void node(String name, T def, ConstMapping<T> monadic);
 
@@ -84,11 +82,11 @@ public interface Sink extends AutoCloseable {
   /**
    * Set default for dyadic values.
    *
-   * @param name
-   *          Variable name.
-   * @param def
-   *          Default value. If {@code null} clears any previous assignment. If the sink supports
-   *          sparse storage, occurrences of this value are not stored.
+   * @param name variable name.
+   * @param def  default value. If {@code null} clears any previous assignment. If
+   *             the sink supports sparse storage, occurrences of this value are
+   *             not stored.
+   * @param <T>  type of the values.
    */
   default <T> void linkDefault(final String name, final T def) {
     link(name, def, null);
@@ -97,10 +95,9 @@ public interface Sink extends AutoCloseable {
   /**
    * Set dyadic values.
    *
-   * @param name
-   *          Variable name.
-   * @param dyadic
-   *          Link mapping. If {@code null} clears any previous assignment.
+   * @param name   variable name.
+   * @param dyadic link mapping. If {@code null} clears any previous assignment.
+   * @param <T>    type of the values.
    */
   default <T> void link(final String name, final ConstMapping<T> dyadic) {
     link(name, null, dyadic);
@@ -109,25 +106,28 @@ public interface Sink extends AutoCloseable {
   /**
    * Set dyadic values.
    *
-   * @param name
-   *          Variable name.
-   * @param def
-   *          Default value. If {@code null} clears any previous assignment. If the sink supports
-   *          sparse storage, occurrences of this value are not stored.
-   * @param dyadic
-   *          Link mapping. If {@code null} clears any previous assignment.
+   * @param name   variable name.
+   * @param def    default value. If {@code null} clears any previous assignment.
+   *               If the sink supports sparse storage, occurrences of this value
+   *               are not stored.
+   * @param dyadic link mapping. If {@code null} clears any previous assignment.
+   * @param <T>    type of the values.
    */
   <T> void link(String name, T def, ConstMapping<T> dyadic);
 
+  /**
+   * Sets additional hints used by the sink for outputting the described data.
+   * 
+   * @param key   name of the hint
+   * @param value assigned value to this hint
+   */
   default void hint(final String key, final String value) {
   }
 
   /**
    * Closes the sink.
    * 
-   * @throws IOException
-   *           Forwards exceptions of underlying IO.
-   * @implNote Overrides the thrown exception type.
+   * @throws IOException forwards exceptions of underlying IO.
    */
   @Override
   void close() throws IOException;

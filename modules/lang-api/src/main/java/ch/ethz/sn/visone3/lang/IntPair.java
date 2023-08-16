@@ -25,9 +25,11 @@ public final class IntPair {
   private static final long INT_MASK = 0xffffffffL;
 
   /**
-   * Build efficient integer 2-element set. The first element is ensured to be no larger than the
-   * second.
+   * Build efficient integer 2-element set. The first element is ensured to be no
+   * larger than the second.
    * 
+   * @param first  one integer in the pair.
+   * @param second the other integer in the pair.
    * @return long representation of the integer 2-element set
    */
   public static long set(final int first, final int second) {
@@ -40,7 +42,10 @@ public final class IntPair {
   /**
    * Build efficient ordered integer pair (2-tuple).
    * 
-   * @return long representation of the integer pair
+   * @param first  first integer in the pair.
+   * @param second second integer in the pair.
+   * 
+   * @return long representation of the ordered integer pair
    */
   public static long tuple(final int first, final int second) {
     return ((long) first << INT_WIDTH) | (second & INT_MASK);
@@ -49,6 +54,7 @@ public final class IntPair {
   /**
    * Returns the first element of the pair's long representation.
    * 
+   * @param pair the long representation of a pair.
    * @return first element of the pair.
    */
   public static int first(final long pair) {
@@ -58,6 +64,7 @@ public final class IntPair {
   /**
    * Returns the second element of the pair's long representation.
    * 
+   * @param pair the long representation of a pair.
    * @return second element of the pair.
    */
   public static int second(final long pair) {
@@ -69,10 +76,8 @@ public final class IntPair {
   /**
    * Constructs an integer pair object.
    * 
-   * @param first
-   *          the first element of the pair
-   * @param second
-   *          the second element of the pair
+   * @param first  the first element of the pair.
+   * @param second the second element of the pair.
    */
   public IntPair(final int first, final int second) {
     pair = tuple(first, second);
@@ -81,7 +86,7 @@ public final class IntPair {
   /**
    * Returns the first element of the integer pair.
    * 
-   * @return the first element
+   * @return the first element.
    */
   public int getFirst() {
     return first(pair);
@@ -90,7 +95,7 @@ public final class IntPair {
   /**
    * Returns the second element of the integer pair.
    * 
-   * @return the second element
+   * @return the second element.
    */
   public int getSecond() {
     return second(pair);

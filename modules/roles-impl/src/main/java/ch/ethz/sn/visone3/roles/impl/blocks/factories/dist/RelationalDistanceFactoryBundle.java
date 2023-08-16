@@ -21,7 +21,7 @@ import ch.ethz.sn.visone3.roles.blocks.factories.DistanceBuilderFactory;
 import ch.ethz.sn.visone3.roles.blocks.factories.VariableDistanceBuilderFactory;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 
-public class RelationalDistanceFactoryBundle implements DistanceFactoryBundle<BinaryRelation> {
+class RelationalDistanceFactoryBundle implements DistanceFactoryBundle<BinaryRelation> {
 
   @Override
   public VariableDistanceBuilderFactory<BinaryRelation> regular() {

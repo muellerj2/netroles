@@ -19,6 +19,9 @@ package ch.ethz.sn.visone3.roles.structures;
 import ch.ethz.sn.visone3.roles.spi.RelationBuilderLoader;
 import ch.ethz.sn.visone3.roles.spi.RelationBuilderService;
 
+/**
+ * Provides builders for producing binary relations and rankings.
+ */
 public class RelationBuilders {
 
   private RelationBuilders() {
@@ -28,14 +31,38 @@ public class RelationBuilders {
   private static final RelationBuilderService SERVICE = RelationBuilderLoader
       .getService();
 
+  /**
+   * Produces a builder for constructing a binary relation backed by a dense
+   * matrix representation.
+   * 
+   * @param size the size of the binary relation's domain.
+   * @return the builder.
+   */
   public static RelationBuilder<? extends BinaryRelation> denseRelationBuilder(int size) {
     return SERVICE.denseRelationBuilder(size);
   }
 
+  /**
+   * Produces a builder for constructing a ranking backed by a dense matrix
+   * representation. This builder does not ensure that the produced ranking object
+   * is transitive.
+   * 
+   * @param size the size of the ranking's domain.
+   * @return the builder.
+   */
   public static RelationBuilder<? extends Ranking> denseUnsafeRankingBuilder(int size) {
     return SERVICE.denseUnsafeRankingBuilder(size);
   }
 
+  /**
+   * Produces a builder for constructing a ranking backed by a dense matrix
+   * representation. This builder returns the least ranking containing all the
+   * specified pairs, i.e., it constructs the reflexive transitive closure of the
+   * binary relation specified by the calls to builder methods.
+   * 
+   * @param size the size of the ranking's domain.
+   * @return the builder.
+   */
   public static RelationBuilder<? extends Ranking> denseSafeRankingBuilder(int size) {
     return SERVICE.denseSafeRankingBuilder(size);
   }

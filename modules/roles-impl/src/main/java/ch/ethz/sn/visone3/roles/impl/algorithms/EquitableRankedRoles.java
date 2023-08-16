@@ -198,6 +198,8 @@ public class EquitableRankedRoles {
    *          relative to.
    * @param comparator
    *          a comparator that weakly orders relationships
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum ranking that is exact-relational-roles-consistent relative to the given
    *         network.
    */
@@ -222,6 +224,8 @@ public class EquitableRankedRoles {
    *          exact-relational-roles-consistent relative to.
    * @param comparator
    *          a comparator that weakly orders relationships
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum relation that is exact-relational-roles-consistent relative to the given
    *         network.
    */
@@ -249,6 +253,8 @@ public class EquitableRankedRoles {
    *          the ranking that is refined by the result
    * @param comparator
    *          a comparator that partially orders relationships
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum ranking that refines refinedRanking and is
    *         exact-relational-roles-consistent relative to the given network.
    */
@@ -276,6 +282,8 @@ public class EquitableRankedRoles {
    *          the relation that is refined by the result
    * @param comparator
    *          a comparator that partially orders relationships
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum relation that refines refinedRelation and is
    *         exact-relational-roles-consistent relative to the given network.
    */
@@ -301,6 +309,8 @@ public class EquitableRankedRoles {
    *          relative to.
    * @param comparator
    *          a comparator that partially orders relationships
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum ranking that is exact-relational-roles-consistent relative to the given
    *         network.
    */
@@ -325,6 +335,8 @@ public class EquitableRankedRoles {
    *          exact-relational-roles-consistent relative to.
    * @param comparator
    *          a comparator that partially orders relationships
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum relation that is exact-relational-roles-consistent relative to the given
    *         network.
    */
@@ -351,6 +363,8 @@ public class EquitableRankedRoles {
    *          the ranking that is refined by the result
    * @param comparator
    *          a comparator that partially orders relationships
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum ranking that refines refinedRanking and is
    *         exact-relational-roles-consistent relative to the given network.
    */
@@ -377,6 +391,8 @@ public class EquitableRankedRoles {
    *          the relation that is refined by the result
    * @param comparator
    *          a comparator that partially orders relationships
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum relation that refines refinedRelation and is
    *         exact-relational-roles-consistent relative to the given network.
    */
@@ -403,6 +419,8 @@ public class EquitableRankedRoles {
    * @param comparator
    *          a binary predicate that says whether the first relationship's value is compatible with
    *          the second one
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum ranking that is exact-relational-roles-consistent relative to the given
    *         network.
    */
@@ -428,6 +446,8 @@ public class EquitableRankedRoles {
    * @param comparator
    *          a binary predicate that says whether the first relationship's value is compatible with
    *          the second one
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum relation that is exact-relational-roles-consistent relative to the given
    *         network.
    */
@@ -459,6 +479,8 @@ public class EquitableRankedRoles {
    * @param comparator
    *          a binary predicate that says whether the first relationship's value is compatible with
    *          the second one
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum ranking that refines refinedRanking and is
    *         exact-relational-roles-consistent relative to the given network.
    */
@@ -486,6 +508,8 @@ public class EquitableRankedRoles {
    * @param comparator
    *          a binary predicate that says whether the first relationship's value is compatible with
    *          the second one
+   * @param <V>
+   *          base type of represented ties
    * @return the maximum relation that refines refinedRelation and is
    *         exact-relational-roles-consistent relative to the given network.
    */

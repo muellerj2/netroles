@@ -72,11 +72,12 @@ public class Rankings {
   }
 
   /**
-   * Generates a ranking representation from a matrix.
+   * Generates a ranking representation from a matrix. This method does not ensure
+   * that the produced result actually represents a valid (reflexive and
+   * transitive) ranking.
    * 
-   * @param mat
-   *          the matrix
-   * @return the ranking representation
+   * @param mat the matrix.
+   * @return the ranking representation.
    */
   public static Ranking fromMatrixUnsafe(boolean[][] mat) {
     return BUILDERSERVICE.rankingFromMatrixUnsafe(mat);

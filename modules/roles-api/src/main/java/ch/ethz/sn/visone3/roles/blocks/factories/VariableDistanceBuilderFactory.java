@@ -16,6 +16,26 @@
  */
 package ch.ethz.sn.visone3.roles.blocks.factories;
 
+/**
+ * Factory to construct builders for generic, heavily user-customizable
+ * operators producing pairwise distances of nodes. The distance operators
+ * produce the distance matrix based on the specified views on network positions
+ * and a chosen setting of ``loose'', ``equitable'' or intermediate degree of
+ * ``strictness`` for the substitution of ties in pairwise comparisons.
+ * 
+ * <p>
+ * This factory produces builders that allow to define the traits of the
+ * produced operators and set comparators and cost functions that can depend on
+ * the input role structure. The comparator is used to restrict and thus refine
+ * the substitution between ties, and the cost functions assign costs for the
+ * substitution of two ties or failure to substitute a tie. This dependence on
+ * the input role structure greatly extends the possibilities for users to
+ * customize the distance operator compared to other provided operators that
+ * always use the same fixed comparator and cost function for all input role
+ * structures.
+ * 
+ * @param <U> role structure type.
+ */
 public interface VariableDistanceBuilderFactory<U>
     extends DistanceBuilderFactory<U>, VariablePFactoryBase<VariableDistanceBuilderFactory<U>> {
 

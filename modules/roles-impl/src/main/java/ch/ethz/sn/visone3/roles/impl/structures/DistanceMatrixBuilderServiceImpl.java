@@ -19,6 +19,9 @@ package ch.ethz.sn.visone3.roles.impl.structures;
 import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
 import ch.ethz.sn.visone3.roles.spi.DistanceMatrixBuilderService;
 
+/**
+ * Service providing facilities to construct {@link IntDistanceMatrix} objects.
+ */
 public class DistanceMatrixBuilderServiceImpl implements DistanceMatrixBuilderService {
 
   @Override
