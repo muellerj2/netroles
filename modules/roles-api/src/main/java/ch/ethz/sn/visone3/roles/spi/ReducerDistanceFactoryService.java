@@ -18,7 +18,15 @@ package ch.ethz.sn.visone3.roles.spi;
 
 import ch.ethz.sn.visone3.roles.blocks.Reducers;
 
+/**
+ * Service providing the factory for distance reducers.
+ */
 public interface ReducerDistanceFactoryService {
 
+  /**
+   * Returns the distance factory provided by this service.
+   * 
+   * @return the distance factory.
+   */
   Reducers.DistanceFactory getFactory();
 }

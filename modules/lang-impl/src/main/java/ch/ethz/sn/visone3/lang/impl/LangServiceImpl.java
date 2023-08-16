@@ -26,15 +26,16 @@ import ch.ethz.sn.visone3.lang.spi.IteratorFacade;
 import ch.ethz.sn.visone3.lang.spi.LangService;
 import ch.ethz.sn.visone3.lang.spi.MappingsFacade;
 
+/**
+ * Service class making the implemented containers, iterators and algorithms
+ * available.
+ */
 public final class LangServiceImpl implements LangService {
 
   private final MappingsFacade mapFacade = new MappingsFacadeImpl();
   private final ContainersFacade containerFacade = new ContainerFacadeImpl();
   private final IteratorFacade iteratorFacade = new IteratorFacadeImpl();
   private final AlgorithmsFacade algoFacade = new AlgorithmsFacadeImpl();
-
-  public LangServiceImpl() {
-  }
 
   @Override
   public String getName() {

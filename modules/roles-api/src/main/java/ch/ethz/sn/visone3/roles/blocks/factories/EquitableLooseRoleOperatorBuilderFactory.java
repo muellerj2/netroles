@@ -16,6 +16,13 @@
  */
 package ch.ethz.sn.visone3.roles.blocks.factories;
 
+/**
+ * Factory to produce builders for role operators based on the specified views
+ * on network positions and the chosen setting of ``loose'' or ``equitable''
+ * type of substitution.
+ * 
+ * @param <U> role structure type.
+ */
 public interface EquitableLooseRoleOperatorBuilderFactory<U>
     extends RoleOperatorBuilderFactory<U>,
     EquitableLooseFactoryBase<EquitableLooseRoleOperatorBuilderFactory<U>> {

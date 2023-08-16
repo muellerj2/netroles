@@ -16,14 +16,14 @@
  */
 package ch.ethz.sn.visone3.lang.spi;
 
-import ch.ethz.sn.visone3.lang.Iterators;
-import ch.ethz.sn.visone3.lang.PrimitiveIterable;
-
 import java.util.Iterator;
 import java.util.PrimitiveIterator;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
+
+import ch.ethz.sn.visone3.lang.Iterators;
+import ch.ethz.sn.visone3.lang.PrimitiveIterable;
 
 /**
  * Produces some common kinds of derived iterators and iterables. The methods should follow the
@@ -32,23 +32,108 @@ import java.util.function.Predicate;
  */
 public interface IteratorFacade {
 
+  /**
+   * Derives a view of an iterator retaining all elements for which {@code filter}
+   * produces true.
+   * 
+   * @param iterator the iterator.
+   * @param filter   the filter predicate.
+   * @param <T>      the element type of the iterator.
+   * @return the filtered iterator.
+   */
   <T> Iterator<T> filter(Iterator<T> iterator, Predicate<? super T> filter);
 
+  /**
+   * Derives a view of an iterable retaining all elements for which {@code filter}
+   * produces true.
+   * 
+   * @param iterable the iterable.
+   * @param filter   the filter predicate.
+   * @param <T>      the element type of the iterable.
+   * @return the filtering view
+   */
   <T> Iterable<T> filter(Iterable<T> iterable, Predicate<? super T> filter);
 
+  /**
+   * Derives a view of an iterator retaining all elements for which {@code filter}
+   * produces true.
+   * 
+   * @param iterator the iterator.
+   * @param filter   the filter predicate.
+   * @return the filtering view.
+   */
   PrimitiveIterator.OfInt filter(PrimitiveIterator.OfInt iterator, IntPredicate filter);
 
+  /**
+   * Derives a view of an iterable retaining all elements for which {@code filter}
+   * produces true.
+   * 
+   * @param iterable the iterable.
+   * @param filter   the filter predicate.
+   * @return the filtering view.
+   */
   PrimitiveIterable.OfInt filter(PrimitiveIterable.OfInt iterable, IntPredicate filter);
 
-  <T> Iterator<T> concat(Iterator<? extends T> first, Iterator<? extends T> second);
-
-  <T> Iterable<T> concat(Iterable<? extends T> first, Iterable<? extends T> second);
-
-  PrimitiveIterator.OfInt concat(PrimitiveIterator.OfInt first, PrimitiveIterator.OfInt second);
-
-  PrimitiveIterable.OfInt concat(PrimitiveIterable.OfInt first, PrimitiveIterable.OfInt second);
-
+  /**
+   * Derives a view of an iterator mapping each of its element with the supplied
+   * function.
+   * 
+   * @param iterator the iterator.
+   * @param map      the mapping function.
+   * @param <T>      the element type of the iterator.
+   * @param <R>      the result type of the function.
+   * @return the mapping view of the iterator.
+   */
   <T, R> Iterator<R> map(Iterator<T> iterator, Function<? super T, R> map);
 
+  /**
+   * Derives a view of an iterable mapping each of its element with the supplied
+   * function.
+   * 
+   * @param iterable the iterable.
+   * @param map      the mapping function.
+   * @param <T>      the element type of the iterable.
+   * @param <R>      the result type of the function.
+   * @return the mapping view of the iterable.
+   */
   <T, R> Iterable<R> map(Iterable<T> iterable, Function<? super T, R> map);
+
+  /**
+   * Concatenates two iterators into a single one.
+   * 
+   * @param first  the first iterator.
+   * @param second the second iterator.
+   * @param <T>    the common element type of the two iterators.
+   * @return the concatenated iterator.
+   */
+  <T> Iterator<T> concat(Iterator<? extends T> first, Iterator<? extends T> second);
+
+  /**
+   * Concatenates two iterables into a single one.
+   * 
+   * @param first  the first iterable.
+   * @param second the second iterable.
+   * @param <T>    the common element type of the two iterables.
+   * @return the concatenated iterable.
+   */
+  <T> Iterable<T> concat(Iterable<? extends T> first, Iterable<? extends T> second);
+
+  /**
+   * Concatenates two integer iterators into a single one.
+   * 
+   * @param first  the first iterator.
+   * @param second the second iterator.
+   * @return the concatenated iterator.
+   */
+  PrimitiveIterator.OfInt concat(PrimitiveIterator.OfInt first, PrimitiveIterator.OfInt second);
+
+  /**
+   * Concatenates two integer iterables into a single one.
+   * 
+   * @param first  the first iterable.
+   * @param second the second iterable.
+   * @return the concatenated iterable.
+   */
+  PrimitiveIterable.OfInt concat(PrimitiveIterable.OfInt first, PrimitiveIterable.OfInt second);
+
 }

@@ -16,10 +16,14 @@
  */
 package ch.ethz.sn.visone3.roles.spi;
 
-import ch.ethz.sn.visone3.roles.blocks.RoleConverter;
-
 import java.util.ServiceLoader;
 
+import ch.ethz.sn.visone3.roles.blocks.RoleConverter;
+
+/**
+ * Provides access to the services registering convertion operators between
+ * different kinds of structures.
+ */
 public class ConverterLoader {
 
   private ConverterLoader() {
@@ -29,10 +33,31 @@ public class ConverterLoader {
   private static final ConverterLoader INSTANCE = new ConverterLoader();
   private ServiceLoader<ConverterService> loader;
 
+  /**
+   * Gets the singleton instance of the loader.
+   * 
+   * @return the singleton instance.
+   */
   public static ConverterLoader getInstance() {
     return INSTANCE;
   }
 
+  /**
+   * Tries to find a role converter between the supplied source and destination
+   * type, or returns {@code null} if no such converter is offered by any
+   * registered service.
+   * 
+   * @param <T>             the source type.
+   * @param <U>             the destination role structure type.
+   * @param sourceType      class object representing the source type.
+   * @param destinationType class object representing the destination role
+   *                        structure type.
+   * @param argument        optional argument identifying the kind of conversion
+   *                        operator between these two types.
+   * @return a role converter compatible with these types and the optional
+   *         argument if such a converter is offered by any registered service,
+   *         otherwise {@code null}.
+   */
   public <T, U> RoleConverter<T, U> tryGetConverter(Class<T> sourceType, Class<U> destinationType,
       Object argument) {
     for (ConverterService service : loader) {
@@ -44,6 +69,23 @@ public class ConverterLoader {
     return null;
   }
 
+  /**
+   * Returns a role converter between the supplied source and destination type.
+   * 
+   * @param <T>             the source type.
+   * @param <U>             the destination role structure type.
+   * @param sourceType      class object representing the source type.
+   * @param destinationType class object representing the destination role
+   *                        structure type.
+   * @param argument        optional argument identifying the kind of conversion
+   *                        operator between these two types.
+   * @return a role converter compatible with these types and the optional
+   *         argument.
+   * @throws UnsupportedOperationException if no registered service offers a role
+   *                                       converter compatible with the source
+   *                                       and destination types plus the
+   *                                       operational argument.
+   */
   public <T, U> RoleConverter<T, U> getConverter(Class<T> sourceType, Class<U> destinationType,
       Object argument) {
     RoleConverter<T, U> result = tryGetConverter(sourceType, destinationType, argument);

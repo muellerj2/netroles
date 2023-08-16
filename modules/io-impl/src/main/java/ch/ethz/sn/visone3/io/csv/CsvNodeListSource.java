@@ -41,6 +41,28 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+/**
+ * CSV network source. All the CSV settings (line separator, delimiter, quotes) are auto discovered
+ * (thanks to univocity). Semantics of columns has to supplied by calling
+ * {@link #monad(String, Range)} and {@link #noderange(String, Range)}.
+ * Columns without a range specification are not read.
+ *
+ * <p>
+ * Example:
+ * 
+ * <pre>
+ * final CsvNodeListSource source = new CsvEdgeListSource(stream, true);
+ *
+ * // configure what to read
+ * source.monad(NODE, Source.Range.INT);
+ * source.range(VALUE, Source.Range.INT);
+ *
+ * // read
+ * try (final InputStream in = new ByteArrayInputStream(data.getBytes())) {
+ *   source.parse();
+ * }
+ * </pre>
+ */
 public class CsvNodeListSource implements SourceFormat, Source<String> {
   private static final Logger LOG = LoggerFactory.getLogger(CsvNodeListSource.class);
   private final InputStream in;
@@ -51,6 +73,12 @@ public class CsvNodeListSource implements SourceFormat, Source<String> {
   private Map<String, Mapping<?>> monadic;
   private IdMapper<String> ids = IdMapper.continous(String.class);
 
+  /**
+   * Constructs the source.
+   * 
+   * @param in     the stream to read from.
+   * @param header true if the CSV data contains a header line, otherwise false.
+   */
   public CsvNodeListSource(final InputStream in, final boolean header) {
     this.in = in;
     this.header = header;

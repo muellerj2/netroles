@@ -19,17 +19,65 @@ package ch.ethz.sn.visone3.roles.spi;
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 
+/**
+ * Provides common operations on and factory methods for special kinds of binary
+ * relations.
+ */
 public interface BinaryRelationUtilityService {
 
+  /**
+   * Returns the universal binary relation (all pairs contained) with a domain of
+   * the specified size.
+   * 
+   * @param size the domain size (number of elements in the base set).
+   * @return the universal binary relation.
+   */
   BinaryRelation universal(int size);
 
+  /**
+   * Returns the identity binary relation (only reflexive pairs contained) with a
+   * domain of the specified size.
+   * 
+   * @param size the domain size (number of elements in the base set).
+   * @return the identity binary relation.
+   */
   BinaryRelation identity(int size);
 
+  /**
+   * Returns the binary relation representation of the specified equivalence.
+   * 
+   * @param equivalence the equivalence.
+   * @return the representation as a binary relation.
+   */
   BinaryRelation fromEquivalence(ConstMapping.OfInt equivalence);
 
+  /**
+   * Computes the greatest common refinement of two binary relations.
+   * 
+   * @param r1   the first binary relation.
+   * @param r2   the second binary relation.
+   * @param lazy true if the computation should/can happen lazily, otherwise
+   *             false.
+   * @return the greatest common refinement of two binary relations.
+   */
   BinaryRelation infimum(BinaryRelation r1, BinaryRelation r2, boolean lazy);
 
+  /**
+   * Computes the least common coarsening of two binary relations.
+   * 
+   * @param r1   the first binary relation.
+   * @param r2   the second binary relation.
+   * @param lazy true if the computation should/can happen lazily, otherwise
+   *             false.
+   * @return the least common coarsening of two binary relations.
+   */
   BinaryRelation supremum(BinaryRelation r1, BinaryRelation r2, boolean lazy);
 
+  /**
+   * Computes the transitive closure of a binary relation.
+   * 
+   * @param relation the binary relation.
+   * @return the transitive closure of the specified binary relation.
+   */
   BinaryRelation closeTransitively(BinaryRelation relation);
 }

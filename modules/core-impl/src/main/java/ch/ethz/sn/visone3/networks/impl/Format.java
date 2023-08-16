@@ -21,7 +21,13 @@ package ch.ethz.sn.visone3.networks.impl;
  * Utility class to produce some human readable numbers.
  */
 public final class Format {
+  /**
+   * SI prefixes for bytes.
+   */
   public static final String SI_PREFIX = " KMGTPE";
+  /**
+   * Byte unit suffix.
+   */
   public static final String UNIT_BYTE = "B";
   private static final long[] DURATION_SCALE = new long[] { 31_536_000_000L, 604_800_000,
       86_400_000, 3_600_000, 60_000, 1_000 };

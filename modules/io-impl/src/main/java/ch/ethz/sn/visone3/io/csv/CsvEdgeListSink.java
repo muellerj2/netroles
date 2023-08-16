@@ -30,14 +30,31 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * CSV edge list sink. First two columns represent source and target and
+ * correspond to the (union domain) integer indices for the nodes in the
+ * network.
+ */
 public class CsvEdgeListSink extends AbstractSink implements AutoCloseable {
+  /**
+   * The name of the source column.
+   */
   public static final String SOURCE = "source";
+  /**
+   * The name of the target column.
+   */
   public static final String TARGET = "target";
   private final BufferedWriter out;
   private final Map<String, ConstMapping<?>> dyadic;
   private final char delimiter;
   private Network network;
 
+  /**
+   * Constructs the sink.
+   * 
+   * @param out       the stream to output to.
+   * @param delimiter the delimiter used in the CSV.
+   */
   public CsvEdgeListSink(final OutputStream out, final char delimiter) {
     this.delimiter = delimiter;
     this.out = new BufferedWriter(new OutputStreamWriter(out));
@@ -63,9 +80,8 @@ public class CsvEdgeListSink extends AbstractSink implements AutoCloseable {
         out.append(delimiter).append(cell(name));
       }
       out.append("\n");
-      final Iterable<? extends Edge> edges = network.isDirected()
-        ? network.asDirectedGraph().getEdges()
-        : network.asUndirectedGraph().getEdges();
+      final Iterable<? extends Edge> edges = network.isDirected() ? network.asDirectedGraph().getEdges()
+          : network.asUndirectedGraph().getEdges();
       for (final Edge e : edges) {
         out.append(cell(String.valueOf(e.getSource()))).append(delimiter);
         out.append(cell(String.valueOf(e.getTarget())));

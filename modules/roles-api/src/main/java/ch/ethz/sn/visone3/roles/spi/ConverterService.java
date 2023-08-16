@@ -18,7 +18,25 @@ package ch.ethz.sn.visone3.roles.spi;
 
 import ch.ethz.sn.visone3.roles.blocks.RoleConverter;
 
+/**
+ * Service offering role converters between two kinds of structures.
+ */
 public interface ConverterService {
 
+  /**
+   * Returns a role converter from the source to the destination type if this
+   * service can offer such a converter, or {@code null} otherwise.
+   * 
+   * @param <T>         the source type.
+   * @param <U>         the destination role structure type.
+   * @param source      class object representing the source type.
+   * @param destination class object representing the destination role structure
+   *                    type.
+   * @param argument    optional argument specifying the kind of requested
+   *                    conversion operation.
+   * @return a role converter compatible with the source and destination type plus
+   *         the optional argument, or {@code null} if this converter does not
+   *         offer such a converter.
+   */
   <T, U> RoleConverter<T, U> getConverter(Class<T> source, Class<U> destination, Object argument);
 }

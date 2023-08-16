@@ -23,7 +23,10 @@ import ch.ethz.sn.visone3.roles.impl.structures.LazyUncachedBinaryRelationMatrix
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 import ch.ethz.sn.visone3.roles.structures.Rankings;
 
-public class RankedBasicRoleOperatorFactory
+/**
+ * Factory class for some basic operations on rankings.
+ */
+class RankedBasicRoleOperatorFactory
     implements BasicSymmetrizableRoleOperatorFactory<Ranking> {
 
   @Override

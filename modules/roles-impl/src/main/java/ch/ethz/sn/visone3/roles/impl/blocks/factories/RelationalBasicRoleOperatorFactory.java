@@ -23,7 +23,10 @@ import ch.ethz.sn.visone3.roles.impl.structures.LazyUncachedBinaryRelationMatrix
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelations;
 
-public class RelationalBasicRoleOperatorFactory
+/**
+ * Factory class for some basic operations on binary relations.
+ */
+class RelationalBasicRoleOperatorFactory
     implements BasicCloseableRoleOperatorFactory<BinaryRelation> {
 
   @Override

@@ -16,9 +16,25 @@
  */
 package ch.ethz.sn.visone3.roles.structures;
 
+/**
+ * Builder for constructing relations (binary relations or rankings).
+ * 
+ * @param <T> relation type.
+ */
 public interface RelationBuilder<T extends RelationBase> {
 
+  /**
+   * Adds the pair (i, j) to the relation to construct.
+   * 
+   * @param i first element.
+   * @param j second element.
+   */
   void add(int i, int j);
 
+  /**
+   * Produces the specified relation.
+   * 
+   * @return the relation.
+   */
   T build();
 }

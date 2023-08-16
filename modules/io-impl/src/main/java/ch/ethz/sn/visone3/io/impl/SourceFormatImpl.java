@@ -23,6 +23,9 @@ import ch.ethz.sn.visone3.networks.Network;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Simple implementation of the {@link SourceFormat} class.
+ */
 public class SourceFormatImpl implements SourceFormat {
   private final Network incidence;
   private final Map<String, Mapping<?>> monadic;

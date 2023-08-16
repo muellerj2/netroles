@@ -16,9 +16,9 @@
  */
 package ch.ethz.sn.visone3.roles.util;
 
-import ch.ethz.sn.visone3.lang.ConstMapping;
-
 import java.util.function.ToIntBiFunction;
+
+import ch.ethz.sn.visone3.lang.ConstMapping;
 
 /**
  * Provides some functions to simplify accumulating distances or penalties on
@@ -30,13 +30,34 @@ public class AccumulationSupport {
   private AccumulationSupport() {
   }
 
+  /**
+   * Represents a ternary function producing an int.
+   * 
+   * @param <T> first argument type.
+   * @param <U> second argument type.
+   * @param <V> third argument type.
+   */
   public interface ToIntTriFunction<T, U, V> {
+    /**
+     * Applies this function to the given arguments.
+     * 
+     * @param t the first argument.
+     * @param u the second argument.
+     * @param v the third argument.
+     * @return the function result.
+     */
     public int applyAsInt(T t, U u, V v);
   }
 
   /**
    * Computes a sum of integers.
    * 
+   * @param ri      the first argument to {@code f}.
+   * @param rj      the second argument to {@code f}.
+   * @param weights array of weights as third arguments to {@code f}.
+   * @param f       the function the results of which are summed over all weights.
+   * @param <T>     first and second argument type.
+   * @param <U>     third argument/weight type.
    * @return the sum of {@code f.applyAsInt(ri, rj, weights[i])} over all i.
    */
   public static <T, U> int accumulate(T ri, T rj, U[] weights, ToIntTriFunction<T, T, U> f) {
@@ -50,6 +71,12 @@ public class AccumulationSupport {
   /**
    * Computes a sum of integers.
    * 
+   * @param ri      the first argument to {@code f}.
+   * @param rj      the second argument to {@code f}.
+   * @param weights array of weights as third arguments to {@code f}.
+   * @param f       the function the results of which are summed over all weights.
+   * @param <T>     first and second argument type.
+   * @param <U>     third argument/weight type.
    * @return the sum of {@code f.applyAsInt(ri, rj, weights.get(i))} over all i.
    */
   public static <T, U> int accumulate(T ri, T rj, ConstMapping<U> weights,
@@ -64,6 +91,11 @@ public class AccumulationSupport {
   /**
    * Computes a sum of integers.
    * 
+   * @param ri      the first argument to {@code f}.
+   * @param weights array of weights as third arguments to {@code f}.
+   * @param f       the function the results of which are summed over all weights.
+   * @param <T>     first type.
+   * @param <U>     second argument/weight type.
    * @return the sum of {@code f.applyAsInt(ri, weights[i])} over all i.
    */
   public static <T, U> int accumulate(T ri, U[] weights, ToIntBiFunction<T, U> f) {
@@ -77,6 +109,11 @@ public class AccumulationSupport {
   /**
    * Computes a sum of integers.
    * 
+   * @param ri      the first argument to {@code f}.
+   * @param weights array of weights as third arguments to {@code f}.
+   * @param f       the function the results of which are summed over all weights.
+   * @param <T>     first type.
+   * @param <U>     second argument/weight type.
    * @return the sum of {@code f.applyAsInt(ri, weights.get(i))} over all i.
    */
   public static <T, U> int accumulate(T ri, ConstMapping<U> weights, ToIntBiFunction<T, U> f) {

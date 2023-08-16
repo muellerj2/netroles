@@ -16,12 +16,16 @@
  */
 package ch.ethz.sn.visone3.roles.spi;
 
+import java.util.NoSuchElementException;
+import java.util.ServiceLoader;
+
 import ch.ethz.sn.visone3.roles.blocks.bundles.DistanceFactoryBundle;
 import ch.ethz.sn.visone3.roles.blocks.bundles.GenericDistanceFactoryBundle;
 import ch.ethz.sn.visone3.roles.blocks.factories.BasicDistanceOperatorFactory;
 
-import java.util.ServiceLoader;
-
+/**
+ * Provides access to the services offering factories for distance operators.
+ */
 public class DistanceBundleLoader {
 
   private DistanceBundleLoader() {
@@ -31,10 +35,27 @@ public class DistanceBundleLoader {
   private static final DistanceBundleLoader INSTANCE = new DistanceBundleLoader();
   private ServiceLoader<DistanceBundleService> loader;
 
+  /**
+   * Gets the singleton loader instance.
+   * 
+   * @return the singleton
+   */
   public static DistanceBundleLoader getInstance() {
     return INSTANCE;
   }
 
+  /**
+   * Returns a bundle of factories for distance operators on the specified role
+   * structure type, if any service provides such a bundle.
+   * 
+   * @param <U>           the role structure type.
+   * @param structureType the class object representing the role structure type.
+   * @return a factory bundle for distance operators on the specified role
+   *         structure type.
+   * @throws UnsupportedOperationException if there is no registered service that
+   *                                       offers these factories for the
+   *                                       specified role structure type.
+   */
   public <U> DistanceFactoryBundle<U> getBundle(
       Class<U> structureType) {
     for (DistanceBundleService service : loader) {
@@ -43,14 +64,30 @@ public class DistanceBundleLoader {
         return result;
       }
     }
-    throw new IllegalStateException(
+    throw new UnsupportedOperationException(
         "No factory bundle for type " + structureType + " provided by any service");
   }
 
+  /**
+   * Returns a bundle of factories for distance operators that are
+   * user-customizable for any input role structure type.
+   * 
+   * @return a factory bundle for generic user-customizable distance operators.
+   * @throws NoSuchElementException if there is no registered service offering a
+   *                                factory bundle for generic user-customizable
+   *                                distance operators.
+   */
   public GenericDistanceFactoryBundle getGenericDistanceBundle() {
     return ServiceLoader.load(GenericDistanceBundleService.class).iterator().next().getBundle();
   }
 
+  /**
+   * Returns a bundle of factories for basic operators on distance matrices.
+   * 
+   * @return a factory bundle for basic operators on distances.
+   * @throws NoSuchElementException if there is no registered service offering a
+   *                                factory bundle for basic distance operators.
+   */
   public BasicDistanceOperatorFactory getBasicDistanceFactory() {
     return ServiceLoader.load(BasicDistanceFactoryService.class).iterator().next().getFactory();
   }

@@ -20,6 +20,10 @@ import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.roles.blocks.bundles.DistanceFactoryBundle;
 import ch.ethz.sn.visone3.roles.spi.DistanceBundleService;
 
+/**
+ * Service providing access to a collection of factories for constructing
+ * operators that produce distance matrices from equivalences.
+ */
 public class EquivalenceDistanceBundleProvider implements DistanceBundleService {
 
   @SuppressWarnings("unchecked")

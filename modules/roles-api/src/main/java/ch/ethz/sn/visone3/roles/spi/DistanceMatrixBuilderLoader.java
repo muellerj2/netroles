@@ -16,10 +16,20 @@
  */
 package ch.ethz.sn.visone3.roles.spi;
 
+import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
+/**
+ * Loader for the distance matrix service.
+ */
 public class DistanceMatrixBuilderLoader {
 
+  /**
+   * Returns the registered distance matrix service.
+   * 
+   * @return the registered distance matrix service.
+   * @throws NoSuchElementException if no distance matrix service is registered.
+   */
   public static DistanceMatrixBuilderService getService() {
     return ServiceLoader.load(DistanceMatrixBuilderService.class).iterator().next();
   }

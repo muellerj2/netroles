@@ -16,6 +16,8 @@
  */
 package ch.ethz.sn.visone3.roles.impl.blocks.converters;
 
+import java.util.function.IntBinaryOperator;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.roles.blocks.RoleConverter;
 import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
@@ -23,8 +25,9 @@ import ch.ethz.sn.visone3.roles.spi.ConverterService;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
-import java.util.function.IntBinaryOperator;
-
+/**
+ * Service making conversion operations producing ranking outputs available.
+ */
 public class RelationConverterServiceProvider implements ConverterService {
 
   @SuppressWarnings("unchecked")

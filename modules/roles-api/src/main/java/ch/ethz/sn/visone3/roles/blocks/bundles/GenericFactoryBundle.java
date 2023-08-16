@@ -20,7 +20,32 @@ package ch.ethz.sn.visone3.roles.blocks.bundles;
 import ch.ethz.sn.visone3.roles.blocks.Operator;
 import ch.ethz.sn.visone3.roles.blocks.factories.GenericBuilderFactory;
 
+/**
+ * Provides a factory for producing generic, heavily user-customizable operators
+ * where user-specified comparator and/or cost function can potentially depend
+ * on the input role structure.
+ * 
+ * @param <T> role structure type.
+ * @param <U> output type of the operator.
+ * @param <V> operator type.
+ * @param <X> factory type for builders of generic, heavily user-customizable
+ *            operators.
+ */
 public interface GenericFactoryBundle<T, U, V extends Operator<T, U>, //
     X extends GenericBuilderFactory<T, V>> {
+
+  /**
+   * Returns a factory for constructing generic, heavily user-customizable
+   * operators.
+   * 
+   * <p>
+   * Using this factory, the user-specified comparator and/or cost functions can
+   * depend on the input role structure. This greatly extends the range of
+   * definable operators compared to the other provided factories where
+   * comparators or cost functions must be chosen independently of the input role
+   * structure.
+   * 
+   * @return the factory to construct generic operators.
+   */
   X generic();
 }

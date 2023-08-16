@@ -80,11 +80,18 @@ import javax.xml.transform.stream.StreamResult;
  */
 
 public class GraphmlSink extends AbstractSink implements AutoCloseable {
-  public static final String PREFIX_NODE = "n";
-  public static final String PREFIX_EDGE = "e";
-  public static final String PREFIX_KEY = "k";
+  private static final String PREFIX_NODE = "n";
+  private static final String PREFIX_EDGE = "e";
+  private static final String PREFIX_KEY = "k";
 
+  /**
+   * Hints accepted by the graphml sink.
+   */
   public enum Hint {
+    /**
+     * Boolean hint whether to include additional hints to a parser that could
+     * speed up reading the GraphML file.
+     */
     PARSE_INFO
   }
 
@@ -103,6 +110,13 @@ public class GraphmlSink extends AbstractSink implements AutoCloseable {
   private boolean writeParseInfo = false;
   private Network graph;
 
+  /**
+   * Constructs a new sink.
+   * 
+   * @param out the output stream to write to.
+   * @throws ParserConfigurationException if some exception occured while
+   *                                      constructing the XML document.
+   */
   public GraphmlSink(final OutputStream out) throws ParserConfigurationException {
     this.out = out;
     graphDefault = new LinkedHashMap<>();

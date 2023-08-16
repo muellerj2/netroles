@@ -22,6 +22,9 @@ import ch.ethz.sn.visone3.roles.spi.ConverterService;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
+/**
+ * Service making conversion operations producing ranking outputs available.
+ */
 public class RankingConverterServiceProvider implements ConverterService {
 
   @SuppressWarnings("unchecked")

@@ -43,6 +43,10 @@ import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
 
+/**
+ * Provides algorithms to compute standard role equivalences and their
+ * extensions, plus methods for some common operations on equivalences.
+ */
 public class Equivalences {
   private Equivalences() {
   }
@@ -60,12 +64,13 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt relativeRegularEquivalence(int n,
       NetworkView<?, ?> positionView, ConstMapping.OfInt equivalenceRelativeTo) {
@@ -96,17 +101,20 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @return an array representing the maximum relative equivalence that refines
    *         equivalenceToRefine: vertices that have the same associated number in the array (based
    *         on their IDs) are structurally equivalent. The algorithm guarantees the following
-   *         properties of the output array: p[0] = 0 and p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         properties of the output array: <code>p[0] = 0</code> and
+   *         <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt refiningRelativeRegularEquivalence(int n,
       NetworkView<?, ?> positionView, ConstMapping.OfInt equivalenceRelativeTo,
@@ -209,6 +217,7 @@ public class Equivalences {
       }
     }
   }
+
   private static <T> void refiningRegularEquivalenceComparatorImpl(final int n,
       final NetworkView<?, T> positionView, final ConstMapping.OfInt equivalenceRelativeTo,
       Comparator<? super T> comparatorExtension, final EquivalenceAlgorithmState state) {
@@ -362,14 +371,17 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
-   *          Compares the relationships.
+   *          compares the relationships.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array: 
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt relativeRegularEquivalence(final int n,
       NetworkView<? extends V, ? extends V> positionView,
@@ -403,19 +415,24 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
    *          Compares the relationships.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative equivalence that refines
    *         equivalenceToRefine: vertices that have the same associated number in the array (based
    *         on their IDs) are structurally equivalent. The algorithm guarantees the following
-   *         properties of the output array: p[0] = 0 and p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         properties of the output array: <code>p[0] = 0</code> and
+   *         <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt refiningRelativeRegularEquivalence(int n,
       NetworkView<? extends V, ? extends V> positionView,
@@ -573,12 +590,13 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt relativeExactEquivalence(final int n,
       NetworkView<?, ?> positionView, final ConstMapping.OfInt equivalenceRelativeTo) {
@@ -610,17 +628,19 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt refiningRelativeExactEquivalence(final int n,
       NetworkView<?, ?> positionView, ConstMapping.OfInt equivalenceRelativeTo,
@@ -657,12 +677,13 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt relativeRegularEquivalence(int n,
       TransposableNetworkView<?, ?> positionView,
@@ -683,17 +704,20 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @return an array representing the maximum relative equivalence that refines
    *         equivalenceToRefine: vertices that have the same associated number in the array (based
    *         on their IDs) are structurally equivalent. The algorithm guarantees the following
-   *         properties of the output array: p[0] = 0 and p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         properties of the output array: <code>p[0] = 0</code> and
+   *         <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt refiningRelativeRegularEquivalence(int n,
       TransposableNetworkView<?, ?> positionView, ConstMapping.OfInt equivalenceRelativeTo,
@@ -708,19 +732,22 @@ public class Equivalences {
    *
    * @param n
    *          Number of nodes
-   * @param positionViewFF
+   * @param positionView
    *          Network as viewed from the position of the individual nodes
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
-   *          Compares the relationships.
+   *          compares the relationships.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt relativeRegularEquivalence(final int n,
       final TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -741,19 +768,23 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
-   *          Compares the relationships.
+   *          compares the relationships.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative equivalence that refines
    *         equivalenceToRefine: vertices that have the same associated number in the array (based
    *         on their IDs) are structurally equivalent. The algorithm guarantees the following
-   *         properties of the output array: p[0] = 0 and p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         properties of the output array: <code>p[0] = 0</code> and
+   *         <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt refiningRelativeRegularEquivalence(final int n,
       final TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -769,19 +800,22 @@ public class Equivalences {
    *
    * @param n
    *          Number of nodes
-   * @param positionViewFF
+   * @param positionView
    *          Network as viewed from the position of the individual nodes
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
-   *          Compares the relationships.
+   *          compares the relationships.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt relativeRegularEquivalence(final int n,
       final TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -802,19 +836,24 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
-   *          Compares the relationships.
+   *          compares the relationships.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative equivalence that refines
    *         equivalenceToRefine: vertices that have the same associated number in the array (based
    *         on their IDs) are structurally equivalent. The algorithm guarantees the following
-   *         properties of the output array: p[0] = 0 and p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         properties of the output array: <code>p[0] = 0</code> and
+   *         <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt refiningRelativeRegularEquivalence(final int n,
       final TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -839,14 +878,17 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
-   *          Compares the relationships.
+   *          compares the relationships.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   private static <V> Mapping.OfInt relativeRegularEquivalence(final int n,
       final TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -880,21 +922,24 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
-   * @param dir
-   *          Edges from which directions to consider (only incoming, only outgoing, or both)
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
-   *          Compares the relationships.
+   *          compares the relationships.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative equivalence that refines
    *         equivalenceToRefine: vertices that have the same associated number in the array (based
    *         on their IDs) are structurally equivalent. The algorithm guarantees the following
-   *         properties of the output array: p[0] = 0 and p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         properties of the output array: <code>p[0] = 0</code> and
+   *         <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   private static <V> Mapping.OfInt refiningRelativeRegularEquivalence(final int n,
       final TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1084,14 +1129,18 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * 
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt relativeExactEquivalence(final int n,
       NetworkView<? extends V, ? extends V> positionView,
@@ -1124,18 +1173,23 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt refiningRelativeExactEquivalence(final int n,
       final NetworkView<? extends V, ? extends V> positionView,
@@ -1287,12 +1341,13 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt relativeExactEquivalence(final int n,
       TransposableNetworkView<?, ?> positionView,
@@ -1311,17 +1366,19 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt refiningRelativeExactEquivalence(final int n,
       TransposableNetworkView<?, ?> positionView, ConstMapping.OfInt equivalenceRelativeTo,
@@ -1341,14 +1398,18 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * 
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt relativeExactEquivalence(final int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1368,18 +1429,23 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt refiningRelativeExactEquivalence(final int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1400,14 +1466,18 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * 
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt relativeExactEquivalence(final int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1427,18 +1497,23 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt refiningRelativeExactEquivalence(final int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1463,14 +1538,18 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * 
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   private static <V> Mapping.OfInt relativeExactEquivalence(final int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1503,18 +1582,23 @@ public class Equivalences {
    * @param equivalenceRelativeTo
    *          array that represents the equivalence the output equivalence should be regular
    *          relative to. Here, two vertices are equivalent to each other if they have the same
-   *          associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be the relative
    *          regular interior of. Here, two vertices are equivalent to each other if they have the
-   *          same associated integer. The algorithm expects the following format: p[0] = 0 and
-   *          equivalence[i] <= max_{1<=j<=i-1} p[j] + 1
+   *          same associated integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative exact equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   private static <V> Mapping.OfInt refiningRelativeExactEquivalence(final int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1650,8 +1734,8 @@ public class Equivalences {
    *          Network as viewed from the position of the individual nodes
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt strongStructuralEquivalence(int n,
       NetworkView<?, ?> positionView) {
@@ -1680,12 +1764,13 @@ public class Equivalences {
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be a refinement
    *          of. Here, two vertices are equivalent to each other if they have the same associated
-   *          integer. The algorithm expects the following format: p[0] = 0 and equivalence[i] <=
-   *          max_{1<=j<=i-1} p[j] + 1
+   *          integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt refiningStrongStructuralEquivalence(int n,
       NetworkView<?, ?> positionView, final ConstMapping.OfInt equivalenceToRefine) {
@@ -1785,11 +1870,13 @@ public class Equivalences {
    * @param positionView
    *          Network as viewed from the position of the individual nodes
    * @param comparator
-   *          weakly ordered edges
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt strongStructuralEquivalence(int n,
       NetworkView<? extends V, ? extends V> positionView,
@@ -1819,14 +1906,17 @@ public class Equivalences {
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be a refinement
    *          of. Here, two vertices are equivalent to each other if they have the same associated
-   *          integer. The algorithm expects the following format: p[0] = 0 and equivalence[i] <=
-   *          max_{1<=j<=i-1} p[j] + 1
+   *          integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @param comparator
-   *          weakly orders edges
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt refiningStrongStructuralEquivalence(final int n,
       final NetworkView<? extends V, ? extends V> positionView,
@@ -1934,11 +2024,17 @@ public class Equivalences {
    * @param positionView
    *          Network as viewed from the position of the individual nodes
    * @param comparator
-   *          partially orders edges
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
+   * @param <T>
+   *          type for ties in forward direction.
+   * @param <U>
+   *          type for ties in backward direction.
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V, T extends V, U extends V> Mapping.OfInt strongStructuralEquivalence(int n,
       NetworkView<T, U> positionView, PartialComparator<? super V> comparator) {
@@ -2011,8 +2107,8 @@ public class Equivalences {
    *          Network as viewed from the position of the individual nodes
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt strongStructuralEquivalence(int n,
       TransposableNetworkView<?, ?> positionView) {
@@ -2029,11 +2125,13 @@ public class Equivalences {
    * @param positionView
    *          Network as viewed from the position of the individual nodes
    * @param comparator
-   *          weakly orders edges
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt strongStructuralEquivalence(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator) {
@@ -2051,11 +2149,13 @@ public class Equivalences {
    * @param positionView
    *          Network as viewed from the position of the individual nodes
    * @param comparator
-   *          partially orders edges
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt strongStructuralEquivalence(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView, PartialComparator<? super V> comparator) {
@@ -2162,8 +2262,8 @@ public class Equivalences {
    *          Network as viewed from the position of the individual nodes in the other direction
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt weakStructuralEquivalence(int n,
       NetworkView<?, ?> positionViewFirstDirection,
@@ -2196,12 +2296,13 @@ public class Equivalences {
    * @param equivalenceToRefine
    *          array that represents the equivalence the output equivalence should be a refinement
    *          of. Here, two vertices are equivalent to each other if they have the same associated
-   *          integer. The algorithm expects the following format: p[0] = 0 and equivalence[i] <=
-   *          max_{1<=j<=i-1} p[j] + 1
+   *          integer. The algorithm expects the following equivalence format:
+   *          <code>p[0] = 0</code> and 
+   *          <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    * @return an array representing the maximum relative regular equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt refiningWeakStructuralEquivalence(int n,
       NetworkView<?, ?> positionViewFirstDirection,
@@ -2259,19 +2360,16 @@ public class Equivalences {
    * The result is returned in the state parameter.
    *
    * @param n
-   *          a network
+   *          number of nodes.
+   * @param positionView
+   *          network as viewed from the position of the individual nodes.
    * @param state
    *          represents the state of the equivalence that will be refined. Note that this state has
    *          to be internally consistent (processed list empty, counts correct, exactly those
    *          colors allocated that are in use), will be modified and used to return the result. The
    *          state has to be constructed such that the algorithm can use up to 2*n colors.
    * @param doSplit
-   *          Specifies which vertices are allowed to be split up/affected by the algorithm
-   * @param relationships
-   *          Functor that produces an iterable of all relationships incident of a vertex (in one
-   *          direction)
-   * @param relationshipTarget
-   *          Functor that produces the vertex on the other side of a relationship
+   *          specifies which vertices are allowed to be split up/affected by the algorithm
    */
   private static <T> void adjacentStructuralEquivalenceImpl(final int n,
       NetworkView<?, T> positionView, final EquivalenceAlgorithmState state,
@@ -2469,11 +2567,13 @@ public class Equivalences {
    * @param positionViewOtherDirection
    *          Network as viewed from the position of the individual nodes in the other direction
    * @param comparator
-   *          weakly orders edges
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum weak structural equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt weakStructuralEquivalence(final int n,
       NetworkView<? extends V, ? extends V> positionViewFirstDirection,
@@ -2494,11 +2594,13 @@ public class Equivalences {
    * @param positionViewOtherDirection
    *          Network as viewed from the position of the individual nodes in the other direction
    * @param comparator
-   *          partially orders edges
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum weak structural equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt weakStructuralEquivalence(final int n,
       NetworkView<? extends V, ? extends V> positionViewFirstDirection,
@@ -2681,8 +2783,8 @@ public class Equivalences {
    *          Network as viewed from the position of the individual nodes in the other direction
    * @return an array representing the maximum weak structural equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static Mapping.OfInt weakStructuralEquivalence(final int n,
       TransposableNetworkView<?, ?> positionViewFirstDirection,
@@ -2702,11 +2804,13 @@ public class Equivalences {
    * @param positionViewOtherDirection
    *          Network as viewed from the position of the individual nodes in the other direction
    * @param comparator
-   *          weakly orders edges
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum weak structural equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt weakStructuralEquivalence(final int n,
       TransposableNetworkView<? extends V, ? extends V> positionViewFirstDirection,
@@ -2727,11 +2831,13 @@ public class Equivalences {
    * @param positionViewOtherDirection
    *          Network as viewed from the position of the individual nodes in the other direction
    * @param comparator
-   *          partially orders edges
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
    * @return an array representing the maximum weak structural equivalence: vertices that have the
    *         same associated number in the array (based on their IDs) are structurally equivalent.
-   *         The algorithm guarantees the following properties of the output array: p[0] = 0 and
-   *         p[i] <= max_{1<=j<=i-1} p[j] + 1
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    */
   public static <V> Mapping.OfInt weakStructuralEquivalence(final int n,
       TransposableNetworkView<? extends V, ? extends V> positionViewFirstDirection,
@@ -2924,6 +3030,21 @@ public class Equivalences {
     return Mappings.wrapModifiableInt(result);
   }
 
+  /**
+   * Computes the maximum weak equivalence for an unweighted network.
+   * Space: O(n), Runtime: O(n) worst case.
+   *
+   * @param n
+   *          number of nodes.
+   * @param positionView
+   *          network as viewed from the position of the individual nodes.
+   * @param <T>
+   *          type of represented ties in forward direction.
+   * @return an array representing the maximum weak equivalence: vertices that have the same
+   *         associated number in the array (based on their IDs) are structurally equivalent.
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
+   */
   public static <T> Mapping.OfInt weakEquivalence(final int n,
       NetworkView<T, ?> positionView) {
     if (n == 0) {
@@ -2938,6 +3059,25 @@ public class Equivalences {
     return Mappings.wrapModifiableInt(result);
   }
 
+  /**
+   * Computes the maximum weak equivalence for a network with weakly ordered ties.
+   * Space: O(n), Runtime: O(n) worst case.
+   *
+   * @param n
+   *          number of nodes.
+   * @param positionView
+   *          network as viewed from the position of the individual nodes.
+   * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
+   * @param <T>
+   *          type of represented ties in forward direction.
+   * @return an array representing the maximum weak equivalence: vertices that have the same
+   *         associated number in the array (based on their IDs) are structurally equivalent.
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
+   */
   public static <V, T extends V> Mapping.OfInt weakEquivalence(final int n,
       final NetworkView<T, ? extends V> positionView, Comparator<? super V> comparator) {
     if (n == 0) {
@@ -2964,12 +3104,42 @@ public class Equivalences {
     return Mappings.wrapModifiableInt(result);
   }
 
+  /**
+   * Computes the maximum weak equivalence for an unweighted network.
+   * Space: O(n), Runtime: O(n) worst case.
+   *
+   * @param n
+   *          number of nodes.
+   * @param positionView
+   *          network as viewed from the position of the individual nodes.
+   * @return an array representing the maximum weak equivalence: vertices that have the same
+   *         associated number in the array (based on their IDs) are structurally equivalent.
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
+   */
   public static Mapping.OfInt weakEquivalence(int n,
       TransposableNetworkView<?, ?> positionView) {
 
     return weakEquivalenceImpl(n, positionView, MiscUtils.alwaysTrue());
   }
 
+  /**
+   * Computes the maximum weak equivalence for a network with weakly ordered ties.
+   * Space: O(n), Runtime: O(n) worst case.
+   *
+   * @param n
+   *          number of nodes.
+   * @param positionView
+   *          network as viewed from the position of the individual nodes.
+   * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
+   * @return an array representing the maximum weak equivalence: vertices that have the same
+   *         associated number in the array (based on their IDs) are structurally equivalent.
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
+   */
   public static <V> Mapping.OfInt weakEquivalence(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       Comparator<? super V> comparator) {
@@ -2977,6 +3147,23 @@ public class Equivalences {
     return weakEquivalenceImpl(n, positionView, MiscUtils.lessEqualPredicate(comparator));
   }
 
+  /**
+   * Computes the maximum weak equivalence for a network with partially ordered ties.
+   * Space: O(n), Runtime: O(n) worst case.
+   *
+   * @param n
+   *          number of nodes.
+   * @param positionView
+   *          network as viewed from the position of the individual nodes.
+   * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
+   * @return an array representing the maximum weak equivalence: vertices that have the same
+   *         associated number in the array (based on their IDs) are structurally equivalent.
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
+   */
   public static <V> Mapping.OfInt weakEquivalence(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       PartialComparator<? super V> comparator) {
@@ -3039,6 +3226,21 @@ public class Equivalences {
     return Mappings.wrapModifiableInt(result);
   }
 
+  /**
+   * Computes the maximum weak equivalence for an unweighted network.
+   * Space: O(n), Runtime: O(n) worst case.
+   *
+   * @param n
+   *          number of nodes.
+   * @param positionView
+   *          network as viewed from the position of the individual nodes.
+   * @param <T>
+   *          type of represented ties in forward direction.
+   * @return an array representing the maximum weak exact equivalence: vertices that have the
+   *         same associated number in the array (based on their IDs) are structurally equivalent.
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
+   */
   public static <T> Mapping.OfInt weakExactEquivalence(final int n,
       final NetworkView<T, ?> positionView) {
     int[] degreeClassAssignment = new int[n];
@@ -3057,6 +3259,23 @@ public class Equivalences {
     return Mappings.wrapModifiableInt(resultEquivalence);
   }
 
+  /**
+   * Computes the maximum weak equivalence for a network with weakly ordered ties.
+   * Space: O(n), Runtime: O(n) worst case.
+   *
+   * @param n
+   *          number of nodes.
+   * @param positionView
+   *          network as viewed from the position of the individual nodes.
+   * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
+   * @return an array representing the maximum weak exact equivalence: vertices that have the
+   *         same associated number in the array (based on their IDs) are structurally equivalent.
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
+   */
   public static <V> Mapping.OfInt weakExactEquivalence(int n,
       NetworkView<? extends V, ? extends V> positionView,
       Comparator<? super V> comparator) {
@@ -3176,17 +3395,66 @@ public class Equivalences {
 
   }
 
+  /**
+   * Computes the maximum weak equivalence for an unweighted network.
+   * Space: O(n), Runtime: O(n) worst case.
+   *
+   * @param n
+   *          number of nodes.
+   * @param positionView
+   *          network as viewed from the position of the individual nodes.
+   * @param <V>
+   *          base type of represented ties.
+   * @return an array representing the maximum weak exact equivalence: vertices that have the
+   *         same associated number in the array (based on their IDs) are structurally equivalent.
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
+   */
   public static <V> Mapping.OfInt weakExactEquivalence(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView) {
     return weakExactEquivalence(n, positionView, MiscUtils.alwaysTrue());
   }
 
+  /**
+   * Computes the maximum weak equivalence for a network with weakly ordered ties.
+   * Space: O(n), Runtime: O(n) worst case.
+   *
+   * @param n
+   *          number of nodes.
+   * @param positionView
+   *          network as viewed from the position of the individual nodes.
+   * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
+   * @return an array representing the maximum weak exact equivalence: vertices that have the
+   *         same associated number in the array (based on their IDs) are structurally equivalent.
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
+   */
   public static <V> Mapping.OfInt weakExactEquivalence(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       Comparator<? super V> comparator) {
     return weakExactEquivalence(n, positionView, MiscUtils.lessEqualPredicate(comparator));
   }
 
+  /**
+   * Computes the maximum weak equivalence for a network with partially ordered ties.
+   * Space: O(n), Runtime: O(n) worst case.
+   *
+   * @param n
+   *          number of nodes.
+   * @param positionView
+   *          network as viewed from the position of the individual nodes.
+   * @param comparator
+   *          compares the ties.
+   * @param <V>
+   *          base type of represented ties.
+   * @return an array representing the maximum weak exact equivalence: vertices that have the
+   *         same associated number in the array (based on their IDs) are structurally equivalent.
+   *         The algorithm guarantees the following properties of the output array:
+   *         <code>p[0] = 0</code> and <code>p[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
+   */
   public static <V> Mapping.OfInt weakExactEquivalence(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       PartialComparator<? super V> comparator) {
@@ -3274,11 +3542,11 @@ public class Equivalences {
   }
 
   /**
-   * Normalizes a partition representation p such that p[0] = 0 and \( p[i] <= max_{1<=j<=i-1} p[j]
-   * + 1 \).
-   *
-   * @param p
-   *          the partition
+   * Normalizes a partition representation p such that <code>p[0] = 0</code> and
+   * <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
+   * 
+   * @param p the partition
+   * @return the partition in normalized form
    */
   public static int[] normalizePartition(final int[] p) {
     int maxColor = -1;
@@ -3293,11 +3561,11 @@ public class Equivalences {
   }
 
   /**
-   * Normalizes a partition representation p such that p[0] = 0 and \( p[i] <= max_{1<=j<=i-1} p[j]
-   * + 1 \).
+   * Normalizes a partition representation p such that <code>p[0] = 0</code> and
+   * <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    *
-   * @param p
-   *          the partition
+   * @param p the partition
+   * @return the partition in normalized form
    */
   public static Mapping.OfInt normalizePartition(ConstMapping.OfInt p) {
     int maxColor = -1;
@@ -3312,13 +3580,13 @@ public class Equivalences {
   }
 
   /**
-   * Normalizes a partition representation p such that p[0] = 0 and \( p[i] <= max_{1<=j<=i-1} p[j]
-   * + 1 \).
+   * Normalizes a partition representation p such that <code>p[0] = 0</code> and
+   * <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    *
-   * @param p
-   *          the partition
-   * @param tempColorMapStore
-   *          temporary storage, at least O(max color) memory, all entries -1
+   * @param p                 the partition
+   * @param tempColorMapStore temporary storage, at least
+   *                          <code>max_{0 &lt;= i &lt;= n} p[i]+1</code> memory,
+   *                          all entries -1
    */
   static void normalizePartition(final int[] p, final int[] tempColorMapStore) {
     int firstunusedcolor = 0;
@@ -3333,13 +3601,12 @@ public class Equivalences {
   }
 
   /**
-   * Argument validation: Checks that the equivalence conforms to the following format: p[0] = 0 and
-   * \( p[i] <= max_{1<=j<=i-1} p[j] + 1 \).
+   * Argument validation: Checks that the equivalence conforms to the following
+   * equivalence format: <code>p[0] = 0</code> and
+   * <code>equivalence[i] &lt;= max_{1&lt;=j&lt;=i-1} p[j] + 1</code>
    *
-   * @param equivalence
-   *          the equivalence to check
-   * @param argumentName
-   *          the name of the argument
+   * @param equivalence  the equivalence to check
+   * @param argumentName the name of the argument
    */
   private static void checkEquivalenceFormat(ConstMapping.OfInt equivalence,
       final String argumentName) {
@@ -3513,6 +3780,12 @@ public class Equivalences {
     }
   }
 
+  /**
+   * Computes the greatest common refinement of two partitions.
+   * @param p1 the first partition.
+   * @param p2 the second partition.
+   * @return the greatest common refinement of the specified partitions.
+   */
   public static Mapping.OfInt infimum(final ConstMapping.OfInt p1, final ConstMapping.OfInt p2) {
 
     // first, do some preprocessing on the equivalence
@@ -3584,6 +3857,12 @@ public class Equivalences {
     return Mappings.wrapModifiableInt(state.getEquivalence());
   }
 
+  /**
+   * Computes the least common coarsening of two partitions.
+   * @param p1 the first partition.
+   * @param p2 the second partition.
+   * @return the least common coarsening of the specified partitions.
+   */
   public static Mapping.OfInt supremum(final ConstMapping.OfInt p1, final ConstMapping.OfInt p2) {
     int[] pcurr = p1.intStream().toArray();
 

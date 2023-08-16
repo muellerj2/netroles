@@ -17,6 +17,8 @@
 
 package ch.ethz.sn.visone3.roles.impl.structures;
 
+import java.util.Arrays;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.Iterators;
 import ch.ethz.sn.visone3.lang.Mappings;
@@ -27,8 +29,11 @@ import ch.ethz.sn.visone3.roles.structures.RelationBase;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
 import ch.ethz.sn.visone3.roles.structures.Relations;
 
-import java.util.Arrays;
-
+/**
+ * Provides implementations for common operations on binary relations and
+ * rankings as well as representations of some special kinds of binary relations
+ * or rankings.
+ */
 public class CommonBinRelationRankingUtils {
 
   private CommonBinRelationRankingUtils() {
@@ -543,6 +548,15 @@ public class CommonBinRelationRankingUtils {
     return intersect(r1, r2);
   }
 
+  /**
+   * Closes transitively on a binary relation.
+   * 
+   * @param r                 the binary relation
+   * @param addReflexivePairs true if the reflexive pairs should be added (i.e.,
+   *                          the reflexive transitive closure should be computed)
+   * @return the transitive or reflexive transitive closure of the specified
+   *         binary relation
+   */
   public static BinaryRelationOrRanking closeTransitively(BinaryRelation r,
       boolean addReflexivePairs) {
     int n = r.domainSize();

@@ -17,6 +17,9 @@
 
 package ch.ethz.sn.visone3.roles.impl.blocks.factories;
 
+import java.util.Comparator;
+import java.util.function.BiPredicate;
+
 import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 import ch.ethz.sn.visone3.roles.blocks.builders.RoleOperatorBuilder;
 import ch.ethz.sn.visone3.roles.blocks.factories.VariableRoleOperatorBuilderFactory;
@@ -26,10 +29,7 @@ import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
 
-import java.util.Comparator;
-import java.util.function.BiPredicate;
-
-public class RelationalWeakRolesFactory
+class RelationalWeakRolesFactory
     extends VariableBuilderFactoryBase<VariableRoleOperatorBuilderFactory<BinaryRelation>>
     implements VariableRoleOperatorBuilderFactory<BinaryRelation> {
 

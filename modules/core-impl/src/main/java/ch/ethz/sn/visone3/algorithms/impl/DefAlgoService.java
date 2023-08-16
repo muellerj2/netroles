@@ -21,6 +21,9 @@ import ch.ethz.sn.visone3.algorithms.Connectedness;
 import ch.ethz.sn.visone3.algorithms.Stats;
 import ch.ethz.sn.visone3.algorithms.Traversal;
 
+/**
+ * Service offering some network-related algorithms to the API.
+ */
 public class DefAlgoService implements AlgoService {
   @Override
   public Traversal traversals() {

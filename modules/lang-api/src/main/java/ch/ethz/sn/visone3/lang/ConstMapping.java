@@ -148,6 +148,9 @@ public interface ConstMapping<W> extends Iterable<W>, Serializable {
     int[] toUnboxedArray();
   }
 
+  /**
+   * Immutable mapping interface specifically for long integers.
+   */
   interface OfLong extends ConstMapping<Long>, PrimitiveIterable.OfLong {
     @Override
     default Class<Long> getComponentType() {
@@ -212,6 +215,9 @@ public interface ConstMapping<W> extends Iterable<W>, Serializable {
     // }
   }
 
+  /**
+   * Immutable mapping interface specifically for doubles.
+   */
   interface OfDouble extends ConstMapping<Double>, PrimitiveIterable.OfDouble {
     @Override
     default Class<Double> getComponentType() {

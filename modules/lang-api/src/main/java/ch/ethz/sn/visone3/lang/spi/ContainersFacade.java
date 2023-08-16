@@ -29,46 +29,48 @@ public interface ContainersFacade {
   /**
    * Creates a long map backed by hashing.
    * 
-   * @return the empty map.
+   * @param <T> type of mapped values.
+   * @return the new and empty map.
    */
   <T> LongMap<T> longHashMap();
 
   /**
    * Creates a long map backed by hashing.
    * 
-   * @param initialCapacity
-   *          initial capacity of the map.
-   * @return the empty map.
+   * @param initialCapacity initial capacity of the map
+   * @param <T>             type of mapped values.
+   * @return the new and empty map.
    */
   <T> LongMap<T> longHashMap(int initialCapacity);
 
   /**
    * Creates a long map backed by a tree.
    * 
-   * @return the empty map.
+   * @param <T> type of mapped values.
+   * @return the new and empty map.
    */
   <T> LongMap<T> longTreeMap();
-
+  
   /**
    * Creates a long map backed by a tree.
    * 
-   * @param minDegree
-   *          minimum degree of tree node after splitting.
-   * @return the empty map.
+   * @param minDegree minimum degree of tree node after splitting.
+   * @param <T>       type of mapped values.
+   * @return the new and empty map.
    */
   <T> LongMap<T> longTreeMap(int minDegree);
 
   /**
    * Creates a long set backed by hashing.
    * 
-   * @return the empty set.
+   * @return the new and empty set.
    */
   LongSet longHashSet();
 
   /**
    * Creates a long set backed by a tree.
    * 
-   * @return the empty set.
+   * @return the new and empty set.
    */
   LongSet longTreeSet();
 

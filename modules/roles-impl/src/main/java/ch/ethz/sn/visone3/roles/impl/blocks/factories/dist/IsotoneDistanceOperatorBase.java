@@ -19,7 +19,7 @@ package ch.ethz.sn.visone3.roles.impl.blocks.factories.dist;
 import ch.ethz.sn.visone3.roles.blocks.Operator;
 import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
 
-public interface IsotoneDistanceOperatorBase<T> extends Operator<T, IntDistanceMatrix> {
+interface IsotoneDistanceOperatorBase<T> extends Operator<T, IntDistanceMatrix> {
 
   @Override
   default public boolean isIsotone() {

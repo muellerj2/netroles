@@ -16,7 +16,11 @@
  */
 package ch.ethz.sn.visone3.roles.impl.blocks.factories.dist;
 
-public interface ConstantDistanceOperatorBase<T> extends IsotoneDistanceOperatorBase<T> {
+/**
+ * Base class for distance operators which produce constant results (independent
+ * of any supplied input).
+ */
+interface ConstantDistanceOperatorBase<T> extends IsotoneDistanceOperatorBase<T> {
 
   @Override
   default public boolean isConstant() {

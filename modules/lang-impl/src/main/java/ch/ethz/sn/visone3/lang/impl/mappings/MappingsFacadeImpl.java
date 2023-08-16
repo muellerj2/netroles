@@ -30,9 +30,6 @@ import ch.ethz.sn.visone3.lang.spi.MappingsFacade;
  */
 public final class MappingsFacadeImpl implements MappingsFacade {
 
-  public MappingsFacadeImpl() {
-  }
-
   @Override
   public PrimitiveList.OfInt newIntList() {
     return new IntArrayList();

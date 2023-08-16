@@ -17,13 +17,13 @@
 
 package ch.ethz.sn.visone3.lang;
 
-import ch.ethz.sn.visone3.lang.spi.LangProvider;
-import ch.ethz.sn.visone3.lang.spi.MappingsFacade;
-
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+
+import ch.ethz.sn.visone3.lang.spi.LangProvider;
+import ch.ethz.sn.visone3.lang.spi.MappingsFacade;
 
 /**
  * Provides standard implementations for {@link PrimitiveCollector}, as well as methods to apply a
@@ -41,6 +41,13 @@ public final class PrimitiveCollectors {
   /**
    * Works like {@link Stream#collect(java.util.stream.Collector)}, but for
    * {@link PrimitiveCollector} on {@link Stream}.
+   * 
+   * @param stream    the stream to be reduced.
+   * @param collector the collector describing the reduction.
+   * @param <T>       the type of stream values.
+   * @param <A>       the intermediate accumulation type of the collector.
+   * @param <R>       the type of the result.
+   * @return the result of the reduction operation.
    */
   public static <T, A, R> R collect(Stream<T> stream, PrimitiveCollector<T, A, R> collector) {
     return collector.finisher().apply(stream.collect(collector.supplier(), collector.accumulator(),
@@ -50,6 +57,12 @@ public final class PrimitiveCollectors {
   /**
    * Works like {@link Stream#collect(java.util.stream.Collector)}, but for
    * {@link PrimitiveCollector.OfInt} on {@link IntStream}.
+   * 
+   * @param stream    the stream to be reduced.
+   * @param collector the collector describing the reduction.
+   * @param <A>       the intermediate accumulation type of the collector.
+   * @param <R>       the type of the result.
+   * @return the result of the reduction operation.
    */
   public static <A, R> R collect(IntStream stream, PrimitiveCollector.OfInt<A, R> collector) {
     return collector.finisher().apply(stream.collect(collector.supplier(),
@@ -59,6 +72,12 @@ public final class PrimitiveCollectors {
   /**
    * Works like {@link Stream#collect(java.util.stream.Collector)}, but for
    * {@link PrimitiveCollector.OfLong} on {@link LongStream}.
+   * 
+   * @param stream    the stream to be reduced.
+   * @param collector the collector describing the reduction.
+   * @param <A>       the intermediate accumulation type of the collector.
+   * @param <R>       the type of the result.
+   * @return the result of the reduction operation.
    */
   public static <A, R> R collect(LongStream stream, PrimitiveCollector.OfLong<A, R> collector) {
     return collector.finisher().apply(stream.collect(collector.supplier(),
@@ -68,6 +87,12 @@ public final class PrimitiveCollectors {
   /**
    * Works like {@link Stream#collect(java.util.stream.Collector)}, but for
    * {@link PrimitiveCollector.OfDouble} on {@link DoubleStream}.
+   * 
+   * @param stream    the stream to be reduced.
+   * @param collector the collector describing the reduction.
+   * @param <A>       the intermediate accumulation type of the collector.
+   * @param <R>       the type of the result.
+   * @return the result of the reduction operation.
    */
   public static <A, R> R collect(DoubleStream stream, PrimitiveCollector.OfDouble<A, R> collector) {
     return collector.finisher().apply(stream.collect(collector.supplier(),
@@ -108,27 +133,31 @@ public final class PrimitiveCollectors {
   }
 
   /**
-   * Returns a {@link PrimitiveCollector} that collects the input elements into a new
-   * {@link PrimitiveList} for the supplied component type.
+   * Returns a {@link PrimitiveCollector} that collects the input elements into a
+   * new {@link PrimitiveList} for the supplied component type.
    * 
    * <p>
-   * If the supplied component type is one of the primitive types {@code int}, {@code long}, or
-   * {@code double}, returns a {@link PrimitiveCollector.OfInt}, {@link PrimitiveCollector.OfLong}
-   * or {@link PrimitiveCollector.OfDouble} that collect into a {@link PrimitiveList.OfInt},
-   * {@link PrimitiveList.OfLong} or {@link PrimitiveList.OfDouble}, respectively. If the component
-   * type is any other primitive type, throws an exception. For any other type, returns a
-   * {@link PrimitiveCollector} that collects into a {@link PrimitiveList} for that component type.
+   * If the supplied component type is one of the primitive types {@code int},
+   * {@code long}, or {@code double}, returns a {@link PrimitiveCollector.OfInt},
+   * {@link PrimitiveCollector.OfLong} or {@link PrimitiveCollector.OfDouble} that
+   * collect into a {@link PrimitiveList.OfInt}, {@link PrimitiveList.OfLong} or
+   * {@link PrimitiveList.OfDouble}, respectively. If the component type is any
+   * other primitive type, throws an exception. For any other type, returns a
+   * {@link PrimitiveCollector} that collects into a {@link PrimitiveList} for
+   * that component type.
    * 
    * <p>
-   * Note that the list of supported primitive component types might be extended in the future.
+   * Note that the list of supported primitive component types might be extended
+   * in the future.
    * 
-   * @param componentType
-   *          the component type of the {@link PrimitiveList} to collect into
-   * @return a {@link PrimitiveCollector} which collects all the input elements into a
-   *         {@link PrimitiveList} in encounter order
-   * @throws UnsupportedOperationException
-   *           if the component type is primitive and not one of the supported primitive component
-   *           types
+   * @param componentType the class object representing the type of the values to
+   *                      collect into the {@link PrimitiveList}
+   * @param <T>           type of collected values.
+   * @return a {@link PrimitiveCollector} which collects all the input elements
+   *         into a {@link PrimitiveList} in encounter order
+   * @throws UnsupportedOperationException if the component type is primitive but
+   *                                       not one of the supported primitive
+   *                                       component types
    */
   public static <T> PrimitiveCollector<T, ?, ? extends PrimitiveList<T>> toList(
       Class<T> componentType) {
@@ -136,26 +165,28 @@ public final class PrimitiveCollectors {
   }
 
   /**
-   * Returns a {@link PrimitiveCollector} that collects the input elements into a new
-   * {@link PrimitiveList} for the supplied component type.
+   * Returns a {@link PrimitiveCollector} that collects the input elements into a
+   * new {@link PrimitiveList} for the supplied component type.
    * 
    * <p>
-   * If the supplied component type is one of the primitive types {@code int}, {@code long}, or
-   * {@code double}, returns a {@link PrimitiveCollector.OfInt}, {@link PrimitiveCollector.OfLong}
-   * or {@link PrimitiveCollector.OfDouble} that collect into a {@link PrimitiveList.OfInt},
-   * {@link PrimitiveList.OfLong} or {@link PrimitiveList.OfDouble}, respectively. If the component
-   * type is any other primitive type, it produces a collector for the wrapper type. For any other
-   * type, returns a {@link PrimitiveCollector} that collects into a {@link PrimitiveList} for that
-   * component type.
+   * If the supplied component type is one of the primitive types {@code int},
+   * {@code long}, or {@code double}, returns a {@link PrimitiveCollector.OfInt},
+   * {@link PrimitiveCollector.OfLong} or {@link PrimitiveCollector.OfDouble} that
+   * collect into a {@link PrimitiveList.OfInt}, {@link PrimitiveList.OfLong} or
+   * {@link PrimitiveList.OfDouble}, respectively. If the component type is any
+   * other primitive type, it produces a collector for the wrapper type. For any
+   * other type, returns a {@link PrimitiveCollector} that collects into a
+   * {@link PrimitiveList} for that component type.
    * 
    * <p>
-   * Note that the list of primitive component types with specialized primitive lists and collectors
-   * might be extended in the future.
+   * Note that the list of primitive component types with specialized primitive
+   * lists and collectors might be extended in the future.
    * 
-   * @param componentType
-   *          the component type of the {@link PrimitiveList} to collect into
-   * @return a {@link PrimitiveCollector} which collects all the input elements into a
-   *         {@link PrimitiveList} in encounter order
+   * @param componentType the class object representing the type of the values to
+   *                      collect into the {@link PrimitiveList}
+   * @param <T>           type of collected values.
+   * @return a {@link PrimitiveCollector} which collects all the input elements
+   *         into a {@link PrimitiveList} in encounter order
    */
   public static <T> PrimitiveCollector<T, ?, ? extends PrimitiveList<T>> toListAutoboxing(
       Class<T> componentType) {

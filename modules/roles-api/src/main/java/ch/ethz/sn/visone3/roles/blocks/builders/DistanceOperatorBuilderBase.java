@@ -20,6 +20,21 @@ package ch.ethz.sn.visone3.roles.blocks.builders;
 import ch.ethz.sn.visone3.roles.blocks.Operator;
 import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
 
+/**
+ * Builder base for distance operators, defining the signatures of functions for
+ * specifying substitution costs.
+ * 
+ * @param <T> type used to represent ties.
+ * @param <U> role structure type.
+ * @param <V> the full builder type.
+ * @param <W> the type of the weakly-ordering comparator for the ties.
+ * @param <X> the type of the partially-ordering comparator for the ties.
+ * @param <Y> the type of the comparison bipredicate for the ties.
+ * @param <Z> the type of the function computing the cost of substituting one
+ *            tie by another.
+ * @param <S> the type of the function computing the cost of failing to
+ *            substitute a tie.
+ */
 public interface DistanceOperatorBuilderBase<T, U, //
     V extends DistanceOperatorBuilderBase<T, U, V, W, X, Y, Z, S>, W, X, Y, Z, S>
     extends OperatorBuilderBase<T, Operator<U, IntDistanceMatrix>, V, W, X, Y> {

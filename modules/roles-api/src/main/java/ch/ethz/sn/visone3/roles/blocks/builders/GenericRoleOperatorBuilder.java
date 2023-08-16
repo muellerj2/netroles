@@ -19,6 +19,22 @@ package ch.ethz.sn.visone3.roles.blocks.builders;
 
 import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 
+/**
+ * This builder constructs a role operator based on network structure and a
+ * user-specified substitution mechanism which can depend on the input role
+ * structure.
+ * 
+ * <p>
+ * This builder allows to specify the traits of the resulting operators, and
+ * configure a comparator that can depend on the input role structure. The
+ * comparator restricts and thus refines the substitution between ties. The
+ * dependence of the comparator and the cost functions on the input role
+ * structure greatly extends the possibilities for user customization compared
+ * to the other provided builders for operators.
+ * 
+ * @param <T> type for ties
+ * @param <U> type for role structure
+ */
 public interface GenericRoleOperatorBuilder<T, U>
     extends GenericOperatorBuilder<T, U, RoleOperator<U>, GenericRoleOperatorBuilder<T, U>> {
 

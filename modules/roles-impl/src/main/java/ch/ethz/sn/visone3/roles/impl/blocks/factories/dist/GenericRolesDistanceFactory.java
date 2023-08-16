@@ -16,6 +16,12 @@
  */
 package ch.ethz.sn.visone3.roles.impl.blocks.factories.dist;
 
+import java.util.Comparator;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.ToIntBiFunction;
+import java.util.function.ToIntFunction;
+
 import ch.ethz.sn.visone3.roles.blocks.Operator;
 import ch.ethz.sn.visone3.roles.blocks.builders.GenericDistanceOperatorBuilder;
 import ch.ethz.sn.visone3.roles.blocks.factories.GenericDistanceBuilderFactory;
@@ -26,13 +32,7 @@ import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
 
-import java.util.Comparator;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.ToIntBiFunction;
-import java.util.function.ToIntFunction;
-
-public class GenericRolesDistanceFactory<U>
+class GenericRolesDistanceFactory<U>
     extends VariableBuilderFactoryBase<GenericDistanceBuilderFactory<U>>
     implements GenericDistanceBuilderFactory<U> {
 

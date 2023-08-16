@@ -38,10 +38,27 @@ public class IdMapper<T> {
   private final Class<T> componentType;
   int generated = 0;
 
+  /**
+   * Returns a mapper constructed from the index -&gt; id relationship specified
+   * by the provided mapping.
+   * 
+   * @param ids the underlying mapping.
+   * @param <T> the id type.
+   * @return the id mapper.
+   */
   public static <T> IdMapper<T> fixed(final ConstMapping<T> ids) {
     return fixed(ids.getComponentType(), inverseMap(ids));
   }
 
+  /**
+   * Returns a mapper constructed from the index -&gt; id relationship specified
+   * by the provided map.
+   * 
+   * @param <T>  the id type.
+   * @param type the class object describing the id type.
+   * @param ids  the underlying map.
+   * @return the id mapper.
+   */
   public static <T> IdMapper<T> fixed(Class<T> type, final Map<T, Integer> ids) {
     final int max = ids.values().stream().mapToInt(Integer::intValue).distinct().max().orElse(0);
     if (max >= ids.size()) {
@@ -50,10 +67,21 @@ public class IdMapper<T> {
     return new IdMapper<>(type, ids, (id) -> null);
   }
 
+  /**
+   * Returns a mapper representing the identity mapping index -&gt; index.
+   * @return the id mapper.
+   */
   public static IdMapper<Integer> identity() {
     return new IdMapper<>(Integer.class, new HashMap<>(), (id) -> id);
   }
 
+  /**
+   * Returns a mapper sequentially assigning new indices for new id values.
+   * 
+   * @param componentType the class object representing the id type.
+   * @param <T>           the id type.
+   * @return the id mapper.
+   */
   public static <T> IdMapper<T> continous(final Class<T> componentType) {
     final Map<T, Integer> ids = new HashMap<>();
     return new IdMapper<>(componentType, ids, (id) -> ids.size());
@@ -67,6 +95,10 @@ public class IdMapper<T> {
     this.generator = generator;
   }
 
+  /**
+   * Gets the type for ids.
+   * @return the id type.
+   */
   public Class<T> getComponentType() {
     return componentType;
   }
@@ -91,10 +123,18 @@ public class IdMapper<T> {
     return reverse;
   }
 
+  /**
+   * Returns the number of assigned indices.
+   * @return the number of assigned indices.
+   */
   public int size() {
     return ids.size();
   }
 
+  /**
+   * Returns all id to index assignments.
+   * @return set of all id to index assignments.
+   */
   public Set<Map.Entry<T, Integer>> entrySet() {
     return ids.entrySet();
   }
@@ -111,10 +151,19 @@ public class IdMapper<T> {
     }
   }
 
+  /**
+   * Returns the map from ids to indices.
+   * @return the map.
+   */
   public Map<T, Integer> getMapping() {
     return ids;
   }
 
+  /**
+   * Returns an index assigned to the specified id.
+   * @param key the id.
+   * @return the index assigned to this id.
+   */
   public int map(final T key) {
     if (key == null) {
       // input is invalid

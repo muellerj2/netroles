@@ -30,7 +30,7 @@ import java.util.function.Function;
 /*
  * TODO stack with current instead of traverse.
  */
-public abstract class NestedHandler extends DefaultHandler {
+abstract class NestedHandler extends DefaultHandler {
   private static final Logger LOG = LoggerFactory.getLogger(NestedHandler.class);
   final String indent;
   final String tag;

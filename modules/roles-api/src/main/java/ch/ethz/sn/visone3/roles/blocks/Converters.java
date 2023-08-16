@@ -17,6 +17,8 @@
 
 package ch.ethz.sn.visone3.roles.blocks;
 
+import java.util.function.IntBinaryOperator;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.Mappings;
 import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
@@ -25,8 +27,6 @@ import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelations;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 import ch.ethz.sn.visone3.roles.structures.Rankings;
-
-import java.util.function.IntBinaryOperator;
 
 /**
  * Provides some common converters between various types of role relations.
@@ -131,9 +131,9 @@ public class Converters {
   /**
    * Always produces the single-class equivalence.
    * 
-   * @param domainSize
-   *          the size of the underlying domain
-   * @return the converter
+   * @param domainSize the size of the underlying domain.
+   * @param <T>        the type of the (ignored) converter input.
+   * @return the converter.
    */
   public static <T> Operator<T, ConstMapping.OfInt> singleClassEquivalence(int domainSize) {
     return new Operator<T, ConstMapping.OfInt>() {
@@ -168,9 +168,9 @@ public class Converters {
   /**
    * Always produces the all-equivalent ranking.
    * 
-   * @param domainSize
-   *          the size of the underlying domain
-   * @return the converter
+   * @param domainSize the size of the underlying domain.
+   * @param <T>        the type of the (ignored) converter input.
+   * @return the converter.
    */
   public static <T> Operator<T, Ranking> allEqualRanking(int domainSize) {
     return new Operator<T, Ranking>() {
@@ -205,9 +205,9 @@ public class Converters {
   /**
    * Always produces the universal relation.
    * 
-   * @param domainSize
-   *          the size of the underlying domain
-   * @return the converter
+   * @param domainSize the size of the underlying domain.
+   * @param <T>        the type of the (ignored) converter input.
+   * @return the converter.
    */
   public static <T> Operator<T, BinaryRelation> universalRelation(int domainSize) {
     return new Operator<T, BinaryRelation>() {

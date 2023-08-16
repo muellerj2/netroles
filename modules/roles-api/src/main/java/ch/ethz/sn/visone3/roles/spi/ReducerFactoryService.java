@@ -18,7 +18,19 @@ package ch.ethz.sn.visone3.roles.spi;
 
 import ch.ethz.sn.visone3.roles.blocks.Reducers;
 
+/**
+ * Service offering factories for reducers.
+ */
 public interface ReducerFactoryService {
 
+  /**
+   * Returns a factory for the specified role structure type, or {@code null} if
+   * this structure type is not supported by this service.
+   * 
+   * @param <T>           the role structure type.
+   * @param structureType class object representing the role structure type.
+   * @return a factory for the specified role structure type, or {@code null} if
+   *         this structure type is not supported.
+   */
   <T> Reducers.Factory<T> getFactory(Class<T> structureType);
 }

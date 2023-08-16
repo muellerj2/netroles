@@ -41,11 +41,11 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Index returning counting sort. Searches the universe size, runs on the complete array. To get
-   * the sorted sequence apply {@link #permute(Object[], int[])}.
+   * Index returning counting sort. Searches the universe size, runs on the
+   * complete array. To get the sorted sequence apply
+   * {@link #permute(Object[], int[])}.
    * 
-   * @param array
-   *          integer array to sort
+   * @param array integer array to sort.
    * @return integer array storing the sort permutation.
    *
    * @see #countingSort(int[], int, int, int, int) for the full description.
@@ -55,15 +55,15 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Index returning counting sort. Assumes non-negative values, runs on the complete array.To get
-   * the sorted sequence apply {@link #permute(Object[], int[])}.
+   * Index returning counting sort. Assumes non-negative values, runs on the
+   * complete array.To get the sorted sequence apply
+   * {@link #permute(Object[], int[])}.
    *
    *
-   * @param array
-   *          integer array to sort
-   * @param universeSize
-   *          size of the maximum integer range {0, ..., universeSize - 1}. Should be larger than
-   *          {@code Arrays.stream(array).max()}.
+   * @param array        integer array to sort.
+   * @param universeSize size of the maximum integer range {0, ..., universeSize -
+   *                     1}. Should be larger than
+   *                     {@code Arrays.stream(array).max()}.
    * @return integer array storing the sort permutation.
    * 
    * @see #countingSort(int[], int, int, int, int) for the full description.
@@ -73,17 +73,16 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Index returning counting sort. Assumes {@code array[i] + valueOffset} is non-negative, runs on
-   * the complete array.
+   * Index returning counting sort. Assumes {@code array[i] + valueOffset} is
+   * non-negative, runs on the complete array.
    *
-   * @param array
-   *          integer array to sort
-   * @param valueOffset
-   *          integer added to each value in {@code array}.
-   * @param start
-   *          output array where start[i] will contain the index of the first element with value
-   *          {@code i - valueOffset} after this method returns. The array should have size larger
-   *          than {@code Arrays.stream(array).max() + valueOffset} and be filled with zeros.
+   * @param array       integer array to sort.
+   * @param valueOffset integer added to each value in {@code array}.
+   * @param start       output array where start[i] will contain the index of the
+   *                    first element with value {@code i - valueOffset} after
+   *                    this method returns. The array should have size larger
+   *                    than {@code Arrays.stream(array).max() + valueOffset} and
+   *                    be filled with zeros.
    * @return integer array storing the sort permutation.
    * 
    * @see #countingSort(int[], int, int[], int, int) for the full description.
@@ -96,16 +95,12 @@ public final class PrimitiveCollections {
    * Index returning counting sort. To get the sorted sequence apply
    * {@link #permute(Object[], int[])}.
    *
-   * @param array
-   *          integer array.
-   * @param valueOffset
-   *          integer added to each value in {@code array}.
-   * @param universeSize
-   *          should be larger than {@code Arrays.stream(array).max() + valueOffset}.
-   * @param begin
-   *          start index (inclusive).
-   * @param end
-   *          end index (exclusive).
+   * @param array        integer array.
+   * @param valueOffset  integer added to each value in {@code array}.
+   * @param universeSize should be larger than
+   *                     {@code Arrays.stream(array).max() + valueOffset}.
+   * @param begin        start index (inclusive).
+   * @param end          end index (exclusive).
    * @return integer array storing the sort permutation.
    */
   public static int[] countingSort(final int[] array, final int valueOffset, final int universeSize,
@@ -117,18 +112,15 @@ public final class PrimitiveCollections {
    * Index returning counting sort. To get the sorted sequence apply
    * {@link #permute(Object[], int[])}.
    *
-   * @param array
-   *          integer array.
-   * @param valueOffset
-   *          integer added to each value in {@code array}.
-   * @param start
-   *          output array where start[i] will contain the index of the first element with value
-   *          {@code i - valueOffset} after this method returns. The array should have size larger
-   *          than {@code Arrays.stream(array).max() + valueOffset} and be filled with zeros.
-   * @param begin
-   *          start index (inclusive).
-   * @param end
-   *          end index (exclusive).
+   * @param array       integer array.
+   * @param valueOffset integer added to each value in {@code array}.
+   * @param start       output array where start[i] will contain the index of the
+   *                    first element with value {@code i - valueOffset} after
+   *                    this method returns. The array should have size larger
+   *                    than {@code Arrays.stream(array).max() + valueOffset} and
+   *                    be filled with zeros.
+   * @param begin       start index (inclusive).
+   * @param end         end index (exclusive).
    * @return integer array storing the sort permutation.
    */
   public static int[] countingSort(final int[] array, final int valueOffset, final int[] start,
@@ -137,52 +129,53 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Index returning counting sort. Searches the universe size, runs on the complete mapping. To get
-   * the sorted sequence apply {@link #permute(Object[], int[])}.
+   * Index returning counting sort. Searches the universe size, runs on the
+   * complete mapping. To get the sorted sequence apply
+   * {@link #permute(Object[], int[])}.
    *
-   * @param list
-   *          integer mapping to sort
+   * @param list integer mapping to sort.
    * @return integer array storing the sort permutation.
    *
-   * @see #countingSort(ch.ethz.sn.visone3.lang.ConstMapping.OfInt, int, int, int, int) for the full
-   *      description.
+   * @see #countingSort(ch.ethz.sn.visone3.lang.ConstMapping.OfInt, int, int, int,
+   *      int) for the full description.
    */
   public static Mapping.OfInt countingSort(final ConstMapping.OfInt list) {
     return facade().countingSort(list);
   }
 
   /**
-   * Index returning counting sort. Assumes non-negative values, runs on the complete array. To get
-   * the sorted sequence apply {@link #permute(Object[], int[])}.
+   * Index returning counting sort. Assumes non-negative values, runs on the
+   * complete array. To get the sorted sequence apply
+   * {@link #permute(Object[], int[])}.
    *
-   * @param list
-   *          integer mapping to sort
-   * @param universeSize
-   *          size of the maximum integer range {0, ..., universeSize - 1}. Should be larger than
-   *          {@code Arrays.stream(array).max()}.
+   * @param list         integer mapping to sort.
+   * @param universeSize size of the maximum integer range {0, ..., universeSize -
+   *                     1}. Should be larger than
+   *                     {@code Arrays.stream(array).max()}.
    * @return integer array storing the sort permutation.
-   * @see #countingSort(ch.ethz.sn.visone3.lang.ConstMapping.OfInt, int, int, int, int) for the full
-   *      description.
+   * @see #countingSort(ch.ethz.sn.visone3.lang.ConstMapping.OfInt, int, int, int,
+   *      int) for the full description.
    */
   public static Mapping.OfInt countingSort(final ConstMapping.OfInt list, final int universeSize) {
     return countingSort(list, 0, universeSize, 0, list.size());
   }
 
   /**
-   * Index returning counting sort. Assumes {@code list.getInt(i) + valueOffset} is non-negative,
-   * runs on the complete array. To get the sorted sequence apply {@link #permute(Object[], int[])}.
+   * Index returning counting sort. Assumes {@code list.getInt(i) + valueOffset}
+   * is non-negative, runs on the complete array. To get the sorted sequence apply
+   * {@link #permute(Object[], int[])}.
    *
-   * @param list
-   *          integer mapping to sort
-   * @param valueOffset
-   *          integer added to each value in {@code list}.
-   * @param start
-   *          output array where start[i] will contain the index of the first element with value
-   *          {@code i - valueOffset} after this method returns. The array should have size larger
-   *          than {@code list.intStream().max() + valueOffset} and be filled with zeros.
+   * @param list        integer mapping to sort.
+   * @param valueOffset integer added to each value in {@code list}.
+   * @param start       output array where start[i] will contain the index of the
+   *                    first element with value {@code i - valueOffset} after
+   *                    this method returns. The array should have size larger
+   *                    than {@code list.intStream().max() + valueOffset} and be
+   *                    filled with zeros.
    * @return integer array storing the sort permutation.
    * @see #countingSort(ch.ethz.sn.visone3.lang.ConstMapping.OfInt, int,
-   *      ch.ethz.sn.visone3.lang.Mapping.OfInt, int, int) for the full description.
+   *      ch.ethz.sn.visone3.lang.Mapping.OfInt, int, int) for the full
+   *      description.
    */
   public static Mapping.OfInt countingSort(final ConstMapping.OfInt list, final int valueOffset,
       final Mapping.OfInt start) {
@@ -193,16 +186,12 @@ public final class PrimitiveCollections {
    * Index returning counting sort. To get the sorted sequence apply
    * {@link #permute(Object[], int[])}.
    *
-   * @param list
-   *          integer mapping.
-   * @param valueOffset
-   *          integer added to each value in {@code list}.
-   * @param universeSize
-   *          should be larger than {@code list.intStream().max() + valueOffset}.
-   * @param begin
-   *          start index (inclusive).
-   * @param end
-   *          end index (exclusive).
+   * @param list         integer mapping.
+   * @param valueOffset  integer added to each value in {@code list}.
+   * @param universeSize should be larger than
+   *                     {@code list.intStream().max() + valueOffset}.
+   * @param begin        start index (inclusive).
+   * @param end          end index (exclusive).
    * @return integer mapping storing the sort permutation.
    */
   public static Mapping.OfInt countingSort(final ConstMapping.OfInt list, final int valueOffset,
@@ -214,18 +203,15 @@ public final class PrimitiveCollections {
    * Index returning counting sort. To get the sorted sequence apply
    * {@link #permute(Object[], int[])}.
    *
-   * @param list
-   *          integer mapping.
-   * @param valueOffset
-   *          integer added to each value in {@code list}.
-   * @param start
-   *          output mapping where start[i] will contain the index of the first element with value
-   *          {@code i - valueOffset} after this method returns. The mapping should have size larger
-   *          than {@code list.intStream().max() + valueOffset} and be filled with zeros.
-   * @param begin
-   *          start index (inclusive).
-   * @param end
-   *          end index (exclusive).
+   * @param list        integer mapping.
+   * @param valueOffset integer added to each value in {@code list}.
+   * @param start       output mapping where start[i] will contain the index of
+   *                    the first element with value {@code i - valueOffset} after
+   *                    this method returns. The mapping should have size larger
+   *                    than {@code list.intStream().max() + valueOffset} and be
+   *                    filled with zeros.
+   * @param begin       start index (inclusive).
+   * @param end         end index (exclusive).
    * @return integer mapping storing the sort permutation.
    */
   public static Mapping.OfInt countingSort(ConstMapping.OfInt list, final int valueOffset,
@@ -253,11 +239,10 @@ public final class PrimitiveCollections {
   /**
    * Applies a permutation to an array.
    * 
-   * @param array
-   *          the array
-   * @param permutation
-   *          the permutation to apply
-   * @return New array where {@code i}-th element is {@code array[permutation[i]]}.
+   * @param array       the array.
+   * @param permutation the permutation to apply.
+   * @return New array where {@code i}-th element is
+   *         {@code array[permutation[i]]}.
    * @see #permute(Object[], int[]) for the full description.
    */
   public static double[] permute(final double[] array, final int[] permutation) {
@@ -270,11 +255,10 @@ public final class PrimitiveCollections {
   /**
    * Applies a permutation to an array.
    * 
-   * @param array
-   *          the array
-   * @param permutation
-   *          the permutation to apply
-   * @return New array where {@code i}-th element is {@code array[permutation[i]]}.
+   * @param array       the array.
+   * @param permutation the permutation to apply.
+   * @return New array where {@code i}-th element is
+   *         {@code array[permutation[i]]}.
    * @see #permute(Object[], int[]) for the full description.
    */
   public static long[] permute(final long[] array, final int[] permutation) {
@@ -287,11 +271,11 @@ public final class PrimitiveCollections {
   /**
    * Applies a permutation to an array.
    * 
-   * @param array
-   *          the array
-   * @param permutation
-   *          the permutation to apply
-   * @return New array where {@code i}-th element is {@code array[permutation[i]]}.
+   * @param array       the array.
+   * @param permutation the permutation to apply
+   * @param <T>         type of values in array.
+   * @return New array where {@code i}-th element is
+   *         {@code array[permutation[i]]}.
    * @see #countingSort(int[]) and siblings on how to get a permutation.
    */
   public static <T> T[] permute(final T[] array, final int[] permutation) {
@@ -304,13 +288,12 @@ public final class PrimitiveCollections {
   /**
    * Applies a permutation to a given mapping.
    * 
-   * @param list
-   *          the mapping
-   * @param permutation
-   *          the permutation to apply
-   * @return New mapping where {@code i}-th element is {@code list.get(permutation.getInt(i))}.
-   * @see #permute(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt) for the full
-   *      description.
+   * @param list        the mapping.
+   * @param permutation the permutation to apply.
+   * @return New mapping where {@code i}-th element is
+   *         {@code list.get(permutation.getInt(i))}.
+   * @see #permute(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt) for
+   *      the full description.
    */
   public static Mapping.OfInt permute(final ConstMapping.OfInt list,
       final ConstMapping.OfInt permutation) {
@@ -323,13 +306,12 @@ public final class PrimitiveCollections {
   /**
    * Applies a permutation to a given mapping.
    * 
-   * @param list
-   *          the mapping
-   * @param permutation
-   *          the permutation to apply
-   * @return New mapping where {@code i}-th element is {@code list.get(permutation.getInt(i))}.
-   * @see #permute(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt) for the full
-   *      description.
+   * @param list        the mapping.
+   * @param permutation the permutation to apply.
+   * @return New mapping where {@code i}-th element is
+   *         {@code list.get(permutation.getInt(i))}.
+   * @see #permute(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt) for
+   *      the full description.
    */
   public static ConstMapping.OfDouble permute(final ConstMapping.OfDouble list,
       final ConstMapping.OfInt permutation) {
@@ -342,13 +324,12 @@ public final class PrimitiveCollections {
   /**
    * Applies a permutation to a given mapping.
    * 
-   * @param list
-   *          the mapping
-   * @param permutation
-   *          the permutation to apply
-   * @return New mapping where {@code i}-th element is {@code list.get(permutation.getInt(i))}.
-   * @see #permute(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt) for the full
-   *      description.
+   * @param list        the mapping.
+   * @param permutation the permutation to apply.
+   * @return New mapping where {@code i}-th element is
+   *         {@code list.get(permutation.getInt(i))}.
+   * @see #permute(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt) for
+   *      the full description.
    */
   public static ConstMapping.OfLong permute(final ConstMapping.OfLong list,
       final ConstMapping.OfInt permutation) {
@@ -361,13 +342,13 @@ public final class PrimitiveCollections {
   /**
    * Applies a permutation to a given mapping.
    * 
-   * @param list
-   *          the mapping
-   * @param permutation
-   *          the permutation to apply
-   * @return New mapping where {@code i}-th element is {@code list.get(permutation.getInt(i))}.
-   * @see #countingSort(ch.ethz.sn.visone3.lang.ConstMapping.OfInt) and siblings on how to get a
-   *      permutation.
+   * @param list        the mapping.
+   * @param permutation the permutation to apply.
+   * @param <T>         type of values in mapping.
+   * @return New mapping where {@code i}-th element is
+   *         {@code list.get(permutation.getInt(i))}.
+   * @see #countingSort(ch.ethz.sn.visone3.lang.ConstMapping.OfInt) and siblings
+   *      on how to get a permutation.
    */
   public static <T> Mapping<T> permute(final ConstMapping<T> list,
       final ConstMapping.OfInt permutation) {
@@ -378,13 +359,13 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Applies a function to each element of an array and returns the resulting array.
+   * Applies a function to each element of an array and returns the resulting
+   * array.
    * 
-   * @param array
-   *          the array
-   * @param mapper
-   *          the function to apply to each array element
-   * @return new array obtained by applying the {@code mapper} to each array element
+   * @param array  the array.
+   * @param mapper the function to apply to each array element.
+   * @return new array obtained by applying the {@code mapper} to each array
+   *         element
    * @see #map(double[], DoubleUnaryOperator)
    * @see #map(Object[], Function)
    */
@@ -397,13 +378,13 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Applies a function to each element of an array and returns the resulting array.
+   * Applies a function to each element of an array and returns the resulting
+   * array.
    * 
-   * @param array
-   *          the array
-   * @param mapper
-   *          the function to apply to each array element
-   * @return new array obtained by applying the {@code mapper} to each array element
+   * @param array  the array.
+   * @param mapper the function to apply to each array element.
+   * @return new array obtained by applying the {@code mapper} to each array
+   *         element
    * @see #map(int[], IntUnaryOperator)
    * @see #map(Object[], Function)
    */
@@ -416,13 +397,14 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Applies a function to each element of an array and returns the resulting array.
+   * Applies a function to each element of an array and returns the resulting
+   * array.
    * 
-   * @param array
-   *          the array
-   * @param mapper
-   *          the function to apply to each array element
-   * @return new array obtained by applying the {@code mapper} to each array element
+   * @param array  the array
+   * @param mapper the function to apply to each array element.
+   * @param <T>    type of values in array.
+   * @return new array obtained by applying the {@code mapper} to each array
+   *         element
    * @see #map(double[], DoubleUnaryOperator)
    * @see #map(int[], IntUnaryOperator)
    */
@@ -436,18 +418,15 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Applies the given array to a list of indices, or {@code missingValue} if a provided index is
-   * negative.
+   * Applies the given array to a list of indices, or {@code missingValue} if a
+   * provided index is negative.
    * 
-   * @param array
-   *          the array
-   * @param indices
-   *          the list of indices to apply
-   * @param missingValue
-   *          the missing value to use for negative indices
+   * @param array        the array.
+   * @param indices      the list of indices to apply.
+   * @param missingValue the missing value to use for negative indices.
    *
-   * @return New array where {@code i}-th element is {@code array[indices[i]]} if {@code indices[i]}
-   *         is non-negative, else {@code missingValue}.
+   * @return New array where {@code i}-th element is {@code array[indices[i]]} if
+   *         {@code indices[i]} is non-negative, else {@code missingValue}.
    * @see #compose(double[], int[], double)
    * @see #compose(long[], int[], long)
    * @see #compose(Object[], int[], Object)
@@ -457,18 +436,15 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Applies the given array to a list of indices, or {@code missingValue} if a provided index is
-   * negative.
+   * Applies the given array to a list of indices, or {@code missingValue} if a
+   * provided index is negative.
    * 
-   * @param array
-   *          the array
-   * @param indices
-   *          the list of indices to apply
-   * @param missingValue
-   *          the missing value to use for negative indices
+   * @param array        the array.
+   * @param indices      the list of indices to apply.
+   * @param missingValue the missing value to use for negative indices.
    *
-   * @return New array where {@code i}-th element is {@code array[indices[i]]} if {@code indices[i]}
-   *         is non-negative, else {@code missingValue}.
+   * @return New array where {@code i}-th element is {@code array[indices[i]]} if
+   *         {@code indices[i]} is non-negative, else {@code missingValue}.
    * @see #compose(int[], int[], int)
    * @see #compose(long[], int[], long)
    * @see #compose(Object[], int[], Object)
@@ -479,18 +455,15 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Applies the given array to a list of indices, or {@code missingValue} if a provided index is
-   * negative.
+   * Applies the given array to a list of indices, or {@code missingValue} if a
+   * provided index is negative.
    * 
-   * @param array
-   *          the array
-   * @param indices
-   *          the list of indices to apply
-   * @param missingValue
-   *          the missing value to use for negative indices
+   * @param array        the array.
+   * @param indices      the list of indices to apply.
+   * @param missingValue the missing value to use for negative indices.
    *
-   * @return New array where {@code i}-th element is {@code array[indices[i]]} if {@code indices[i]}
-   *         is non-negative, else {@code missingValue}.
+   * @return New array where {@code i}-th element is {@code array[indices[i]]} if
+   *         {@code indices[i]} is non-negative, else {@code missingValue}.
    * @see #compose(double[], int[], double)
    * @see #compose(int[], int[], int)
    * @see #compose(Object[], int[], Object)
@@ -500,41 +473,39 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Applies the given array to a list of indices, or {@code missingValue} if a provided index is
-   * negative.
+   * Applies the given array to a list of indices, or {@code missingValue} if a
+   * provided index is negative.
    * 
-   * @param array
-   *          the array
-   * @param indices
-   *          the list of indices to apply
-   * @param missingValue
-   *          the missing value to use for negative indices
+   * @param array        the array.
+   * @param indices      the list of indices to apply.
+   * @param missingValue the missing value to use for negative indices.
+   * @param <T>          type of values in the array.
    *
-   * @return New array where {@code i}-th element is {@code array[indices[i]]} if {@code indices[i]}
-   *         is non-negative, else {@code missingValue}.
-   * @see #countingSort(int[], int, int, int, int) and siblings on how to get a list of indices.
+   * @return New array where {@code i}-th element is {@code array[indices[i]]} if
+   *         {@code indices[i]} is non-negative, else {@code missingValue}.
+   * @see #countingSort(int[], int, int, int, int) and siblings on how to get a
+   *      list of indices.
    */
   public static <T> T[] compose(final T[] array, final int[] indices, final T missingValue) {
     return facade().compose(array, indices, missingValue);
   }
 
   /**
-   * Applies the given mapping to a list of indices, or {@code missingValue} if a provided index is
-   * negative.
+   * Applies the given mapping to a list of indices, or {@code missingValue} if a
+   * provided index is negative.
    *
-   * @param list
-   *          the mapping
-   * @param indices
-   *          the list of indices to apply
-   * @param missingValue
-   *          the missing value to use for negative indices
-   * @return New mapping where {@code i}-th element is {@code list.get(indices.getInt(i))} if
-   *         {@code indices[i]} is non-negative, else {@code missingValue}.
+   * @param list         the mapping.
+   * @param indices      the list of indices to apply.
+   * @param missingValue the missing value to use for negative indices.
+   * @return New mapping where {@code i}-th element is
+   *         {@code list.get(indices.getInt(i))} if {@code indices.getInt(i)} is
+   *         non-negative, else {@code missingValue}.
    * @see #compose(ch.ethz.sn.visone3.lang.ConstMapping.OfDouble,
    *      ch.ethz.sn.visone3.lang.ConstMapping.OfInt, double)
    * @see #compose(ch.ethz.sn.visone3.lang.ConstMapping.OfLong,
    *      ch.ethz.sn.visone3.lang.ConstMapping.OfInt, long)
-   * @see #compose(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt, Object)
+   * @see #compose(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt,
+   *      Object)
    */
   public static Mapping.OfInt compose(final ConstMapping.OfInt list,
       final ConstMapping.OfInt indices, final int missingValue) {
@@ -542,22 +513,21 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Applies the given mapping to a list of indices, or {@code missingValue} if a provided index is
-   * negative.
+   * Applies the given mapping to a list of indices, or {@code missingValue} if a
+   * provided index is negative.
    *
-   * @param list
-   *          the mapping
-   * @param indices
-   *          the list of indices to apply
-   * @param missingValue
-   *          the missing value to use for negative indices
-   * @return New mapping where {@code i}-th element is {@code list.get(indices.getInt(i))} if
-   *         {@code indices[i]} is non-negative, else {@code missingValue}.
+   * @param list         the mapping.
+   * @param indices      the list of indices to apply.
+   * @param missingValue the missing value to use for negative indices.
+   * @return New mapping where {@code i}-th element is
+   *         {@code list.get(indices.getInt(i))} if {@code indices.getInt(i)} is
+   *         non-negative, else {@code missingValue}.
    * @see #compose(ch.ethz.sn.visone3.lang.ConstMapping.OfInt,
    *      ch.ethz.sn.visone3.lang.ConstMapping.OfInt, int)
    * @see #compose(ch.ethz.sn.visone3.lang.ConstMapping.OfLong,
    *      ch.ethz.sn.visone3.lang.ConstMapping.OfInt, long)
-   * @see #compose(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt, Object)
+   * @see #compose(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt,
+   *      Object)
    */
   public static Mapping.OfDouble compose(final ConstMapping.OfDouble list,
       final ConstMapping.OfInt indices, final double missingValue) {
@@ -565,22 +535,21 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Applies the given mapping to a list of indices, or {@code missingValue} if a provided index is
-   * negative.
+   * Applies the given mapping to a list of indices, or {@code missingValue} if a
+   * provided index is negative.
    *
-   * @param list
-   *          the mapping
-   * @param indices
-   *          the list of indices to apply
-   * @param missingValue
-   *          the missing value to use for negative indices
-   * @return New mapping where {@code i}-th element is {@code list.get(indices.getInt(i))} if
-   *         {@code indices[i]} is non-negative, else {@code missingValue}.
+   * @param list         the mapping.
+   * @param indices      the list of indices to apply.
+   * @param missingValue the missing value to use for negative indices
+   * @return New mapping where {@code i}-th element is
+   *         {@code list.get(indices.getInt(i))} if {@code indices.getInt(i)} is
+   *         non-negative, else {@code missingValue}.
    * @see #compose(ch.ethz.sn.visone3.lang.ConstMapping.OfDouble,
    *      ch.ethz.sn.visone3.lang.ConstMapping.OfInt, double)
    * @see #compose(ch.ethz.sn.visone3.lang.ConstMapping.OfInt,
    *      ch.ethz.sn.visone3.lang.ConstMapping.OfInt, int)
-   * @see #compose(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt, Object)
+   * @see #compose(ConstMapping, ch.ethz.sn.visone3.lang.ConstMapping.OfInt,
+   *      Object)
    */
   public static Mapping.OfLong compose(final ConstMapping.OfLong list,
       final ConstMapping.OfInt indices, final long missingValue) {
@@ -588,19 +557,18 @@ public final class PrimitiveCollections {
   }
 
   /**
-   * Applies the given mapping to a list of indices, or {@code missingValue} if a provided index is
-   * negative.
+   * Applies the given mapping to a list of indices, or {@code missingValue} if a
+   * provided index is negative.
    *
-   * @param list
-   *          the mapping
-   * @param indices
-   *          the list of indices to apply
-   * @param missingValue
-   *          the missing value to use for negative indices
-   * @return New mapping where {@code i}-th element is {@code list.get(indices.getInt(i))} if
-   *         {@code indices[i]} is non-negative, else {@code missingValue}.
-   * @see #countingSort(ch.ethz.sn.visone3.lang.ConstMapping.OfInt, int, int, int, int) and siblings
-   *      on how to get a list of indices.
+   * @param list         the mapping.
+   * @param indices      the list of indices to apply.
+   * @param missingValue the missing value to use for negative indices.
+   * @param <T>          type of values in mapping.
+   * @return New mapping where {@code i}-th element is
+   *         {@code list.get(indices.getInt(i))} if {@code indices.getInt(i)} is
+   *         non-negative, else {@code missingValue}.
+   * @see #countingSort(ch.ethz.sn.visone3.lang.ConstMapping.OfInt, int, int, int,
+   *      int) and siblings on how to get a list of indices.
    */
   public static <T> Mapping<T> compose(final ConstMapping<T> list, final ConstMapping.OfInt indices,
       final T missingValue) {

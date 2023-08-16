@@ -17,8 +17,6 @@
 
 package ch.ethz.sn.visone3.algorithms;
 
-import ch.ethz.sn.visone3.lang.ConstMapping;
-
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -26,6 +24,8 @@ import java.util.Objects;
 import java.util.PrimitiveIterator;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+
+import ch.ethz.sn.visone3.lang.ConstMapping;
 
 /**
  * Provides methods for descriptive statistics.
@@ -117,8 +117,8 @@ public interface Stats {
   /**
    * Categorical histogram.
    *
-   * @param array
-   *          input values.
+   * @param array input values.
+   * @param <T>   type of data values.
    * @return histogram of categorical values.
    */
   <T> Hist<T> hist(final ConstMapping<T> array);
@@ -126,10 +126,9 @@ public interface Stats {
   /**
    * Returns the index of the first global maximum in the array.
    * 
-   * @param array
-   *          the array to search.
-   * @param comp
-   *          the ordering of the values in the array.
+   * @param array the array to search.
+   * @param comp  the ordering of the values in the array.
+   * @param <T>   type of data values.
    * @return index of the first global maximum.
    */
   <T> int argmax(final T[] array, final Comparator<T> comp);
@@ -161,8 +160,10 @@ public interface Stats {
   /**
    * Determines the range (minimum and maximum) of values.
    *
-   * @param values
-   *          input values.
+   * @param values input values.
+   * @param comp   defines the ordering which is used to determine minimum and
+   *               maximum.
+   * @param <T>    type of data values.
    * @return Range of values.
    */
   <T> Range<T> minMax(final Supplier<? extends Iterator<T>> values, final Comparator<T> comp);
@@ -192,7 +193,13 @@ public interface Stats {
    *          the value type
    */
   public class Range<T> {
+    /**
+     * Minimum value of the range.
+     */
     public final T min;
+    /**
+     * Maximum value of the range.
+     */
     public final T max;
     final Comparator<T> less;
 
@@ -229,9 +236,18 @@ public interface Stats {
 
   /**
    * Histogram helper for non-integer types.
+   * 
+   * @param <T> type of data values.
    */
   class Hist<T> {
+    /**
+     * Distinct values in the data.
+     */
     public final T[] value;
+    /**
+     * Counts on the number of occurrences: {@code value[i]} appeared
+     * {@code count[i]} times.
+     */
     public final int[] count;
 
     /**

@@ -18,14 +18,13 @@
 package ch.ethz.sn.visone3.roles.position;
 
 /**
- * Represents a perspective on a network and the positions of the nodes, expressed by some kind of
- * ties, in it. Allows to transpose the network or adjust the node position based on the pair of
- * nodes involved in the pairwise comparison.
+ * Represents a perspective on a network and the positions of the nodes,
+ * expressed by some kind of ties, in it. Allows to transpose the network or
+ * adjust the node position based on the pair of nodes involved in the pairwise
+ * comparison.
  * 
- * @param <T>
- *          type of (forward) ties from the nodes
- * @param <U>
- *          type of backward ties pointing to the nodes
+ * @param <T> type of (forward) ties from the nodes.
+ * @param <U> type of backward ties pointing to the nodes.
  */
 public interface TransposableNetworkView<T, U> {
 

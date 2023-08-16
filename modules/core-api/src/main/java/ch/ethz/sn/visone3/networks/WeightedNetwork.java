@@ -17,16 +17,22 @@
 
 package ch.ethz.sn.visone3.networks;
 
-import ch.ethz.sn.visone3.lang.ConstMapping;
-
 import java.io.Serializable;
+
+import ch.ethz.sn.visone3.lang.ConstMapping;
 
 /**
  * Represents a network with some edge weight/attribute in a type-safe way.
  */
 public class WeightedNetwork<T, M extends ConstMapping<T>> implements Serializable {
   private static final long serialVersionUID = 3279601926700689594L;
+  /**
+   * Binary incidence structure of the network.
+   */
   private final Network network;
+  /**
+   * Weights on the edges of the network.
+   */
   private final M weight;
 
   /**

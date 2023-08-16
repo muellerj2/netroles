@@ -52,8 +52,17 @@ public interface Source<H> extends AutoCloseable {
      */
     T defaultValue();
 
+    /**
+     * Range describing and converging to integer values.
+     */
     Range<Integer> INT = Range.of(int.class, 0, Integer::parseInt);
+    /**
+     * Range describing and converging to double values.
+     */
     Range<Double> DOUBLE = Range.of(double.class, 0., Double::parseDouble);
+    /**
+     * Range describing and converging to string values.
+     */
     Range<String> STRING = Range.of(String.class, null, String::valueOf);
 
     /**
@@ -187,6 +196,7 @@ public interface Source<H> extends AutoCloseable {
    * perform the auto configuration.
    * 
    * @return the result of the parse.
+   * @throws IOException forwards exceptions of underlying IO.
    */
   SourceFormat parse() throws IOException;
 

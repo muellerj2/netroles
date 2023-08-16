@@ -35,7 +35,8 @@ public class PrimitiveContainers {
   /**
    * Creates a long map backed by hashing.
    * 
-   * @return the new and empty map
+   * @param <T> type of mapped values.
+   * @return the new and empty map.
    */
   public static <T> LongMap<T> longHashMap() {
     return facade().longHashMap();
@@ -44,9 +45,9 @@ public class PrimitiveContainers {
   /**
    * Creates a long map backed by hashing.
    * 
-   * @param initialCapacity
-   *          initial capacity of the map
-   * @return the new and empty map
+   * @param initialCapacity initial capacity of the map
+   * @param <T>             type of mapped values.
+   * @return the new and empty map.
    */
   public static <T> LongMap<T> longHashMap(int initialCapacity) {
     return facade().longHashMap(initialCapacity);
@@ -55,7 +56,8 @@ public class PrimitiveContainers {
   /**
    * Creates a long map backed by a tree.
    * 
-   * @return the new and empty map
+   * @param <T> type of mapped values.
+   * @return the new and empty map.
    */
   public static <T> LongMap<T> longTreeMap() {
     return facade().longTreeMap();
@@ -64,9 +66,9 @@ public class PrimitiveContainers {
   /**
    * Creates a long map backed by a tree.
    * 
-   * @param minDegree
-   *          minimum degree of tree node after splitting
-   * @return the new and empty map
+   * @param minDegree minimum degree of tree node after splitting.
+   * @param <T>       type of mapped values.
+   * @return the new and empty map.
    */
   public static <T> LongMap<T> longTreeMap(int minDegree) {
     return facade().longTreeMap(minDegree);
@@ -75,7 +77,7 @@ public class PrimitiveContainers {
   /**
    * Creates a long set backed by hashing.
    * 
-   * @return the new and empty set
+   * @return the new and empty set.
    */
   public static LongSet longHashSet() {
     return facade().longHashSet();
@@ -84,7 +86,7 @@ public class PrimitiveContainers {
   /**
    * Creates a long set backed by a tree.
    * 
-   * @return the new and empty set
+   * @return the new and empty set.
    */
   public static LongSet longTreeSet() {
     return facade().longTreeSet();
@@ -93,7 +95,7 @@ public class PrimitiveContainers {
   /**
    * Creates an integer queue.
    * 
-   * @return the new and empty queue
+   * @return the new and empty queue.
    */
   public static PrimitiveQueue.OfInt intQueue() {
     return facade().intQueue();
@@ -102,9 +104,8 @@ public class PrimitiveContainers {
   /**
    * Creates an int-double min heap for a fixed universe size.
    * 
-   * @param universeSize
-   *          the universe size
-   * @return the new and empty min heap
+   * @param universeSize the universe size.
+   * @return the new and empty min heap.
    */
   public static IntDoubleHeap fixedUniverseIntDoubleMinHeap(int universeSize) {
     return facade().fixedUniverseIntDoubleMinHeap(universeSize);

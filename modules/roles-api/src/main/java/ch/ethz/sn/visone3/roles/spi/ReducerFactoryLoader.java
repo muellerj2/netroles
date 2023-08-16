@@ -16,10 +16,15 @@
  */
 package ch.ethz.sn.visone3.roles.spi;
 
-import ch.ethz.sn.visone3.roles.blocks.Reducers;
-
+import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
+import ch.ethz.sn.visone3.roles.blocks.Reducer;
+import ch.ethz.sn.visone3.roles.blocks.Reducers;
+
+/**
+ * Loader for services providing factories for {@link Reducer} objects.
+ */
 public class ReducerFactoryLoader {
 
   private ReducerFactoryLoader() {
@@ -29,10 +34,25 @@ public class ReducerFactoryLoader {
   private static final ReducerFactoryLoader INSTANCE = new ReducerFactoryLoader();
   private ServiceLoader<ReducerFactoryService> loader;
 
+  /**
+   * Gets the singleton instance of this loader.
+   * 
+   * @return the singleton instance.
+   */
   public static ReducerFactoryLoader getInstance() {
     return INSTANCE;
   }
 
+  /**
+   * Returns a factory compatible with the specified role structure type, if any
+   * registered service provides such a factory.
+   * 
+   * @param <T>           the role structure type.
+   * @param structureType class object representing the role structure type.
+   * @return a factory compatible with the specified role structure type.
+   * @throws UnsupportedOperationException if no registered service provides a
+   *                                       factory for this role structure type.
+   */
   public <T> Reducers.Factory<T> getFactory(Class<T> structureType) {
     for (ReducerFactoryService service : loader) {
       Reducers.Factory<T> result = service.getFactory(structureType);
@@ -40,10 +60,18 @@ public class ReducerFactoryLoader {
         return result;
       }
     }
-    throw new IllegalStateException(
+    throw new UnsupportedOperationException(
         "No factory for type " + structureType + " provided by any service");
   }
 
+  /**
+   * Returns the factory for reducers on distances provided by the registered
+   * service.
+   * 
+   * @return the factory for reducers on distances.
+   * @throws NoSuchElementException if no service providing a factory for distance
+   *                                reducers is registered.
+   */
   public Reducers.DistanceFactory getDistanceFactory() {
     return ServiceLoader.load(ReducerDistanceFactoryService.class).iterator().next().getFactory();
   }

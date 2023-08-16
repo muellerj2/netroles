@@ -56,23 +56,26 @@ import java.util.stream.IntStream;
  * Example:
  * 
  * <pre>
- * final CsvEdgeListSource source = new CsvEdgeListSource(new DirectedNetworkImpl.Builder(), true);
+ * final CsvEdgeListSource source = new CsvEdgeListSource(stream, true);
  *
  * // configure what to read
- * source.dyad(SOURCE, TARGET, IntRangeImpl.NO_ZERO);
- * source.range(VALUE, IntRangeImpl.NO_ZERO);
+ * source.dyad(DyadType.DIRECTED, SOURCE, TARGET, Source.Range.INT);
+ * source.range(VALUE, Source.Range.INT);
  *
  * // read
  * try (final InputStream in = new ByteArrayInputStream(data.getBytes())) {
- *   source.parse(in);
+ *   source.parse();
  * }
  * </pre>
  */
 public class CsvEdgeListSource implements SourceFormat, Source<String> {
   private static final Logger LOG = LoggerFactory.getLogger(CsvEdgeListSource.class);
   // single monadic result with original node names
+  /**
+   * Name of the generated ID attribute.
+   */
   public static final String ID = "id";
-  public static final String BUILDER_UNINTIALIZED_MESSAGE = "first call #dyad()";
+  private static final String BUILDER_UNINTIALIZED_MESSAGE = "first call #dyad()";
   private final InputStream in;
   private final boolean header;
   private final Map<String, Range<?>> name2range;
@@ -86,6 +89,12 @@ public class CsvEdgeListSource implements SourceFormat, Source<String> {
   private IdMapper<String> nodeIds;
   private IdMapper<String> affiliationIds;
 
+  /**
+   * Constructs the source.
+   * 
+   * @param in     the stream to read from.
+   * @param header true if the CSV data contains a header line, otherwise false.
+   */
   public CsvEdgeListSource(final InputStream in, final boolean header) {
     this.in = in;
     this.header = header;

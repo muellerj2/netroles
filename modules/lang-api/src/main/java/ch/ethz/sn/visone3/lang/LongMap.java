@@ -20,45 +20,43 @@ package ch.ethz.sn.visone3.lang;
 /**
  * A map from long keys to arbitrary values.
  * 
- * @param <T>
- *          value type
+ * @param <T> value type.
  */
 public interface LongMap<T> {
 
   /**
    * Sets the value for the given key.
    * 
-   * @param key
-   *          the key
-   * @param value
-   *          the value
-   * @return the old value assigned to the key, or null if no prior value had been assigned.
+   * @param key   the key.
+   * @param value the value.
+   * @return the old value assigned to the key, or null if no prior value had been
+   *         assigned.
    */
   T put(long key, T value);
 
   /**
    * Returns the value at the key, or null if no value is assigned.
    * 
-   * @param key
-   *          the key
-   * @return the value at the key, or null if no value has been assigned to the key
+   * @param key the key.
+   * @return the value at the key, or null if no value has been assigned to the
+   *         key
    */
   T get(long key);
 
   /**
-   * Returns the value at the key, or the default alue if no value is assigned.
+   * Returns the value at the key, or the default value if no value is assigned.
    * 
-   * @param key
-   *          the key
-   * @return the value at the key, or the default if no value has been assigned to the key
+   * @param key the key.
+   * @param def the default value if no value has been assigned to the key.
+   * @return the value at the key, or the default if no value has been assigned to
+   *         the key
    */
   T getOrDefault(long key, T def);
 
   /**
    * Removes the value at the key.
    * 
-   * @param key
-   *          the key
+   * @param key the key.
    * @return the removed value at the key
    */
   T remove(long key);
@@ -66,8 +64,7 @@ public interface LongMap<T> {
   /**
    * Returns true if the map contains a mapping for the key.
    * 
-   * @param key
-   *          the key
+   * @param key the key.
    * @return true if the map contains a mapping for the key, false otherwise
    */
   boolean contains(long key);

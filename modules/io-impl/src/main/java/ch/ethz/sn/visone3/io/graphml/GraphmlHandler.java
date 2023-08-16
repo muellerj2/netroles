@@ -34,7 +34,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 // Handles the GraphMLTags
-public class GraphmlHandler extends NestedHandler {
+class GraphmlHandler extends NestedHandler {
   private static final Logger LOG = LoggerFactory.getLogger(GraphmlHandler.class);
   private final Map<String, Integer> nodeIds = new HashMap<>();
   final PrimitiveList.OfInt sources = Mappings.newIntList();

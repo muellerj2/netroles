@@ -16,11 +16,33 @@
  */
 package ch.ethz.sn.visone3.roles.distances;
 
+/**
+ * Represents a (not necessarily symmetric) integer distance matrix on a
+ * quadratic domain of a particular size.
+ */
 public interface IntDistanceMatrix {
 
+  /**
+   * Returns the size of the domain.
+   * 
+   * @return the size.
+   */
   public int getDomainSize();
 
+  /**
+   * Returns the distance from {@code i} to {@code j}.
+   * 
+   * @param i the first element.
+   * @param j the second element.
+   * @return the distance from {@code i} to {@code j}.
+   */
   public int getDistance(int i, int j);
 
+  /**
+   * Produces a representation of the pairwise distances as a two-dimensional
+   * integer array.
+   * 
+   * @return a two-dimensional integer array containing pairwise distances.
+   */
   public int[][] asMatrix();
 }

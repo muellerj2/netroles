@@ -19,6 +19,10 @@ package ch.ethz.sn.visone3.roles.impl.blocks.factories.dist;
 import ch.ethz.sn.visone3.roles.blocks.factories.BasicDistanceOperatorFactory;
 import ch.ethz.sn.visone3.roles.spi.BasicDistanceFactoryService;
 
+/**
+ * Service class providing access to the basic operators for distance
+ * computations.
+ */
 public class BasicDistanceFactoryServiceImpl implements BasicDistanceFactoryService {
 
   @Override

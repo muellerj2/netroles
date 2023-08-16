@@ -21,10 +21,18 @@ package ch.ethz.sn.visone3.networks.impl;
  * Magic number, capacity guesses for collections.
  */
 public final class Magic {
+  /**
+   * Capacity guess for degrees.
+   */
   public static final int CAP_DEGREE = 10;
+  /**
+   * Capacity guess for nodes.
+   */
   public static final int CAP_NODES = 1_000;
+  /**
+   * Capacity guess for edges.
+   */
   public static final int CAP_EDGES = 10_000;
-  public static final double EPS = Double.MIN_VALUE;
 
   private Magic() {
   }

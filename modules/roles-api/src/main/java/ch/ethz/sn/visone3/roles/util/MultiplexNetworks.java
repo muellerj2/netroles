@@ -16,6 +16,8 @@
  */
 package ch.ethz.sn.visone3.roles.util;
 
+import java.util.function.IntBinaryOperator;
+
 import ch.ethz.sn.visone3.lang.IntPair;
 import ch.ethz.sn.visone3.lang.LongMap;
 import ch.ethz.sn.visone3.lang.Mapping;
@@ -32,8 +34,6 @@ import ch.ethz.sn.visone3.networks.Relation;
 import ch.ethz.sn.visone3.networks.Relationship;
 import ch.ethz.sn.visone3.progress.ProgressProvider;
 import ch.ethz.sn.visone3.progress.ProgressSource;
-
-import java.util.function.IntBinaryOperator;
 
 /**
  * Constructs a composite network relation from several given relations in a multiplex network.
@@ -197,16 +197,17 @@ public class MultiplexNetworks {
   /**
    * Create the undirected multiplex network from a sequence of provided networks.
    * 
-   * @param networks
-   *          the provided networks plus the link direction to consider
-   * @param translateToNew
-   *          is provided a network's sequence number and the node index and translates it to the
-   *          multiplex network's node index
-   * @return the multiplex network plus for each provided network a mapping that maps an int pair of
-   *         multiplex network's link indices to the corresponding link indices in the provided
-   *         network; for a link (a, b) in the undirected multiplex network with a <= b, the first
-   *         element of the int pair refers to the original index of the link (a, b) and the second
-   *         element to the original index of the link (b, a).
+   * @param networks       the provided networks plus the link direction to
+   *                       consider
+   * @param translateToNew is provided a network's sequence number and the node
+   *                       index and translates it to the multiplex network's node
+   *                       index
+   * @return the multiplex network plus for each provided network a mapping that
+   *         maps an int pair of multiplex network's link indices to the
+   *         corresponding link indices in the provided network; for a link (a, b)
+   *         in the undirected multiplex network with a &lt;= b, the first element
+   *         of the int pair refers to the original index of the link (a, b) and
+   *         the second element to the original index of the link (b, a).
    */
   public static Pair<Network, Mapping.OfLong[]> multiplexUndirected(
       Iterable<Pair<Network, Direction>> networks, IntBinaryOperator translateToNew) {

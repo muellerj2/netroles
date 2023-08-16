@@ -16,6 +16,23 @@
  */
 package ch.ethz.sn.visone3.roles.blocks.factories;
 
+/**
+ * Factory to produce builders for generic, heavily user-customizable role
+ * operators based on the specified views on network positions and a chosen
+ * setting of ``loose'', ``equitable'' or intermediate degree of ``strictness``
+ * for the substitution of ties in pairwise comparisons.
+ * 
+ * <p>
+ * This factory produces builders that allow to define the traits of the
+ * produced operators and set comparators among ties that can depend on the
+ * input role structure. The comparator is used to restrict and thus refine the
+ * substitution between ties. This dependence on the input role structure
+ * greatly extends the possibilities for users to customize the role operator
+ * compared to other provided operators that always use the same fixed
+ * comparator for all input role structures.
+ * 
+ * @param <U> role structure type.
+ */
 public interface VariableGenericRoleOperatorBuilderFactory<U>
     extends GenericRoleOperatorBuilderFactory<U>,
     VariablePFactoryBase<VariableGenericRoleOperatorBuilderFactory<U>> {

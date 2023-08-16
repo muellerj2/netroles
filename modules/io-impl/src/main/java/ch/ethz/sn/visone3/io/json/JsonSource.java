@@ -70,7 +70,7 @@ public class JsonSource implements Source<String> {
   private static final Logger LOG = LoggerFactory.getLogger(JsonSource.class);
   static final String TYPE = "type"; // dyad type
 
-  public enum Hint {
+  private enum Hint {
     // input key names
     ID, NODES, EDGES, SOURCE, TARGET
   }

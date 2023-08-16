@@ -17,13 +17,13 @@
 
 package ch.ethz.sn.visone3.roles.lattice;
 
+import java.util.function.Predicate;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.ConstMapping.OfInt;
 import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
-
-import java.util.function.Predicate;
 
 /**
  * Provides enumerators on stable role structures with respect to role extension and
@@ -38,20 +38,19 @@ public class StableRolesEnumeration {
   /**
    * Factory to create enumerators for stable role structures.
    * 
-   * @param <T>
-   *          the type of role structure
+   * @param <T> the type of role structure.
    */
   public interface Factory<T> {
 
     /**
      * Enumerates stable role structures under role extension.
      * 
-     * @param roleOp
-     *          the (isotone) role operator whose stable role structures are to be enumerated
-     * @param initial
-     *          the role structure to start the search from; any enumerated stable role structures
-     *          are coarsenings of this one
-     * @return an iterable that allows to enumerate the stable role structures under role extension
+     * @param roleOp  the (isotone) role operator whose stable role structures are
+     *                to be enumerated.
+     * @param initial the role structure to start the search from; any enumerated
+     *                stable role structures are coarsenings of this one.
+     * @return an iterable that allows to enumerate the stable role structures under
+     *         role extension.
      */
     default Iterable<T> stableRolesUnderExtension(RoleOperator<T> roleOp, T initial) {
       return stableRolesUnderExtension(roleOp, initial, x -> false);
@@ -60,15 +59,16 @@ public class StableRolesEnumeration {
     /**
      * Enumerates stable role structures under role extension.
      * 
-     * @param roleOp
-     *          the (isotone) role operator whose stable role structures are to be enumerated
-     * @param initial
-     *          the role structure to start the search from; any enumerated stable role structures
-     *          are coarsenings of this one
-     * @param skipElement
-     *          predicate that says whether this element and all succeeding lattice elements should
-     *          be skipped during the enumeration
-     * @return an iterable that allows to enumerate the stable role structures under role extension
+     * @param roleOp      the (isotone) role operator whose stable role structures
+     *                    are to be enumerated.
+     * @param initial     the role structure to start the search from; any
+     *                    enumerated stable role structures are coarsenings of this
+     *                    one.
+     * @param skipElement predicate that says whether this element and all
+     *                    succeeding lattice elements should be skipped during the
+     *                    enumeration.
+     * @return an iterable that allows to enumerate the stable role structures under
+     *         role extension.
      */
     Iterable<T> stableRolesUnderExtension(RoleOperator<T> roleOp, T initial,
         Predicate<T> skipElement);
@@ -76,13 +76,12 @@ public class StableRolesEnumeration {
     /**
      * Enumerates stable role structures under role restriction.
      * 
-     * @param roleOp
-     *          the (isotone) role operator whose stable role structures are to be enumerated
-     * @param initial
-     *          the role structure to start the search from; any enumerated stable role
-     *          structures are refinements of this one
-     * @return an iterable that allows to enumerate the stable role structures under role
-     *         restriction
+     * @param roleOp  the (isotone) role operator whose stable role structures are
+     *                to be enumerated.
+     * @param initial the role structure to start the search from; any enumerated
+     *                stable role structures are refinements of this one.
+     * @return an iterable that allows to enumerate the stable role structures under
+     *         role restriction.
      */
     default Iterable<T> stableRolesUnderRestriction(RoleOperator<T> roleOp, T initial) {
       return stableRolesUnderRestriction(roleOp, initial, x -> false);
@@ -91,70 +90,80 @@ public class StableRolesEnumeration {
     /**
      * Enumerates stable role structures under role restriction.
      * 
-     * @param roleOp
-     *          the (isotone) role operator whose stable role structures are to be enumerated
-     * @param initial
-     *          the role structure to start the search from; any enumerated stable role
-     *          structures are refinements of this one
-     * @param skipElement
-     *          predicate that says whether this element and all preceding lattice elements should
-     *          be skipped during the enumeration
-     * @return an iterable that allows to enumerate the stable role structures under role
-     *         restriction
+     * @param roleOp      the (isotone) role operator whose stable role structures
+     *                    are to be enumerated.
+     * @param initial     the role structure to start the search from; any
+     *                    enumerated stable role structures are refinements of this
+     *                    one.
+     * @param skipElement predicate that says whether this element and all preceding
+     *                    lattice elements should be skipped during the enumeration.
+     * @return an iterable that allows to enumerate the stable role structures under
+     *         role restriction.
      */
     Iterable<T> stableRolesUnderRestriction(RoleOperator<T> roleOp, T initial,
         Predicate<T> skipElement);
   }
 
+  /**
+   * Factory for enumerators of stable role structures on the lattice of binary
+   * relations.
+   */
   public static final Factory<BinaryRelation> BINARYRELATION = new Factory<BinaryRelation>() {
 
     @Override
     public Iterable<BinaryRelation> stableRolesUnderExtension(RoleOperator<BinaryRelation> roleOp,
         BinaryRelation initial, Predicate<BinaryRelation> skipElement) {
       return LatticeEnumerator.enumerateLattice(roleOp::closure, () -> initial,
-          SuccessorAndPredecessorIterators::successorRelations, skipElement);
+          LatticeCoverEnumerators::upperCoversBinaryRelations, skipElement);
     }
 
     @Override
     public Iterable<BinaryRelation> stableRolesUnderRestriction(RoleOperator<BinaryRelation> roleOp,
         BinaryRelation initial, Predicate<BinaryRelation> skipElement) {
       return LatticeEnumerator.enumerateLattice(roleOp::interior, () -> initial,
-          SuccessorAndPredecessorIterators::predecessorRelations, skipElement);
+          LatticeCoverEnumerators::lowerCoversBinaryRelations, skipElement);
     }
 
   };
 
+  /**
+   * Factory for enumerators of stable role structures on the lattice of rankings.
+   */
   public static final Factory<Ranking> RANKING = new Factory<Ranking>() {
 
     @Override
     public Iterable<Ranking> stableRolesUnderExtension(RoleOperator<Ranking> roleOp,
         Ranking initial, Predicate<Ranking> skipElement) {
       return LatticeEnumerator.enumerateLattice(roleOp::closure, () -> initial,
-          SuccessorAndPredecessorIterators::successorRankings, skipElement);
+          LatticeCoverEnumerators::upperCoversRankings, skipElement);
     }
 
     @Override
     public Iterable<Ranking> stableRolesUnderRestriction(RoleOperator<Ranking> roleOp,
         Ranking initial, Predicate<Ranking> skipElement) {
       return LatticeEnumerator.enumerateLattice(roleOp::interior, () -> initial,
-          SuccessorAndPredecessorIterators::predecessorRankings, skipElement);
+          LatticeCoverEnumerators::lowerCoversRankings, skipElement);
     }
   };
 
+  /**
+   * Factory for enumerators of stable role structures on the lattice of
+   * equivalences.
+   */
   public static final Factory<ConstMapping.OfInt> EQUIVALENCE = new Factory<ConstMapping.OfInt>() {
 
     @Override
     public Iterable<OfInt> stableRolesUnderExtension(RoleOperator<ConstMapping.OfInt> roleOp,
         ConstMapping.OfInt initial, Predicate<ConstMapping.OfInt> skipElement) {
       return LatticeEnumerator.enumerateLattice(roleOp::closure, () -> initial,
-          SuccessorAndPredecessorIterators::successorEquivalences, skipElement);
+          LatticeCoverEnumerators::upperCoversEquivalences, skipElement);
     }
 
     @Override
     public Iterable<OfInt> stableRolesUnderRestriction(RoleOperator<ConstMapping.OfInt> roleOp,
         ConstMapping.OfInt initial, Predicate<ConstMapping.OfInt> skipElement) {
       return LatticeEnumerator.enumerateLattice(roleOp::interior, () -> initial,
-          SuccessorAndPredecessorIterators::predecessorEquivalences, skipElement);
+          LatticeCoverEnumerators::lowerCoversEquivalences, skipElement);
     }
   };
 }

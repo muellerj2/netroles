@@ -20,6 +20,10 @@ import ch.ethz.sn.visone3.roles.blocks.bundles.DistanceFactoryBundle;
 import ch.ethz.sn.visone3.roles.spi.DistanceBundleService;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
+/**
+ * Service providing access to a collection of factories for constructing
+ * operators that produce distance matrices from rankings.
+ */
 public class RankedDistanceBundleProvider implements DistanceBundleService {
 
   @SuppressWarnings("unchecked")

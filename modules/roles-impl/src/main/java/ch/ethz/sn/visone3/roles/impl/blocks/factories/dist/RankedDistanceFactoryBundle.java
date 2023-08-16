@@ -21,7 +21,7 @@ import ch.ethz.sn.visone3.roles.blocks.factories.DistanceBuilderFactory;
 import ch.ethz.sn.visone3.roles.blocks.factories.VariableDistanceBuilderFactory;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
-public class RankedDistanceFactoryBundle implements DistanceFactoryBundle<Ranking> {
+class RankedDistanceFactoryBundle implements DistanceFactoryBundle<Ranking> {
 
   @Override
   public VariableDistanceBuilderFactory<Ranking> regular() {

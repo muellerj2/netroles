@@ -23,6 +23,13 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+/**
+ * Growable and writable list, see {@link Mapping} for a constant-size and
+ * {@link ConstMapping} for read-only interfaces (which instances of this
+ * interface can be converted to).
+ *
+ * @param <T> value type.
+ */
 public interface PrimitiveList<T> extends Mapping<T>, List<T> {
 
   @Override
@@ -133,9 +140,8 @@ public interface PrimitiveList<T> extends Mapping<T>, List<T> {
     /**
      * Appends the specified integer to the end of the list.
      * 
-     * @param value
-     *          the integer.
-     * @see #add(Integer) for the boxed version.
+     * @param value the integer.
+     * @see #add(Object) for the boxed version.
      */
     void addInt(int value);
 
@@ -202,9 +208,8 @@ public interface PrimitiveList<T> extends Mapping<T>, List<T> {
     /**
      * Appends the specified long value to the end of the list.
      * 
-     * @param value
-     *          the long value.
-     * @see #add(Long) for the boxed version.
+     * @param value the long value.
+     * @see #add(Object) for the boxed version.
      */
     void addLong(long value);
 
@@ -261,9 +266,8 @@ public interface PrimitiveList<T> extends Mapping<T>, List<T> {
     /**
      * Appends the specified double value to the end of the list.
      * 
-     * @param value
-     *          the double value.
-     * @see #add(Double) for the boxed version.
+     * @param value the double value.
+     * @see #add(Object) for the boxed version.
      */
     void addDouble(double value);
 

@@ -22,7 +22,20 @@ package ch.ethz.sn.visone3.networks;
  *
  */
 public enum DyadType {
-  DIRECTED(true, false), UNDIRECTED(false, false), TWO_MODE(false, true);
+  /**
+   * Type representing dyads of directed one-mode networks.
+   */
+  DIRECTED(true, false),
+
+  /**
+   * Type representing dyads of undirected one-mode networks.
+   */
+  UNDIRECTED(false, false),
+
+  /**
+   * Type representing dyads of (undirected) two-mode networks.
+   */
+  TWO_MODE(false, true);
   private final boolean isDirected;
   private final boolean isTwoMode;
 

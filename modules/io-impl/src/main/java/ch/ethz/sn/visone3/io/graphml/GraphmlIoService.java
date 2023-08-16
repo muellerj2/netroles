@@ -28,6 +28,9 @@ import java.util.Arrays;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+/**
+ * This service class makes the GraphML source and sink classes available to others.
+ */
 public class GraphmlIoService implements IoService {
   private static final String[] SUPPORTED_TYPES = new String[] {"graphml"};
 

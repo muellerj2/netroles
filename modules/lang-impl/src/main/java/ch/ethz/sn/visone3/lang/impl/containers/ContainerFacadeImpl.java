@@ -22,6 +22,9 @@ import ch.ethz.sn.visone3.lang.LongSet;
 import ch.ethz.sn.visone3.lang.PrimitiveQueue;
 import ch.ethz.sn.visone3.lang.spi.ContainersFacade;
 
+/**
+ * Facade to implemented containers.
+ */
 public class ContainerFacadeImpl implements ContainersFacade {
 
   @Override

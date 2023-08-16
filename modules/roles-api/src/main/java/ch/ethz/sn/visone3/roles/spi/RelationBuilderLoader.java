@@ -16,13 +16,24 @@
  */
 package ch.ethz.sn.visone3.roles.spi;
 
+import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
+/**
+ * Loader for the registered relation builder service.
+ */
 public class RelationBuilderLoader {
 
   private RelationBuilderLoader() {
 
   }
+
+  /**
+   * Returns the registered relation builder service.
+   * 
+   * @return the registered relation builder service.
+   * @throws NoSuchElementException if no relation builder service is registered.
+   */
   public static RelationBuilderService getService() {
     return ServiceLoader.load(RelationBuilderService.class).iterator().next();
   }

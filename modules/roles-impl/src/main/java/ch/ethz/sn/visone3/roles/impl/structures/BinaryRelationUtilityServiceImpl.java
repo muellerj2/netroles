@@ -22,6 +22,10 @@ import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilders;
 
+/**
+ * Service making implementations of common operations on binary relations
+ * available in the API.
+ */
 public class BinaryRelationUtilityServiceImpl implements BinaryRelationUtilityService {
 
   @Override

@@ -16,15 +16,18 @@
  */
 package ch.ethz.sn.visone3.lang.impl.iterators;
 
-import ch.ethz.sn.visone3.lang.PrimitiveIterable;
-import ch.ethz.sn.visone3.lang.spi.IteratorFacade;
-
 import java.util.Iterator;
 import java.util.PrimitiveIterator;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 
+import ch.ethz.sn.visone3.lang.PrimitiveIterable;
+import ch.ethz.sn.visone3.lang.spi.IteratorFacade;
+
+/**
+ * Facade to implemented utility iterators and iterables.
+ */
 public final class IteratorFacadeImpl implements IteratorFacade {
 
   @Override

@@ -121,7 +121,21 @@ public interface RelationBase {
    */
   RelationBase invert();
 
+  /**
+   * Returns true if this representation of a relation provides efficient random
+   * access to test whether it contains a pair or not.
+   * 
+   * @return true if it offers efficient random access, otherwise false.
+   */
   boolean isRandomAccess();
 
+  /**
+   * Returns true if this relation might be lazily evaluated on access.
+   * 
+   * <p>
+   * This method is mainly intended for internal use.
+   * 
+   * @return true if it might be lazily evaluated, false otherwise.
+   */
   boolean isLazilyEvaluated();
 }

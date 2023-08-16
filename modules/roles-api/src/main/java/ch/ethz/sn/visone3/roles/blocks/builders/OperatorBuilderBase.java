@@ -17,6 +17,19 @@
 
 package ch.ethz.sn.visone3.roles.blocks.builders;
 
+/**
+ * This interface is the base for all operator builders (whether for role
+ * operators or distance operators). It defines the signatures for constructing
+ * the final operator and supplying comparators between ties to restrict the set
+ * of admissible substitutions.
+ * 
+ * @param <T> type of represented ties.
+ * @param <U> type of the produced operator.
+ * @param <V> the full builder type.
+ * @param <W> the type of the weakly-ordering comparator for the ties.
+ * @param <X> the type of the partially-ordering comparator for the ties.
+ * @param <Y> the type of the comparison bipredicate for the ties.
+ */
 public interface OperatorBuilderBase<T, U, //
     V extends OperatorBuilderBase<T, U, V, W, X, Y>, W, X, Y> {
 

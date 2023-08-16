@@ -23,25 +23,28 @@ import java.util.NoSuchElementException;
 /**
  * Iterator over a generic array.
  * 
- * @param <T>
- *          value type of the array.
+ * @param <T> value type of the array.
  */
 public final class ArrayIterator<T> implements Iterator<T> {
   private final T[] array;
   private final int end;
   private int index;
 
+  /**
+   * Constructs an interator over the elements in an array.
+   *
+   * @param array the array.
+   */
   public ArrayIterator(final T[] array) {
     this(array, 0, array.length);
   }
 
   /**
-   * Iterator over element in a range.
+   * Constructs an interator over the elements in a range.
    *
-   * @param begin
-   *          Start index (inclusive).
-   * @param end
-   *          End index (exclusive).
+   * @param array the array.
+   * @param begin start index (inclusive).
+   * @param end   end index (exclusive).
    */
   public ArrayIterator(final T[] array, final int begin, final int end) {
     this.array = array;

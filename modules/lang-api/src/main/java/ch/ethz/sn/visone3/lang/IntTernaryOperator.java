@@ -17,6 +17,9 @@
 
 package ch.ethz.sn.visone3.lang;
 
+/**
+ * Represents a operation of three arguments on integers.
+ */
 @FunctionalInterface
 public interface IntTernaryOperator {
 

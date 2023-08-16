@@ -20,17 +20,16 @@ package ch.ethz.sn.visone3.roles.blocks.bundles;
 import ch.ethz.sn.visone3.roles.blocks.factories.GenericDistanceBuilderFactory;
 
 /**
- * Bundle of factories to produce distances based on common role types/substitution mechanisms on a
- * user-specified role structure type.
+ * Bundle of factories to produce distances based on common role
+ * types/substitution mechanisms on a user-specified role structure type.
  *
- * @param <T>
- *          the role structure type
  */
 public interface GenericDistanceFactoryBundle {
   /**
-   * Returns a factory to construct distance operators based on a substitution mechanism, allowing
-   * many-to-one substitutions between ties by default.
+   * Returns a factory to construct distance operators based on a substitution
+   * mechanism, allowing many-to-one substitutions between ties by default.
    * 
+   * @param <T> the role structure type
    * @return the factory
    */
   <T> GenericDistanceBuilderFactory<T> factory();
