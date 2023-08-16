@@ -127,7 +127,7 @@ public class CsvEdgeListSource implements SourceFormat, Source<String> {
     final int sourceCol = header.indexOf(nameSource);
     final int targetCol = header.indexOf(nameTarget);
     if (sourceCol < 0 || targetCol < 0) {
-      throw new IllegalStateException("could not find source/target column\n" + "known: "
+      throw new IOException("could not find source/target column\n" + "known: "
           + String.join(", ", header) + "\n" + "searching: " + nameSource + ", " + nameTarget);
     }
     if (name2range.remove(nameSource) != null) {
@@ -150,6 +150,9 @@ public class CsvEdgeListSource implements SourceFormat, Source<String> {
       int ignoredId = 0;
       int ignoredEdge = 0;
       do {
+        if (row.length != rangedMappings.length || sourceCol >= row.length || targetCol >= row.length) {
+          throw new IOException("row too short");
+        }
         // add edge
         final int s = nodeIds.map(row[sourceCol]);
         final int t = affiliationIds.map(row[targetCol]);
@@ -158,7 +161,7 @@ public class CsvEdgeListSource implements SourceFormat, Source<String> {
           if (e >= 0) {
             p.updateProgress(e);
             // first time around: add dyadic attributes
-            for (int i = 0; i < row.length; i++) {
+            for (int i = 0; i < rangedMappings.length; i++) {
               RangedList<?> rangedMapping = rangedMappings[i];
               if (rangedMapping.getList() != null) {
                 if (rangedMapping.getList().size() != e) {
