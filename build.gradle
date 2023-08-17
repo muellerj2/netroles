@@ -9,9 +9,9 @@ buildscript {
 }
 
 plugins {
-  id 'com.github.hierynomus.license' version '0.16.1'
   id 'jvm-test-suite'
   id 'jacoco-report-aggregation'
+  alias(libs.plugins.licensecheck)
 }
 
 ext.isToSign = project.hasProperty("doSign")
