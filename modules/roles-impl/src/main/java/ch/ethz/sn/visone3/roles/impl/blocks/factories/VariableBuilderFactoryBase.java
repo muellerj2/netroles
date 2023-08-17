@@ -18,6 +18,13 @@ package ch.ethz.sn.visone3.roles.impl.blocks.factories;
 
 import ch.ethz.sn.visone3.roles.blocks.factories.VariablePFactoryBase;
 
+/**
+ * This base class for builder factories implements the handling for settings of
+ * ``loose'', ``equitable'' and intermediate degrees of strictness for tie
+ * substitution.
+ * 
+ * @param <T> the full factory type.
+ */
 public abstract class VariableBuilderFactoryBase<T extends VariablePFactoryBase<T>>
     implements VariablePFactoryBase<T> {
 
@@ -47,6 +54,11 @@ public abstract class VariableBuilderFactoryBase<T extends VariablePFactoryBase<
     return (T) this;
   }
 
+  /**
+   * Returns the currently set degree of strictness.
+   * 
+   * @return the degree of strictness.
+   */
   protected int getPValue() {
     return value;
   }

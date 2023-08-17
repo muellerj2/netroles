@@ -16,11 +16,16 @@
  */
 package ch.ethz.sn.visone3.roles.impl.structures;
 
-import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
-
 import java.util.Arrays;
 import java.util.function.IntBinaryOperator;
 
+import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
+
+/**
+ * Lazy implementation of a distance matrix with dense cache. Each entry is
+ * computed lazily by evaluating a provided function, but the result of this
+ * evaluation is stored and then returned when requested later.
+ */
 public class LazyIntDistanceMatrixImpl implements IntDistanceMatrix {
 
   private int[][] mat_;
@@ -28,6 +33,13 @@ public class LazyIntDistanceMatrixImpl implements IntDistanceMatrix {
   private IntBinaryOperator lazyEvaluator_;
   private int unevaluatedCount_;
 
+  /**
+   * Constructs the lazy distance matrix with dense cache.
+   * 
+   * @param size          the size of the domain.
+   * @param lazyEvaluator function which computes the distance between a pair of
+   *                      elements on request.
+   */
   public LazyIntDistanceMatrixImpl(int size, IntBinaryOperator lazyEvaluator) {
     size_ = size;
     lazyEvaluator_ = lazyEvaluator;

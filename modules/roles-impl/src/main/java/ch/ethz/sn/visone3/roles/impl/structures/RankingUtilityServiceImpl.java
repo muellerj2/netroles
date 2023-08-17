@@ -23,6 +23,9 @@ import ch.ethz.sn.visone3.roles.structures.Ranking;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilders;
 
+/**
+ * Service making implementations of common operations on rankings available.
+ */
 public class RankingUtilityServiceImpl implements RankingUtilityService {
 
   @Override

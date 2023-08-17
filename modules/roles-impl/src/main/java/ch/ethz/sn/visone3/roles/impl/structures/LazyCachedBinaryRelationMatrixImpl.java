@@ -16,13 +16,17 @@
  */
 package ch.ethz.sn.visone3.roles.impl.structures;
 
+import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
+
 import ch.ethz.sn.visone3.lang.PrimitiveIterable.OfInt;
 import ch.ethz.sn.visone3.roles.structures.RelationBase;
 import ch.ethz.sn.visone3.roles.structures.Relations;
 
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
-
+/**
+ * Dense matrix representation of a binary relation or ranking, but the content
+ * is lazily computed and only stored when it is requested for the first time.
+ */
 public class LazyCachedBinaryRelationMatrixImpl implements BinaryRelationOrRanking {
 
   private boolean[] mat_;
@@ -34,6 +38,13 @@ public class LazyCachedBinaryRelationMatrixImpl implements BinaryRelationOrRanki
   private int hashcode_;
   private boolean hasHashcode_;
 
+  /**
+   * Constructs the representation of a relation.
+   * 
+   * @param size          the size of the relation's domain.
+   * @param lazyEvaluator function that is called to lazily compute the content of
+   *                      this relation.
+   */
   public LazyCachedBinaryRelationMatrixImpl(int size, BiIntPredicate lazyEvaluator) {
     this.size_ = size;
     this.lazyEvaluator_ = lazyEvaluator;

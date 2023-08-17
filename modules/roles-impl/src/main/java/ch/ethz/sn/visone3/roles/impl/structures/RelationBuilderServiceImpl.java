@@ -22,6 +22,9 @@ import ch.ethz.sn.visone3.roles.structures.Ranking;
 import ch.ethz.sn.visone3.roles.structures.Rankings;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
 
+/**
+ * Implementation of the service providing relation builders.
+ */
 public class RelationBuilderServiceImpl implements RelationBuilderService {
 
   @Override
@@ -57,6 +60,13 @@ public class RelationBuilderServiceImpl implements RelationBuilderService {
   }
 
 
+  /**
+   * Returns a relation builder for a reducible relation (i.e., a relation where
+   * pairs can be removed).
+   * 
+   * @param size domain size
+   * @return the relation builder.
+   */
   public static RelationBuilder<? extends ReducibleRelationOrRanking> denseReducibleRelationOrRankingBuilder(
       int size) {
     return new BinaryRelationMatrixImpl.Builder(size);

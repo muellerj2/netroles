@@ -19,6 +19,10 @@ package ch.ethz.sn.visone3.roles.impl.blocks.factories.dist;
 import ch.ethz.sn.visone3.roles.blocks.bundles.GenericDistanceFactoryBundle;
 import ch.ethz.sn.visone3.roles.spi.GenericDistanceBundleService;
 
+/**
+ * Service implementation providing the bundle of factories for generic
+ * user-customizable distance operators.
+ */
 public class GenericDistanceBundleServiceImpl implements GenericDistanceBundleService {
 
   @Override

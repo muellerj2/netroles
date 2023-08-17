@@ -24,7 +24,7 @@ import ch.ethz.sn.visone3.roles.structures.RelationBuilders;
 
 /**
  * Service making implementations of common operations on binary relations
- * available in the API.
+ * available.
  */
 public class BinaryRelationUtilityServiceImpl implements BinaryRelationUtilityService {
 

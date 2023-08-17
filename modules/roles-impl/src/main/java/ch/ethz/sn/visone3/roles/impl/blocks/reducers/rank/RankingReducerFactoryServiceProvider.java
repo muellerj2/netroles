@@ -23,6 +23,9 @@ import ch.ethz.sn.visone3.roles.blocks.RoleReducer;
 import ch.ethz.sn.visone3.roles.spi.ReducerFactoryService;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
+/**
+ * Service implementation providing the reducers for rankings.
+ */
 public class RankingReducerFactoryServiceProvider implements ReducerFactoryService {
 
   @SuppressWarnings("unchecked")

@@ -36,6 +36,8 @@ public class UnionFind {
 
   /**
    * Create an empty union find data structure with isolated sets.
+   * 
+   * @param universeSize the number of elements.
    */
   public UnionFind(final int universeSize) {
     parentMap = new int[universeSize];
@@ -47,12 +49,21 @@ public class UnionFind {
     groups = universeSize;
   }
 
+  /**
+   * Returns the current number of groups/sets.
+   * 
+   * @return the number of groups/sets.
+   */
   public int getGroups() {
     return groups;
   }
 
   /**
    * Return parent for {@code element}.
+   * 
+   * @param element the element to search the parent for.
+   * @return the parent, or {@code -1} if {@code element} is not within the
+   *         universe.
    */
   public int find(final int element) {
     if (element >= parentMap.length) {
@@ -70,6 +81,9 @@ public class UnionFind {
 
   /**
    * merge components containing {@code element1} and {@code element2}.
+   * 
+   * @param element1 the first element
+   * @param element2 the second element.
    */
   public void union(final int element1, final int element2) {
     final int parent1 = find(element1);
