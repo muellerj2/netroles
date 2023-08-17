@@ -1,12 +1,9 @@
-apply plugin: "java"
-
 dependencies {
   implementation project(':core-api')
   implementation project(':lang-api')
   
   // logging backend
-  implementation "org.slf4j:slf4j-api:2.0.7"
-  
-  implementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+  implementation(libs.slf4j.api)
+  implementation(libs.junit5.engine)
 }
 

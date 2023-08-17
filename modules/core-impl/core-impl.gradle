@@ -4,17 +4,17 @@ dependencies {
   runtimeOnly project(':lang-impl')
 
   // logging backend
-  implementation "org.slf4j:slf4j-api:2.0.7"
+  implementation(libs.slf4j.api)
   
   testImplementation project(':test-api')
   testImplementation project(':io-api')
   
-  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
-  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  testImplementation(libs.junit5.engine)
 
   testRuntimeOnly project(':io-impl')
   testRuntimeOnly project(':datasets')
-  ['slf4j2-impl', 'core'].each { testRuntimeOnly "org.apache.logging.log4j:log4j-$it:2.20.0" }
+  testRuntimeOnly(libs.junit.launcher)
+  testRuntimeOnly(libs.bundles.log4j2)
 }
 
 publishing {
