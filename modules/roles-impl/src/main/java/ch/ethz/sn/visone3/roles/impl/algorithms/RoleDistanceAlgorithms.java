@@ -17,6 +17,16 @@
 
 package ch.ethz.sn.visone3.roles.impl.algorithms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.TreeSet;
+import java.util.function.BiPredicate;
+import java.util.function.ToIntBiFunction;
+import java.util.function.ToIntFunction;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.Mappings;
 import ch.ethz.sn.visone3.lang.PrimitiveCollections;
@@ -34,29 +44,56 @@ import ch.ethz.sn.visone3.roles.structures.Ranking;
 import ch.ethz.sn.visone3.roles.structures.RelationBase;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.TreeSet;
-import java.util.function.BiPredicate;
-import java.util.function.ToIntBiFunction;
-import java.util.function.ToIntFunction;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
+/**
+ * Implements algorithms to compute distances from some ideal notion of role.
+ */
 public class RoleDistanceAlgorithms {
 
   private RoleDistanceAlgorithms() {
   }
 
-  public static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(
-      int n, NetworkView<T, U> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified ranking on the
+   * given network.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param mismatchPenalty   function specifying the cost of failing to
+   *                          substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      NetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo, mismatchPenalty);
   }
 
-  public static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(
-      int n, NetworkView<T, U> positionView, BinaryRelation relationRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified relation on the
+   * given network.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param mismatchPenalty    function specifying the cost of failing to
+   *                           substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      NetworkView<? extends V, ? extends V> positionView, BinaryRelation relationRelativeTo,
       ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo, mismatchPenalty);
   }
@@ -87,15 +124,51 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(
-      int n, NetworkView<T, U> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified ranking on the
+   * given network with weakly ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a comparator that weakly orders the ties.
+   * @param mismatchPenalty   function specifying the cost of failing to
+   *                          substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      NetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       Comparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo, comparator,
         mismatchPenalty);
   }
 
-  public static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(
-      int n, NetworkView<T, U> positionView, BinaryRelation relationRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified relation on the
+   * given network with weakly ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a comparator that weakly orders the ties.
+   * @param mismatchPenalty    function specifying the cost of failing to
+   *                           substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      NetworkView<? extends V, ? extends V> positionView, BinaryRelation relationRelativeTo,
       Comparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo, comparator,
         mismatchPenalty);
@@ -128,15 +201,51 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(
-      int n, NetworkView<T, U> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified ranking on the
+   * given network with partially ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a comparator that partially orders the ties.
+   * @param mismatchPenalty   function specifying the cost of failing to
+   *                          substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      NetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       PartialComparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo, comparator,
         mismatchPenalty);
   }
 
-  public static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(
-      int n, NetworkView<T, U> positionView, BinaryRelation relationRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified relation on the
+   * given network with partially ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a comparator that partially orders the ties.
+   * @param mismatchPenalty    function specifying the cost of failing to
+   *                           substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      NetworkView<? extends V, ? extends V> positionView, BinaryRelation relationRelativeTo,
       PartialComparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo, comparator,
         mismatchPenalty);
@@ -203,59 +312,203 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified ranking on the
+   * given network.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param mismatchPenalty   function specifying the cost of failing to
+   *                          substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.alwaysTrue(), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified relation on the
+   * given network.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param mismatchPenalty    function specifying the cost of failing to
+   *                           substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.alwaysTrue(), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified ranking on the
+   * given network with weakly ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a comparator that weakly orders the ties.
+   * @param mismatchPenalty   function specifying the cost of failing to
+   *                          substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       Comparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified relation on the
+   * given network with weakly ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a comparator that weakly orders the ties.
+   * @param mismatchPenalty    function specifying the cost of failing to
+   *                           substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, Comparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified ranking on the
+   * given network with partially ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a comparator that partially orders the ties.
+   * @param mismatchPenalty   function specifying the cost of failing to
+   *                          substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       PartialComparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified relation on the
+   * given network with partially ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a comparator that partially orders the ties.
+   * @param mismatchPenalty    function specifying the cost of failing to
+   *                           substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, PartialComparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified ranking on the
+   * given network with a notion of compatibility between ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a binary predicate that says whether the first tie's
+   *                          value is compatible with the second one.
+   * @param mismatchPenalty   function specifying the cost of failing to
+   *                          substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       BiPredicate<? super V, ? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo, comparator,
         mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified relation on the
+   * given network with a notion of compatibility between ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a binary predicate that says whether the first
+   *                           tie's value is compatible with the second one.
+   * @param mismatchPenalty    function specifying the cost of failing to
+   *                           substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo, comparator,
@@ -295,10 +548,32 @@ public class RoleDistanceAlgorithms {
         positionView, structureRelativeTo, comparator, mismatchPenalty));
   }
 
-  public static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(
-      int n, NetworkView<T, U> positionView, ConstMapping.OfInt equivalenceRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified equivalence on
+   * the given network.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      NetworkView<? extends V, ? extends V> positionView, ConstMapping.OfInt equivalenceRelativeTo,
       ToIntFunction<? super V> mismatchPenalty) {
+    return regularRolesDistanceRelativeToImpl(n, positionView, equivalenceRelativeTo, mismatchPenalty);
+  }
 
+  private static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeToImpl(int n,
+      NetworkView<T, U> positionView, ConstMapping.OfInt equivalenceRelativeTo,
+      ToIntFunction<? super V> mismatchPenalty) {
     // there is probably room for more laziness here
     int[] sortedVertices = PrimitiveCollections.countingSort(equivalenceRelativeTo).array();
     int classStart = 0;
@@ -330,9 +605,33 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(
-      int n, NetworkView<T, U> positionView, ConstMapping.OfInt equivalenceRelativeTo,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified equivalence on
+   * the given network with weakly ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a comparator that weakly orders the ties.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      NetworkView<? extends V, ? extends V> positionView, ConstMapping.OfInt equivalenceRelativeTo,
       Comparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
+    return regularRolesDistanceRelativeToImpl(n, positionView, equivalenceRelativeTo, comparator, mismatchPenalty);
+  }
+
+  private static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeToImpl(int n,
+      NetworkView<T, U> positionView, ConstMapping.OfInt equivalenceRelativeTo, Comparator<? super V> comparator,
+      ToIntFunction<? super V> mismatchPenalty) {
 
     @SuppressWarnings("unchecked")
     U[][] dominated = (U[][]) new Object[n][n];
@@ -370,7 +669,31 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified equivalence on
+   * the given network with partially ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a comparator that partially orders the ties.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      NetworkView<? extends V, ? extends V> positionView, ConstMapping.OfInt equivalenceRelativeTo,
+      PartialComparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
+    return regularRolesDistanceRelativeToImpl(n, positionView, equivalenceRelativeTo, comparator, mismatchPenalty);
+  }
+
+  private static <V, T extends V, U extends V> IntDistanceMatrix regularRolesDistanceRelativeToImpl(
       int n, NetworkView<T, U> positionView, ConstMapping.OfInt equivalenceRelativeTo,
       PartialComparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
 
@@ -440,23 +763,76 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified equivalence on
+   * the given network.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
         MiscUtils.alwaysTrue(), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified equivalence on
+   * the given network with weakly ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a comparator that weakly orders the ties.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, Comparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified equivalence on
+   * the given network with partially ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a comparator that partially orders the ties.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, PartialComparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return regularRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
@@ -487,8 +863,27 @@ public class RoleDistanceAlgorithms {
     return errsum;
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of regular roles relative to the specified equivalence on
+   * the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a binary predicate that says whether the first
+   *                              tie's value is compatible with the second one.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
 
@@ -496,61 +891,205 @@ public class RoleDistanceAlgorithms {
         positionView, equivalenceRelativeTo, comparator, mismatchPenalty));
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified ranking on
+   * the given network.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param substitutionCost  function specifying the cost of substituting two
+   *                          ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return regularRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.alwaysTrue(), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified relation on
+   * the given network.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param substitutionCost   function specifying the cost of substituting two
+   *                           ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return regularRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.alwaysTrue(), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified ranking on
+   * the given network with weakly ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a comparator that weakly orders the ties.
+   * @param substitutionCost  function specifying the cost of substituting two
+   *                          ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       Comparator<? super V> comparator, ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return regularRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified relation on
+   * the given network with weakly ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a comparator that weakly orders the ties.
+   * @param substitutionCost   function specifying the cost of substituting two
+   *                           ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, Comparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return regularRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified ranking on
+   * the given network with partially ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a comparator that partially orders the ties.
+   * @param substitutionCost  function specifying the cost of substituting two
+   *                          ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       PartialComparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return regularRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified relation on
+   * the given network with partially ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a comparator that partially orders the ties.
+   * @param substitutionCost   function specifying the cost of substituting two
+   *                           ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, PartialComparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return regularRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified ranking on
+   * the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a binary predicate that says whether the first tie's
+   *                          value is compatible with the second one.
+   * @param substitutionCost  function specifying the cost of substituting two
+   *                          ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       BiPredicate<? super V, ? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return regularRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo, comparator,
         substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified relation on
+   * the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a binary predicate that says whether the first
+   *                           tie's value is compatible with the second one.
+   * @param substitutionCost   function specifying the cost of substituting two
+   *                           ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return regularRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo, comparator,
@@ -591,24 +1130,77 @@ public class RoleDistanceAlgorithms {
         positionView, structureRelativeTo, comparator, substitutionCost));
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified equivalence
+   * on the given network.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return regularRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
         MiscUtils.alwaysTrue(), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified equivalence
+   * on the given network with weakly ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a comparator that weakly orders the ties.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, Comparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return regularRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified equivalence
+   * on the given network with partially ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a comparator that partially orders the ties.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, PartialComparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return regularRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
@@ -641,8 +1233,27 @@ public class RoleDistanceAlgorithms {
     return costsum;
   }
 
-  public static <V, T extends V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles relative to the specified equivalence
+   * on the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a binary predicate that says whether the first
+   *                              tie's value is compatible with the second one.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix regularRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
 
@@ -650,55 +1261,183 @@ public class RoleDistanceAlgorithms {
         positionView, equivalenceRelativeTo, comparator, substitutionCost));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.alwaysTrue());
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.alwaysTrue());
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network with weakly ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a comparator that weakly orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       Comparator<? super V> comparator) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.lessEqualPredicate(comparator));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network with weakly ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a comparator that weakly orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, Comparator<? super V> comparator) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.lessEqualPredicate(comparator));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network with partially ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a comparator that partially orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       PartialComparator<? super V> comparator) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.lessEqualPredicate(comparator));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network with partially ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a comparator that partially orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, PartialComparator<? super V> comparator) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.lessEqualPredicate(comparator));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a binary predicate that says whether the first tie's
+   *                          value is compatible with the second one.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       BiPredicate<? super V, ? super V> comparator) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo, comparator);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a binary predicate that says whether the first
+   *                           tie's value is compatible with the second one.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, BiPredicate<? super V, ? super V> comparator) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo, comparator);
   }
@@ -738,7 +1477,27 @@ public class RoleDistanceAlgorithms {
         positionView, structureRelativeTo, comparator));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      NetworkView<? extends V, ? extends V> positionView, ConstMapping.OfInt equivalenceRelativeTo) {
+    return exactRolesDistanceRelativeToImpl(n, positionView, equivalenceRelativeTo);
+  }
+
+  private static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeToImpl(int n,
       NetworkView<T, ? extends V> positionView, ConstMapping.OfInt equivalenceRelativeTo) {
     int maxclassCalc = 0;
     for (int k : equivalenceRelativeTo) {
@@ -764,9 +1523,29 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo) {
+    return exactRolesDistanceRelativeToImpl(n, positionView, equivalenceRelativeTo);
+  }
+
+  private static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeToImpl(int n,
+      TransposableNetworkView<T, ? extends V> positionView, ConstMapping.OfInt equivalenceRelativeTo) {
     int maxclassCalc = 0;
     for (int k : equivalenceRelativeTo) {
       maxclassCalc = Math.max(maxclassCalc, k);
@@ -791,15 +1570,47 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network with weakly ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a comparator that weakly orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, Comparator<? super V> comparator) {
     return exactRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network with partially ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a comparator that partially orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, PartialComparator<? super V> comparator) {
     return exactRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator));
@@ -834,67 +1645,228 @@ public class RoleDistanceAlgorithms {
         Mappings.intRange(0, degi));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a binary predicate that says whether the first
+   *                              tie's value is compatible with the second one.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, BiPredicate<? super V, ? super V> comparator) {
 
     return new LazyIntDistanceMatrixImpl(n, (i, j) -> exactRolesDistanceRelativeToAt(i, j,
         positionView, equivalenceRelativeTo, comparator));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param mismatchPenalty   function specifying the cost of failing to
+   *                          substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       ToIntFunction<? super V> mismatchPenalty) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.alwaysTrue(), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param mismatchPenalty    function specifying the cost of failing to
+   *                           substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, ToIntFunction<? super V> mismatchPenalty) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.alwaysTrue(), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network with weakly ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a comparator that weakly orders the ties.
+   * @param mismatchPenalty   function specifying the cost of failing to
+   *                          substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       Comparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network with weakly ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a comparator that weakly orders the ties.
+   * @param mismatchPenalty    function specifying the cost of failing to
+   *                           substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, Comparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network with partially ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a comparator that partially orders the ties.
+   * @param mismatchPenalty   function specifying the cost of failing to
+   *                          substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       PartialComparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network with partially ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a comparator that partially orders the ties.
+   * @param mismatchPenalty    function specifying the cost of failing to
+   *                           substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, PartialComparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          regular relative to in the ideal case.
+   * @param comparator        a binary predicate that says whether the first tie's
+   *                          value is compatible with the second one.
+   * @param mismatchPenalty   function specifying the cost of failing to
+   *                          substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       BiPredicate<? super V, ? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo, comparator,
         mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be regular relative to in the ideal case.
+   * @param comparator         a binary predicate that says whether the first
+   *                           tie's value is compatible with the second one.
+   * @param mismatchPenalty    function specifying the cost of failing to
+   *                           substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo, comparator,
@@ -946,23 +1918,76 @@ public class RoleDistanceAlgorithms {
         positionView, structureRelativeTo, comparator, mismatchPenalty));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, ToIntFunction<? super V> mismatchPenalty) {
     return exactRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
         MiscUtils.alwaysTrue(), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network with weakly ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a comparator that weakly orders the ties.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, Comparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return exactRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network with partially ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a comparator that partially orders the ties.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, PartialComparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return exactRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
@@ -1006,8 +2031,27 @@ public class RoleDistanceAlgorithms {
         builder.build().asUndirectedGraph(), weights, Mappings.intRange(0, degi));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be regular relative to in the ideal case.
+   * @param comparator            a binary predicate that says whether the first
+   *                              tie's value is compatible with the second one.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
 
@@ -1015,61 +2059,205 @@ public class RoleDistanceAlgorithms {
         positionView, equivalenceRelativeTo, comparator, mismatchPenalty));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          equitably regular relative to in the ideal case.
+   * @param substitutionCost  function specifying the cost of substituting two
+   *                          ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.alwaysTrue(), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be equitably regular relative to in the ideal case.
+   * @param substitutionCost   function specifying the cost of substituting two
+   *                           ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.alwaysTrue(), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network with weakly ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          equitably regular relative to in the ideal case.
+   * @param comparator        a comparator that weakly orders the ties.
+   * @param substitutionCost  function specifying the cost of substituting two
+   *                          ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       Comparator<? super V> comparator, ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network with weakly ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be equitably regular relative to in the ideal case.
+   * @param comparator         a comparator that weakly orders the ties.
+   * @param substitutionCost   function specifying the cost of substituting two
+   *                           ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, Comparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network with partially ordered ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          equitably regular relative to in the ideal case.
+   * @param comparator        a comparator that partially orders the ties.
+   * @param substitutionCost  function specifying the cost of substituting two
+   *                          ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       PartialComparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network with partially ordered ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be equitably regular relative to in the ideal case.
+   * @param comparator         a comparator that partially orders the ties.
+   * @param substitutionCost   function specifying the cost of substituting two
+   *                           ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, PartialComparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView, Ranking rankingRelativeTo,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * ranking on the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking under which the pairs of nodes should be
+   *                          equitably regular relative to in the ideal case.
+   * @param comparator        a binary predicate that says whether the first tie's
+   *                          value is compatible with the second one.
+   * @param substitutionCost  function specifying the cost of substituting two
+   *                          ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
       BiPredicate<? super V, ? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return exactRolesDistanceRelativeToImpl(n, positionView, rankingRelativeTo, comparator,
         substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * relation on the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation under which the pairs of nodes should
+   *                           be equitably regular relative to in the ideal case.
+   * @param comparator         a binary predicate that says whether the first
+   *                           tie's value is compatible with the second one.
+   * @param substitutionCost   function specifying the cost of substituting two
+   *                           ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified relation on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       BinaryRelation relationRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return exactRolesDistanceRelativeToImpl(n, positionView, relationRelativeTo, comparator,
@@ -1121,24 +2309,80 @@ public class RoleDistanceAlgorithms {
         positionView, structureRelativeTo, comparator, substitutionCost));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be equitably regular relative to in the
+   *                              ideal case.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return exactRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
         MiscUtils.alwaysTrue(), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network with weakly ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be equitably regular relative to in the
+   *                              ideal case.
+   * @param comparator            a comparator that weakly orders the ties.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, Comparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return exactRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network with partially ordered ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be equitably regular relative to in the
+   *                              ideal case.
+   * @param comparator            a comparator that partially orders the ties.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, PartialComparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return exactRolesDistanceRelativeTo(n, positionView, equivalenceRelativeTo,
@@ -1185,8 +2429,28 @@ public class RoleDistanceAlgorithms {
         builder.build().asUndirectedGraph(), weights, Mappings.intRange(0, degi));
   }
 
-  public static <V, T extends V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
-      TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of equitable regular roles relative to the specified
+   * equivalence on the given network with a notion of compatibility between ties.
+   * 
+   * @param <V>                   type representing ties.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence under which the pairs of nodes
+   *                              should be equitably regular relative to in the
+   *                              ideal case.
+   * @param comparator            a binary predicate that says whether the first
+   *                              tie's value is compatible with the second one.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of equitable regular
+   *         roles relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix exactRolesDistanceRelativeTo(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
 
@@ -1194,29 +2458,132 @@ public class RoleDistanceAlgorithms {
         positionView, equivalenceRelativeTo, comparator, substitutionCost));
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified role structure on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, structureRelativeTo,
         MiscUtils.alwaysTrue());
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with weakly
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @param comparator          a comparator that weakly orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified role structure on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo, Comparator<? super V> comparator) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, structureRelativeTo,
         MiscUtils.lessEqualPredicate(comparator));
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with partially
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @param comparator          a comparator that partially orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified role structure on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo, PartialComparator<? super V> comparator) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, structureRelativeTo,
         MiscUtils.lessEqualPredicate(comparator));
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with a notion
+   * of compatibility between ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @param comparator          a binary predicate that says whether the first
+   *                            tie's value is compatible with the second one.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified ranking on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo, BiPredicate<? super V, ? super V> comparator) {
 
     if (p == n) {
@@ -1266,29 +2633,132 @@ public class RoleDistanceAlgorithms {
         Mappings.intRange(0, degi));
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, equivalenceRelativeTo,
         MiscUtils.alwaysTrue());
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network with weakly
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @param comparator            a comparator that weakly orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, Comparator<? super V> comparator) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator));
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network with partially
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @param comparator            a comparator that partially orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, PartialComparator<? super V> comparator) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator));
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network with a notion of
+   * compatibility between ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @param comparator            a binary predicate that says whether the first
+   *                              tie's value is compatible with the second one.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, BiPredicate<? super V, ? super V> comparator) {
 
     if (p == n) {
@@ -1340,31 +2810,142 @@ public class RoleDistanceAlgorithms {
         Mappings.intRange(0, degi));
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @param mismatchPenalty     function specifying the cost of failing to
+   *                            substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified role structure on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo, ToIntFunction<? super V> mismatchPenalty) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, structureRelativeTo,
         MiscUtils.alwaysTrue(), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with weakly
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @param comparator          a comparator that weakly orders ties.
+   * @param mismatchPenalty     function specifying the cost of failing to
+   *                            substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified role structure on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo, Comparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, structureRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with partially
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @param comparator          a comparator that partially orders ties.
+   * @param mismatchPenalty     function specifying the cost of failing to
+   *                            substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified role structure on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo, PartialComparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, structureRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with a notion
+   * of compatibility between ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @param comparator          a binary predicate that says whether the first
+   *                            tie's value is compatible with the second one.
+   * @param mismatchPenalty     function specifying the cost of failing to
+   *                            substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified role structure on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
 
@@ -1424,31 +3005,142 @@ public class RoleDistanceAlgorithms {
         builder.build().asUndirectedGraph(), weights, Mappings.intRange(0, degi));
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, ToIntFunction<? super V> mismatchPenalty) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, equivalenceRelativeTo,
         MiscUtils.alwaysTrue(), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network with weakly
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @param comparator            a comparator that weakly orders the ties.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, Comparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network with partially
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @param comparator            a comparator that partially orders the ties.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, PartialComparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network with a notion of
+   * compatibility between ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @param comparator            a binary predicate that says whether the first
+   *                              tie's value is compatible with the second one.
+   * @param mismatchPenalty       function specifying the cost of failing to
+   *                              substitute a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of regular roles
+   *         relative to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
 
@@ -1510,31 +3202,142 @@ public class RoleDistanceAlgorithms {
         builder.build().asUndirectedGraph(), weights, Mappings.intRange(0, degi));
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @param substitutionCost    function specifying the cost of substituting two
+   *                            ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified role structure on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo, ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, structureRelativeTo,
         MiscUtils.alwaysTrue(), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with weakly
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @param comparator          a comparator that weakly orders the ties.
+   * @param substitutionCost    function specifying the cost of substituting two
+   *                            ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified role structure on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo, Comparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, structureRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with partially
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @param comparator          a comparator that partially orders the ties.
+   * @param substitutionCost    function specifying the cost of substituting two
+   *                            ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified role structure on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo, PartialComparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, structureRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with a notion
+   * of compatibility between ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                 type representing ties.
+   * @param p                   degree of strictness in substitution.
+   * @param n                   number of nodes.
+   * @param positionView        network as viewed from the position of the
+   *                            individual nodes.
+   * @param structureRelativeTo the role structure that the pairs of nodes should
+   *                            be equivalent relative to under the chosen notion
+   *                            of role in the ideal case.
+   * @param comparator          a binary predicate that says whether the first
+   *                            tie's value is compatible with the second one.
+   * @param substitutionCost    function specifying the cost of substituting two
+   *                            ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified role structure on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       RelationBase structureRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
 
@@ -1595,32 +3398,143 @@ public class RoleDistanceAlgorithms {
         builder.build().asUndirectedGraph(), weights, Mappings.intRange(0, degi));
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, equivalenceRelativeTo,
         MiscUtils.alwaysTrue(), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network with weakly
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @param comparator            a comparator that weakly orders the ties.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, Comparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network with partially
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @param comparator            a comparator that partially orders the ties.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
+      int p, int n, TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, PartialComparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return pApproximateRegularRolesDistanceRelativeTo(p, n, positionView, equivalenceRelativeTo,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(
-      int p, int n, TransposableNetworkView<T, ? extends V> positionView,
+  /**
+   * Computes the distance (minimal total substitution cost) between pairs of
+   * nodes under the notion of regular roles of a degree of strictness {@code p}.
+   * relative to the specified equivalence on the given network with a notion of
+   * compatibility between ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to regular roles for {@code p=n} and equitable regular roles for
+   * {@code p=1}.
+   * 
+   * @param <V>                   type representing ties.
+   * @param p                     degree of strictness in substitution.
+   * @param n                     number of nodes.
+   * @param positionView          network as viewed from the position of the
+   *                              individual nodes.
+   * @param equivalenceRelativeTo the equivalence that the pairs of nodes should
+   *                              be equivalent relative to under the chosen
+   *                              notion of role in the ideal case.
+   * @param comparator            a binary predicate that says whether the first
+   *                              tie's value is compatible with the second one.
+   * @param substitutionCost      function specifying the cost of substituting two
+   *                              ties or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of regular roles relative
+   *         to the specified equivalence on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateRegularRolesDistanceRelativeTo(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
       ConstMapping.OfInt equivalenceRelativeTo, BiPredicate<? super V, ? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
 
@@ -1685,8 +3599,23 @@ public class RoleDistanceAlgorithms {
         builder.build().asUndirectedGraph(), weights, Mappings.intRange(0, degi));
   }
 
-  public static <T> IntDistanceMatrix weakEquivalenceDistance(int n,
-      NetworkView<T, ?> positionView, ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of weak roles on the given network.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles on the
+   *         given network.
+   */
+  public static <V> IntDistanceMatrix weakEquivalenceDistance(int n, //
+      NetworkView<? extends V, ? extends V> positionView,
+      ToIntFunction<? super V> mismatchPenalty) {
     int[] sortedVertices = new int[n];
     int lastIsolate = 0;
     int firstNonisolate = n;
@@ -1708,7 +3637,7 @@ public class RoleDistanceAlgorithms {
     for (int iv = firstNonisolate; iv < n; ++iv) {
       int errorCost = 0;
       int v = sortedVertices[iv];
-      for (T r : positionView.ties(v)) {
+      for (V r : positionView.ties(v)) {
         errorCost += mismatchPenalty.applyAsInt(r);
       }
       for (int iw = 0; iw < lastIsolate; ++iw) {
@@ -1719,9 +3648,22 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
-  public static <T> IntDistanceMatrix weakEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView,
-      ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of weak roles on the given network.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles on the
+   *         given network.
+   */
+  public static <V> IntDistanceMatrix weakEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, ToIntFunction<? super V> mismatchPenalty) {
     return new LazyIntDistanceMatrixImpl(n, (i, j) -> {
       if (positionView.ties(i, j, j).iterator().hasNext()) {
         return 0;
@@ -1732,12 +3674,25 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <T> IntDistanceMatrix weakEquivalenceDistance(int n,
-      NetworkView<T, ?> positionView, Comparator<? super T> comparator,
-      ToIntFunction<? super T> mismatchPenalty) {
-
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of weak roles on the given network with weakly ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that weakly orders the ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles on the
+   *         given network.
+   */
+  public static <V> IntDistanceMatrix weakEquivalenceDistance(int n, NetworkView<? extends V, ? extends V> positionView,
+      Comparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
     @SuppressWarnings("unchecked")
-    T[] maximalRelationships = (T[]) new Object[n];
+    V[] maximalRelationships = (V[]) new Object[n];
     for (int i = 0; i < n; ++i) {
       maximalRelationships[i] = StreamSupport.stream(positionView.ties(i).spliterator(), false)
           .max(comparator).orElse(null);
@@ -1747,11 +3702,11 @@ public class RoleDistanceAlgorithms {
 
     for (int i = 0; i < n; ++i) {
       @SuppressWarnings("unchecked")
-      T[] sortedRelationships = (T[]) StreamSupport
+      V[] sortedRelationships = (V[]) StreamSupport
           .stream(positionView.ties(i).spliterator(), false).sorted(comparator).toArray();
       int[] cost = new int[sortedRelationships.length];
       int errorCost = 0;
-      T previous = null;
+      V previous = null;
       int previousCost = 0;
       for (int j = sortedRelationships.length - 1; j >= 0; --j) {
         if (previous != null && comparator.compare(sortedRelationships[j], previous) < 0) {
@@ -1781,15 +3736,30 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
-  public static <T> IntDistanceMatrix weakEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView, Comparator<? super T> comparator,
-      ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of weak roles on the given network with weakly ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that weakly orders the ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles on the
+   *         given network.
+   */
+  public static <V> IntDistanceMatrix weakEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator,
+      ToIntFunction<? super V> mismatchPenalty) {
 
     return new LazyIntDistanceMatrixImpl(n, (i, j) -> {
-      T maxRj = StreamSupport.stream(positionView.ties(i, j, j).spliterator(), false)
+      V maxRj = StreamSupport.stream(positionView.ties(i, j, j).spliterator(), false)
           .max(comparator).orElse(null);
 
-      Stream<? extends T> streamRi = StreamSupport.stream(positionView.ties(i, j, i).spliterator(),
+      Stream<? extends V> streamRi = StreamSupport.stream(positionView.ties(i, j, i).spliterator(),
           false);
       if (maxRj != null) {
         streamRi = streamRi.filter(ri -> comparator.compare(ri, maxRj) > 0);
@@ -1798,16 +3768,49 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <T> IntDistanceMatrix weakEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView, PartialComparator<? super T> comparator,
-      ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of weak roles on the given network with partially ordered
+   * ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that partially orders the ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles on the
+   *         given network.
+   */
+  public static <V> IntDistanceMatrix weakEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, PartialComparator<? super V> comparator,
+      ToIntFunction<? super V> mismatchPenalty) {
     return weakEquivalenceDistance(n, positionView, MiscUtils.lessEqualPredicate(comparator),
         mismatchPenalty);
   }
 
-  public static <T> IntDistanceMatrix weakEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView,
-      BiPredicate<? super T, ? super T> comparator, ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (substitution failure cost) between pairs of nodes
+   * under the notion of weak roles on the given network with a notion of
+   * compatibility between ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles on the
+   *         given network.
+   */
+  public static <V> IntDistanceMatrix weakEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, BiPredicate<? super V, ? super V> comparator,
+      ToIntFunction<? super V> mismatchPenalty) {
 
     return new LazyIntDistanceMatrixImpl(n,
         (i, j) -> weakEquivalenceDistanceAt(i, j, positionView, comparator, mismatchPenalty));
@@ -1832,22 +3835,68 @@ public class RoleDistanceAlgorithms {
     return errorsum;
   }
 
-  public static <T> IntDistanceMatrix weakEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak roles on the given network.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         cost between each pair of nodes under the notion of weak roles on the
+   *         given network.
+   */
+  public static <V> IntDistanceMatrix weakEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return weakEquivalenceDistance(n, positionView, MiscUtils.alwaysTrue(), substitutionCost);
   }
 
-  public static <T> IntDistanceMatrix weakEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView, Comparator<? super T> comparator,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak roles on the given network with weakly ordered
+   * ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that weakly orders the ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         cost between each pair of nodes under the notion of weak roles on the
+   *         given network.
+   */
+  public static <V> IntDistanceMatrix weakEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return weakEquivalenceDistance(n, positionView, MiscUtils.lessEqualPredicate(comparator),
         substitutionCost);
   }
 
-  public static <T> IntDistanceMatrix weakEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView, PartialComparator<? super T> comparator,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak roles on the given network with weakly ordered
+   * ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that weakly orders the ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         cost between each pair of nodes under the notion of weak roles on the
+   *         given network.
+   */
+  public static <V> IntDistanceMatrix weakEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, PartialComparator<? super V> comparator,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return weakEquivalenceDistance(n, positionView, MiscUtils.lessEqualPredicate(comparator),
         substitutionCost);
   }
@@ -1869,17 +3918,43 @@ public class RoleDistanceAlgorithms {
     return costsum;
   }
 
-  public static <T> IntDistanceMatrix weakEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView,
-      BiPredicate<? super T, ? super T> comparator,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak roles on the given network with a notion of
+   * compatibility between ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a binary predicate that says whether the first tie's
+   *                         value is compatible with the second one.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         cost between each pair of nodes under the notion of weak roles on the
+   *         given network.
+   */
+  public static <V> IntDistanceMatrix weakEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, BiPredicate<? super V, ? super V> comparator,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
 
     return new LazyIntDistanceMatrixImpl(n,
         (i, j) -> weakEquivalenceDistanceAt(i, j, positionView, comparator, substitutionCost));
   }
 
-  public static <T> IntDistanceMatrixImpl weakExactEquivalenceDistance(int n,
-      NetworkView<T, ?> positionView) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network.
+   * 
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static IntDistanceMatrixImpl weakExactEquivalenceDistance(int n, NetworkView<?, ?> positionView) {
     int[][] distance = new int[n][n];
     if (n == 0) {
       return new IntDistanceMatrixImpl(distance);
@@ -1912,8 +3987,28 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
-  public static <T> IntDistanceMatrixImpl pApproximateWeakEquivalenceDistance(int p, int n,
-      NetworkView<T, ?> positionView) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param p            degree of strictness in substitution.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static IntDistanceMatrixImpl pApproximateWeakEquivalenceDistance(int p, int n,
+      NetworkView<?, ?> positionView) {
     int[][] distance = new int[n][n];
     if (n == 0) {
       return new IntDistanceMatrixImpl(distance);
@@ -1946,8 +4041,19 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network.
+   * 
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static IntDistanceMatrix weakExactEquivalenceDistance(int n, //
+      TransposableNetworkView<?, ?> positionView) {
 
     return new LazyIntDistanceMatrixImpl(n, (i, j) -> {
       if (i == j) {
@@ -1957,8 +4063,28 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param p            degree of strictness in substitution.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<?, ?> positionView) {
 
     return new LazyIntDistanceMatrixImpl(n, (i, j) -> {
       if (i == j) {
@@ -1968,15 +4094,29 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      NetworkView<T, ?> positionView, Comparator<? super T> comparator) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      NetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator) {
 
     @SuppressWarnings("unchecked")
-    T[][] sortedRelationships = (T[][]) new Object[n][];
-    Comparator<? super T> reversedComparator = comparator.reversed();
+    V[][] sortedRelationships = (V[][]) new Object[n][];
+    Comparator<? super V> reversedComparator = comparator.reversed();
     for (int i = 0; i < n; ++i) {
       @SuppressWarnings("unchecked")
-      T[] sortedRelationshipsForI = (T[]) StreamSupport
+      V[] sortedRelationshipsForI = (V[]) StreamSupport
           .stream(positionView.ties(i).spliterator(), false).sorted(reversedComparator).toArray();
       sortedRelationships[i] = sortedRelationshipsForI;
     }
@@ -2005,21 +4145,35 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView, Comparator<? super T> comparator) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator) {
 
-    Comparator<? super T> reversedComparator = comparator.reversed();
+    Comparator<? super V> reversedComparator = comparator.reversed();
 
     return new LazyIntDistanceMatrixImpl(n, (i, j) -> {
       if (i == j) {
         return 0;
       }
       @SuppressWarnings("unchecked")
-      T[] sortedRelationshipsForI = (T[]) StreamSupport
+      V[] sortedRelationshipsForI = (V[]) StreamSupport
           .stream(positionView.ties(i, j, i).spliterator(), false).sorted(reversedComparator)
           .toArray();
       @SuppressWarnings("unchecked")
-      T[] sortedRelationshipsForJ = (T[]) StreamSupport
+      V[] sortedRelationshipsForJ = (V[]) StreamSupport
           .stream(positionView.ties(i, j, j).spliterator(), false).sorted(reversedComparator)
           .toArray();
       int nilen = sortedRelationshipsForI.length;
@@ -2037,21 +4191,44 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView, Comparator<? super T> comparator) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with weakly
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param <V>          type representing ties.
+   * @param p            degree of strictness in substitution.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator) {
 
-    Comparator<? super T> reversedComparator = comparator.reversed();
+    Comparator<? super V> reversedComparator = comparator.reversed();
 
     return new LazyIntDistanceMatrixImpl(n, (i, j) -> {
       if (i == j) {
         return 0;
       }
       @SuppressWarnings("unchecked")
-      T[] sortedRelationshipsForI = (T[]) StreamSupport
+      V[] sortedRelationshipsForI = (V[]) StreamSupport
           .stream(positionView.ties(i, j, i).spliterator(), false).sorted(reversedComparator)
           .toArray();
       @SuppressWarnings("unchecked")
-      T[] sortedRelationshipsForJ = (T[]) StreamSupport
+      V[] sortedRelationshipsForJ = (V[]) StreamSupport
           .stream(positionView.ties(i, j, j).spliterator(), false).sorted(reversedComparator)
           .toArray();
       int nilen = sortedRelationshipsForI.length;
@@ -2072,14 +4249,43 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView, PartialComparator<? super T> comparator) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network with
+   * partially ordered ties.
+   * 
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
+      PartialComparator<? super V> comparator) {
     return weakExactEquivalenceDistance(n, positionView, MiscUtils.lessEqualPredicate(comparator));
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView,
-      BiPredicate<? super T, ? super T> comparator) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network with a
+   * notion of compatibility between ties.
+   * 
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, BiPredicate<? super V, ? super V> comparator) {
 
     return new LazyIntDistanceMatrixImpl(n, (i, j) -> {
       int degi = positionView.countTies(i, j, i);
@@ -2087,9 +4293,9 @@ public class RoleDistanceAlgorithms {
       NetworkBuilder builder = NetworkProvider.getInstance().builder(DyadType.UNDIRECTED);
       builder.ensureNode(degi + degj);
       int ipos = 0;
-      for (T ri : positionView.ties(i, j, i)) {
+      for (V ri : positionView.ties(i, j, i)) {
         int jpos = degi;
-        for (T rj : positionView.ties(i, j, j)) {
+        for (V rj : positionView.ties(i, j, j)) {
           if (comparator.test(ri, rj)) {
             builder.addEdge(ipos, jpos);
           }
@@ -2102,15 +4308,61 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView, PartialComparator<? super T> comparator) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with partially
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param <V>          type representing ties.
+   * @param p            degree of strictness in substitution.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders the ties.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, PartialComparator<? super V> comparator) {
     return pApproximateWeakEquivalenceDistance(p, n, positionView,
         MiscUtils.lessEqualPredicate(comparator));
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView,
-      BiPredicate<? super T, ? super T> comparator) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with a notion
+   * of compatibility between ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param <V>          type representing ties.
+   * @param p            degree of strictness in substitution.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, BiPredicate<? super V, ? super V> comparator) {
 
     return new LazyIntDistanceMatrixImpl(n, (i, j) -> {
       int degi = positionView.countTies(i, j, i);
@@ -2121,9 +4373,9 @@ public class RoleDistanceAlgorithms {
       NetworkBuilder builder = NetworkProvider.getInstance().builder(DyadType.UNDIRECTED);
       builder.ensureNode(degi + p * degj - 1);
       int ipos = 0;
-      for (T ri : positionView.ties(i, j, i)) {
+      for (V ri : positionView.ties(i, j, i)) {
         int jpos = degi;
-        for (T rj : positionView.ties(i, j, j)) {
+        for (V rj : positionView.ties(i, j, j)) {
           if (comparator.test(ri, rj)) {
             for (int q = 0; q < p; ++q) {
               builder.addEdge(ipos, jpos + q * degj);
@@ -2138,8 +4390,22 @@ public class RoleDistanceAlgorithms {
     });
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      NetworkView<T, ?> positionView, ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      NetworkView<? extends V, ? extends V> positionView, ToIntFunction<? super V> mismatchPenalty) {
 
     int[][] distance = new int[n][n];
     if (n == 0) {
@@ -2182,9 +4448,22 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView,
-      ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, ToIntFunction<? super V> mismatchPenalty) {
 
     int[][] distance = new int[n][n];
     for (int i = 0; i < n; ++i) {
@@ -2196,12 +4475,12 @@ public class RoleDistanceAlgorithms {
             continue;
           }
           @SuppressWarnings("unchecked")
-          T[] iRelationshipsSortedByPenalty = (T[]) StreamSupport
+          V[] iRelationshipsSortedByPenalty = (V[]) StreamSupport
               .stream(positionView.ties(i, j, i).spliterator(), false)
               .sorted(Comparator.comparingInt(mismatchPenalty)).toArray();
           int totalPenalty = 0;
           for (int k = 0; k < degi - degj; ++k) {
-            T ri = iRelationshipsSortedByPenalty[k];
+            V ri = iRelationshipsSortedByPenalty[k];
             totalPenalty += mismatchPenalty.applyAsInt(ri);
           }
           distance[i][j] = totalPenalty;
@@ -2211,23 +4490,39 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      NetworkView<T, ?> positionView, Comparator<? super T> comparator,
-      ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that weakly orders the ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      NetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator,
+      ToIntFunction<? super V> mismatchPenalty) {
 
     int[][] distance = new int[n][n];
     for (int i = 0; i < n; ++i) {
       @SuppressWarnings("unchecked")
-      T[] iRelationshipsSortedByPenalty = (T[]) StreamSupport
+      V[] iRelationshipsSortedByPenalty = (V[]) StreamSupport
           .stream(positionView.ties(i).spliterator(), false)
           .sorted(Comparator.comparingInt(mismatchPenalty)).toArray();
       for (int j = 0; j < n; ++j) {
-        TreeSet<T> jRelationshipsSortedByComparator = new TreeSet<>(comparator);
+        TreeSet<V> jRelationshipsSortedByComparator = new TreeSet<>(comparator);
         positionView.ties(j).forEach(r -> jRelationshipsSortedByComparator.add(r));
         int totalPenalty = 0;
         for (int k = iRelationshipsSortedByPenalty.length - 1; k >= 0; --k) {
-          T ri = iRelationshipsSortedByPenalty[k];
-          T rj = jRelationshipsSortedByComparator.ceiling(ri);
+          V ri = iRelationshipsSortedByPenalty[k];
+          V rj = jRelationshipsSortedByComparator.ceiling(ri);
           if (rj == null) {
             totalPenalty += mismatchPenalty.applyAsInt(ri);
           } else {
@@ -2240,23 +4535,39 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView, Comparator<? super T> comparator,
-      ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that weakly orders the ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator,
+      ToIntFunction<? super V> mismatchPenalty) {
 
     int[][] distance = new int[n][n];
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < n; ++j) {
         @SuppressWarnings("unchecked")
-        T[] iRelationshipsSortedByPenalty = (T[]) StreamSupport
+        V[] iRelationshipsSortedByPenalty = (V[]) StreamSupport
             .stream(positionView.ties(i, j, i).spliterator(), false)
             .sorted(Comparator.comparingInt(mismatchPenalty)).toArray();
-        TreeSet<T> jRelationshipsSortedByComparator = new TreeSet<>(comparator);
+        TreeSet<V> jRelationshipsSortedByComparator = new TreeSet<>(comparator);
         positionView.ties(i, j, j).forEach(r -> jRelationshipsSortedByComparator.add(r));
         int totalPenalty = 0;
         for (int k = iRelationshipsSortedByPenalty.length - 1; k >= 0; --k) {
-          T ri = iRelationshipsSortedByPenalty[k];
-          T rj = jRelationshipsSortedByComparator.ceiling(ri);
+          V ri = iRelationshipsSortedByPenalty[k];
+          V rj = jRelationshipsSortedByComparator.ceiling(ri);
           if (rj == null) {
             totalPenalty += mismatchPenalty.applyAsInt(ri);
           } else {
@@ -2269,16 +4580,49 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView, PartialComparator<? super T> comparator,
-      ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network with
+   * partially ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that partially orders the ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, PartialComparator<? super V> comparator,
+      ToIntFunction<? super V> mismatchPenalty) {
     return weakExactEquivalenceDistance(n, positionView, MiscUtils.lessEqualPredicate(comparator),
         mismatchPenalty);
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView,
-      BiPredicate<? super T, ? super T> comparator, ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network with a
+   * notion of compatibility between ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak equitable
+   *         roles on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, BiPredicate<? super V, ? super V> comparator,
+      ToIntFunction<? super V> mismatchPenalty) {
 
     return new LazyIntDistanceMatrixImpl(n,
         (i, j) -> weakExactEquivalenceDistanceAt(i, j, positionView, comparator, mismatchPenalty));
@@ -2313,30 +4657,129 @@ public class RoleDistanceAlgorithms {
         builder.build().asUndirectedGraph(), weights, Mappings.intRange(0, degi));
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView,
-      ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param <V>             type representing ties.
+   * @param p               degree of strictness in substitution.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, ToIntFunction<? super V> mismatchPenalty) {
     return pApproximateWeakEquivalenceDistance(p, n, positionView, MiscUtils.alwaysTrue(),
         mismatchPenalty);
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView, Comparator<? super T> comparator,
-      ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with weakly
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param <V>             type representing ties.
+   * @param p               degree of strictness in substitution.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that weakly orders the ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator,
+      ToIntFunction<? super V> mismatchPenalty) {
     return pApproximateWeakEquivalenceDistance(p, n, positionView,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView, PartialComparator<? super T> comparator,
-      ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with partially
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param <V>             type representing ties.
+   * @param p               degree of strictness in substitution.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that partially orders the ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, PartialComparator<? super V> comparator,
+      ToIntFunction<? super V> mismatchPenalty) {
     return pApproximateWeakEquivalenceDistance(p, n, positionView,
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView,
-      BiPredicate<? super T, ? super T> comparator, ToIntFunction<? super T> mismatchPenalty) {
+  /**
+   * Computes the distance (total unit substitution failure cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with a notion
+   * of compatibility between ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param <V>             type representing ties.
+   * @param p               degree of strictness in substitution.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, //
+      BiPredicate<? super V, ? super V> comparator,
+      ToIntFunction<? super V> mismatchPenalty) {
     if (p == 1) {
       return weakExactEquivalenceDistance(n, positionView, comparator, mismatchPenalty);
     } else if (p == n) {
@@ -2384,30 +4827,93 @@ public class RoleDistanceAlgorithms {
         builder.build().asUndirectedGraph(), weights, Mappings.intRange(0, degi));
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak equitable roles
+   *         on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return weakExactEquivalenceDistance(n, positionView, MiscUtils.alwaysTrue(), substitutionCost);
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView, Comparator<? super T> comparator,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that weakly orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak equitable roles
+   *         on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return weakExactEquivalenceDistance(n, positionView, MiscUtils.lessEqualPredicate(comparator),
         substitutionCost);
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView, PartialComparator<? super T> comparator,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network with
+   * partially ordered ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that partially orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak equitable roles
+   *         on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, PartialComparator<? super V> comparator,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return weakExactEquivalenceDistance(n, positionView, MiscUtils.lessEqualPredicate(comparator),
         substitutionCost);
   }
 
-  public static <T> IntDistanceMatrix weakExactEquivalenceDistance(int n,
-      TransposableNetworkView<T, ?> positionView,
-      BiPredicate<? super T, ? super T> comparator,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak equitable roles on the given network with a
+   * notion of compatibility between ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a binary predicate that says whether the first tie's
+   *                         value is compatible with the second one.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak equitable roles
+   *         on the given network.
+   */
+  public static <V> IntDistanceMatrix weakExactEquivalenceDistance(int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, //
+      BiPredicate<? super V, ? super V> comparator,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
 
     return new LazyIntDistanceMatrixImpl(n,
         (i, j) -> weakExactEquivalenceDistanceAt(i, j, positionView, comparator, substitutionCost));
@@ -2446,31 +4952,130 @@ public class RoleDistanceAlgorithms {
         builder.build().asUndirectedGraph(), weights, Mappings.intRange(0, degi));
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param <V>              type representing ties.
+   * @param p                degree of strictness in substitution.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return pApproximateWeakEquivalenceDistance(p, n, positionView, MiscUtils.alwaysTrue(),
         substitutionCost);
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView, Comparator<? super T> comparator,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with weakly
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param <V>              type representing ties.
+   * @param p                degree of strictness in substitution.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that weakly orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return pApproximateWeakEquivalenceDistance(p, n, positionView,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView, PartialComparator<? super T> comparator,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with partially
+   * ordered ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param <V>              type representing ties.
+   * @param p                degree of strictness in substitution.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that partially orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, PartialComparator<? super V> comparator,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
     return pApproximateWeakEquivalenceDistance(p, n, positionView,
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <T> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
-      TransposableNetworkView<T, ?> positionView,
-      BiPredicate<? super T, ? super T> comparator,
-      ToIntBiFunction<? super T, ? super T> substitutionCost) {
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak roles of a degree of strictness {@code p}.
+   * relative to the specified role structure on the given network with a notion
+   * of compatibility between ties.
+   * 
+   * <p>
+   * Here, a degree of strictness {@code p} means that in a pairwise comparison of
+   * node {@code i} with {@code j}, each incident tie of {@code j} can substitute
+   * an incident tie of {@code i} up to {@code p} times. Note that this is
+   * equivalent to weak roles for {@code p=n} and weak equitable roles for
+   * {@code p=1}.
+   * 
+   * @param <V>              type representing ties.
+   * @param p                degree of strictness in substitution.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a binary predicate that says whether the first tie's
+   *                         value is compatible with the second one.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak roles of the
+   *         specified degree of strictness on the given network.
+   */
+  public static <V> IntDistanceMatrix pApproximateWeakEquivalenceDistance(int p, int n,
+      TransposableNetworkView<? extends V, ? extends V> positionView, //
+      BiPredicate<? super V, ? super V> comparator,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
     if (p == 1) {
       return weakExactEquivalenceDistance(n, positionView, comparator, substitutionCost);
     } else if (p == n) {
@@ -2526,6 +5131,20 @@ public class RoleDistanceAlgorithms {
         builder.build().asUndirectedGraph(), weights, Mappings.intRange(0, degi));
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView,
       ToIntFunction<? super V> mismatchPenalty) {
@@ -2533,6 +5152,22 @@ public class RoleDistanceAlgorithms {
         mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that weakly orders ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
@@ -2540,6 +5175,22 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with
+   * partially ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that partially orders ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView,
       PartialComparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
@@ -2547,6 +5198,23 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with a
+   * notion of compatibility between ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView,
       BiPredicate<? super V, ? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
@@ -2597,6 +5265,20 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       ToIntFunction<? super V> mismatchPenalty) {
@@ -2604,6 +5286,22 @@ public class RoleDistanceAlgorithms {
         mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that weakly orders ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       Comparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
@@ -2611,6 +5309,22 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with
+   * partially ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that partially orders ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       PartialComparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
@@ -2618,6 +5332,23 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with a
+   * notion of compatibility between ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       BiPredicate<? super V, ? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
@@ -2662,6 +5393,20 @@ public class RoleDistanceAlgorithms {
     });
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
@@ -2669,6 +5414,22 @@ public class RoleDistanceAlgorithms {
         substitutionCost);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that weakly orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
@@ -2676,6 +5437,22 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with
+   * partially ordered ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that partially orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView,
       PartialComparator<? super V> comparator,
@@ -2684,6 +5461,23 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with a
+   * notion of compatibility between ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a binary predicate that says whether the first tie's
+   *                         value is compatible with the second one.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView,
       BiPredicate<? super V, ? super V> comparator,
@@ -2736,6 +5530,20 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
@@ -2743,6 +5551,22 @@ public class RoleDistanceAlgorithms {
         substitutionCost);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that weakly orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       Comparator<? super V> comparator, ToIntBiFunction<? super V, ? super V> substitutionCost) {
@@ -2750,6 +5574,22 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with
+   * partially ordered ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that partially orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       PartialComparator<? super V> comparator,
@@ -2758,6 +5598,23 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of strong structural roles on the given network with a
+   * notion of compatibility between ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a binary predicate that says whether the first tie's
+   *                         value is compatible with the second one.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of strong structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix strongStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       BiPredicate<? super V, ? super V> comparator,
@@ -2805,6 +5662,20 @@ public class RoleDistanceAlgorithms {
     });
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView,
       ToIntFunction<? super V> mismatchPenalty) {
@@ -2812,6 +5683,22 @@ public class RoleDistanceAlgorithms {
         mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that weakly orders ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator,
       ToIntFunction<? super V> mismatchPenalty) {
@@ -2819,6 +5706,22 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with
+   * partially ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that partially orders ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView,
       PartialComparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
@@ -2826,6 +5729,23 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with a
+   * notion of compatibility between ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView,
       BiPredicate<? super V, ? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
@@ -2918,6 +5838,20 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       ToIntFunction<? super V> mismatchPenalty) {
@@ -2925,6 +5859,22 @@ public class RoleDistanceAlgorithms {
         mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that weakly orders ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       Comparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
@@ -2932,6 +5882,22 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with
+   * partially ordered ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a comparator that partially orders ties.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       PartialComparator<? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
@@ -2939,6 +5905,23 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), mismatchPenalty);
   }
 
+  /**
+   * Computes the distance (total substitution failure cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with a
+   * notion of compatibility between ties.
+   * 
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one.
+   * @param mismatchPenalty function specifying the cost of failing to substitute
+   *                        a given tie.
+   * @return matrix of integer distances detailing the total substitution failure
+   *         cost between each pair of nodes under the notion of weak structural
+   *         roles on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       BiPredicate<? super V, ? super V> comparator, ToIntFunction<? super V> mismatchPenalty) {
@@ -2991,6 +5974,20 @@ public class RoleDistanceAlgorithms {
     });
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak structural roles
+   *         on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
@@ -2998,6 +5995,22 @@ public class RoleDistanceAlgorithms {
         substitutionCost);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that weakly orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak structural roles
+   *         on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView, Comparator<? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
@@ -3005,6 +6018,22 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with
+   * partially ordered ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that partially orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak structural roles
+   *         on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       NetworkView<? extends V, ? extends V> positionView,
       PartialComparator<? super V> comparator,
@@ -3013,8 +6042,31 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
-  public static <V, T extends V, U extends V> IntDistanceMatrix weakStructuralEquivalenceDistance(
-      int n, NetworkView<T, U> positionView, BiPredicate<? super V, ? super V> comparator,
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with a
+   * notion of compatibility between ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a binary predicate that says whether the first tie's
+   *                         value is compatible with the second one.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak structural roles
+   *         on the given network.
+   */
+  public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
+      NetworkView<? extends V, ? extends V> positionView, BiPredicate<? super V, ? super V> comparator,
+      ToIntBiFunction<? super V, ? super V> substitutionCost) {
+    return weakStructuralEquivalenceDistanceImpl(n, positionView, comparator, substitutionCost);
+  }
+
+  private static <V, T extends V, U extends V> IntDistanceMatrix weakStructuralEquivalenceDistanceImpl(int n,
+      NetworkView<T, U> positionView, BiPredicate<? super V, ? super V> comparator,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
 
     int[][] distance = new int[n][n];
@@ -3104,6 +6156,20 @@ public class RoleDistanceAlgorithms {
     return new IntDistanceMatrixImpl(distance);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak structural roles
+   *         on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       ToIntBiFunction<? super V, ? super V> substitutionCost) {
@@ -3111,6 +6177,22 @@ public class RoleDistanceAlgorithms {
         substitutionCost);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with
+   * weakly ordered ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that weakly orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak structural roles
+   *         on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       Comparator<? super V> comparator, ToIntBiFunction<? super V, ? super V> substitutionCost) {
@@ -3118,6 +6200,22 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with
+   * partially ordered ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a comparator that partially orders ties.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak structural roles
+   *         on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       PartialComparator<? super V> comparator,
@@ -3126,6 +6224,23 @@ public class RoleDistanceAlgorithms {
         MiscUtils.lessEqualPredicate(comparator), substitutionCost);
   }
 
+  /**
+   * Computes the distance (minimum total substitution cost) between pairs of
+   * nodes under the notion of weak structural roles on the given network with a
+   * notion of compatibility between ties.
+   * 
+   * @param <V>              type representing ties.
+   * @param n                number of nodes.
+   * @param positionView     network as viewed from the position of the individual
+   *                         nodes.
+   * @param comparator       a binary predicate that says whether the first tie's
+   *                         value is compatible with the second one.
+   * @param substitutionCost function specifying the cost of substituting two ties
+   *                         or failing to substitute a tie.
+   * @return matrix of integer distances detailing the total substitution cost
+   *         between each pair of nodes under the notion of weak structural roles
+   *         on the given network.
+   */
   public static <V> IntDistanceMatrix weakStructuralEquivalenceDistance(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       BiPredicate<? super V, ? super V> comparator,

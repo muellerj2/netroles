@@ -21,8 +21,8 @@ import ch.ethz.sn.visone3.roles.spi.DistanceBundleService;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 
 /**
- * Service providing access to a collection of factories for constructing
- * operators that produce distance matrices from binary relations.
+ * Service implementation providing the bundle of factories for distance
+ * operators acting on binary relations.
  */
 public class RelationalDistanceBundleProvider implements DistanceBundleService {
 

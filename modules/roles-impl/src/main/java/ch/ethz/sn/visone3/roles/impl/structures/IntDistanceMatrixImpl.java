@@ -18,10 +18,18 @@ package ch.ethz.sn.visone3.roles.impl.structures;
 
 import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
 
+/**
+ * Dense matrix implementation of an integer distance matrix.
+ */
 public class IntDistanceMatrixImpl implements IntDistanceMatrix {
 
   private int[][] mat_;
 
+  /**
+   * Constructs a new distance matrix from a square two-dimensional integer array.
+   * 
+   * @param mat the two-dimensional integer array.
+   */
   public IntDistanceMatrixImpl(int[][] mat) {
     this.mat_ = mat;
   }

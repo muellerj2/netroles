@@ -21,6 +21,9 @@ import ch.ethz.sn.visone3.roles.blocks.Reducers.DistanceFactory;
 import ch.ethz.sn.visone3.roles.distances.IntDistanceMatrix;
 import ch.ethz.sn.visone3.roles.spi.ReducerDistanceFactoryService;
 
+/**
+ * Service implementation providing the reducers for integer distance matrices.
+ */
 public class ReducerDistanceFactoryServiceProvider implements ReducerDistanceFactoryService {
 
   @Override

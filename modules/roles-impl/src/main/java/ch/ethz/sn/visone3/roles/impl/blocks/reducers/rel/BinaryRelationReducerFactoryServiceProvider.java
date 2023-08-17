@@ -24,8 +24,7 @@ import ch.ethz.sn.visone3.roles.spi.ReducerFactoryService;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 
 /**
- * Service that makes the factories for reducers acting on binary relations
- * available.
+ * Service implementation providing the reducers for binary relations.
  */
 public class BinaryRelationReducerFactoryServiceProvider implements ReducerFactoryService {
 

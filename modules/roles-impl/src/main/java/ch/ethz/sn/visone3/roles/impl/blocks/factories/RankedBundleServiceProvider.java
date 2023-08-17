@@ -27,6 +27,9 @@ import ch.ethz.sn.visone3.roles.blocks.factories.WeakStructuralRoleOperatorBuild
 import ch.ethz.sn.visone3.roles.spi.RoleOperatorBundleService;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
+/**
+ * Service implementation providing a bundle of factories for rankings.
+ */
 public class RankedBundleServiceProvider implements RoleOperatorBundleService {
 
   @SuppressWarnings("unchecked")

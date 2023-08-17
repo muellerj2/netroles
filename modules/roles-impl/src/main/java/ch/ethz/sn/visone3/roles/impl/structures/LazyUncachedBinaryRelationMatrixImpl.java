@@ -16,19 +16,31 @@
  */
 package ch.ethz.sn.visone3.roles.impl.structures;
 
+import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
+
 import ch.ethz.sn.visone3.lang.PrimitiveIterable.OfInt;
 import ch.ethz.sn.visone3.roles.structures.RelationBase;
 import ch.ethz.sn.visone3.roles.structures.Relations;
 
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
-
+/**
+ * Lazy, completely uncached implementation of a binary relation or ranking.
+ * Calls a function (perhaps multiple times at the same position) to determine
+ * its content as requested.
+ */
 public class LazyUncachedBinaryRelationMatrixImpl implements BinaryRelationOrRanking {
 
   private final int size_;
   private final BiIntPredicate lazyEvaluator_;
   private int relationships_;
 
+  /**
+   * Constructs the representation of a relation.
+   * 
+   * @param size          the size of the relation's domain.
+   * @param lazyEvaluator function that is called to lazily compute the content of
+   *                      this relation.
+   */
   public LazyUncachedBinaryRelationMatrixImpl(int size, BiIntPredicate lazyEvaluator) {
     this.size_ = size;
     this.lazyEvaluator_ = lazyEvaluator;

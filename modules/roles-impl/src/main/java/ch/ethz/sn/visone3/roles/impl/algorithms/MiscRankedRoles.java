@@ -17,6 +17,11 @@
 
 package ch.ethz.sn.visone3.roles.impl.algorithms;
 
+import java.util.Comparator;
+import java.util.function.BiPredicate;
+import java.util.function.ToIntFunction;
+import java.util.stream.StreamSupport;
+
 import ch.ethz.sn.visone3.lang.Mappings;
 import ch.ethz.sn.visone3.lang.Pair;
 import ch.ethz.sn.visone3.lang.PrimitiveCollections;
@@ -40,24 +45,22 @@ import ch.ethz.sn.visone3.roles.structures.RelationBuilders;
 import ch.ethz.sn.visone3.roles.structures.Relations;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
 
-import java.util.Comparator;
-import java.util.function.BiPredicate;
-import java.util.function.ToIntFunction;
-import java.util.stream.StreamSupport;
-
+/**
+ * Implements algorithms to compute weak, weak structural and strong structural
+ * roles on binary relations and rankings.
+ */
 public class MiscRankedRoles {
 
   private MiscRankedRoles() {
   }
 
   /**
-   * Computes the weak roles ranking relative to the given unweighted network. Runs in O(n) time and
-   * needs O(1) additional space.
+   * Computes the weak roles ranking relative to the given unweighted network.
+   * Runs in O(n) time and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak roles ranking for the given network.
    */
   public static Ranking weakRolesRanking(int n, NetworkView<?, ?> positionView) {
@@ -65,16 +68,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak roles ranking relative to the given network that refines the given
-   * relation. Runs in O(n^2) time and needs O(n^2) additional space.
+   * Computes the coarsest weak roles ranking relative to the given network that
+   * refines the given relation. Runs in O(n^2) time and needs O(n^2) additional
+   * space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          ranking to refine
-   * @return the coarsest weak roles ranking for the given network that refines the given ranking.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @return the coarsest weak roles ranking for the given network that refines
+   *         the given ranking.
    */
   public static Ranking refiningWeakRoles(int n, NetworkView<?, ?> positionView,
       Ranking refinedRanking) {
@@ -82,13 +85,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak roles relation relative to the given unweighted network. Runs in O(n) time
-   * and needs O(1) additional space.
+   * Computes the weak roles relation relative to the given unweighted network.
+   * Runs in O(n) time and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak roles relation for the given network.
    */
   public static BinaryRelation weakRolesRelation(int n, NetworkView<?, ?> positionView) {
@@ -96,16 +98,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak roles relation relative to the given network that refines the given
-   * relation. Runs in O(n^2) time and needs O(1) additional space.
+   * Computes the coarsest weak roles relation relative to the given network that
+   * refines the given relation. Runs in O(n^2) time and needs O(1) additional
+   * space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          relation to refine
-   * @return the coarsest weak roles relation for the given network that refines the given relation.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @return the coarsest weak roles relation for the given network that refines
+   *         the given relation.
    */
   public static BinaryRelation refiningWeakRoles(int n, NetworkView<?, ?> positionView,
       BinaryRelation refinedRelation) {
@@ -209,13 +211,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak roles ranking relative to the given unweighted network. Runs in O(n) time and
-   * needs O(1) additional space.
+   * Computes the weak roles ranking relative to the given unweighted network.
+   * Runs in O(n) time and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak roles ranking for the given network.
    */
   public static Ranking weakRolesRanking(int n,
@@ -224,16 +225,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak roles ranking relative to the given network that refines the given
-   * relation. Runs in O(n^2) time and needs O(n^2) additional space.
+   * Computes the coarsest weak roles ranking relative to the given network that
+   * refines the given relation. Runs in O(n^2) time and needs O(n^2) additional
+   * space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          ranking to refine
-   * @return the coarsest weak roles ranking for the given network that refines the given ranking.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @return the coarsest weak roles ranking for the given network that refines
+   *         the given ranking.
    */
   public static Ranking refiningWeakRoles(int n, TransposableNetworkView<?, ?> positionView,
       Ranking refinedRanking) {
@@ -241,13 +242,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak roles relation relative to the given unweighted network. Runs in O(n) time
-   * and needs O(1) additional space.
+   * Computes the weak roles relation relative to the given unweighted network.
+   * Runs in O(n) time and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak roles relation for the given network.
    */
   public static BinaryRelation weakRolesRelation(int n,
@@ -256,16 +256,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak roles relation relative to the given network that refines the given
-   * relation. Runs in O(n^2) time and needs O(1) additional space.
+   * Computes the coarsest weak roles relation relative to the given network that
+   * refines the given relation. Runs in O(n^2) time and needs O(1) additional
+   * space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          relation to refine
-   * @return the coarsest weak roles relation for the given network that refines the given relation.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @return the coarsest weak roles relation for the given network that refines
+   *         the given relation.
    */
   public static BinaryRelation refiningWeakRoles(int n,
       TransposableNetworkView<?, ?> positionView, BinaryRelation refinedRelation) {
@@ -282,15 +282,14 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak roles ranking relative to the given network. Runs in O(m + n log n) time and
-   * needs O(n) additional space.
+   * Computes the weak roles ranking relative to the given network with weakly
+   * ordered ties. Runs in O(m + n log n) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak roles ranking for the given network.
    */
   public static <V> Ranking weakRolesRanking(int n,
@@ -300,18 +299,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak roles ranking relative to the given network that refines the given
-   * relation. Runs in O(n^2) time and needs O(n^2) additional space.
+   * Computes the coarsest weak roles ranking relative to the given network with
+   * weakly ordered ties that refines the given relation. Runs in O(n^2) time and
+   * needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          ranking to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the coarsest weak roles ranking for the given network that refines the given ranking.
+   * @param <V>            type representing ties.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @param comparator     a comparator that weakly orders ties.
+   * @return the coarsest weak roles ranking for the given network that refines
+   *         the given ranking.
    */
   public static <V> Ranking refiningWeakRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, Ranking refinedRanking,
@@ -320,15 +319,14 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak roles relation relative to the given network. Runs in O(m + n log n) time and
-   * needs O(n) additional space.
+   * Computes the weak roles relation relative to the given network with weakly
+   * ordered ties. Runs in O(m + n log n) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak roles relation for the given network.
    */
   public static <V> BinaryRelation weakRolesRelation(int n,
@@ -338,18 +336,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak roles relation relative to the given network that refines the given
-   * relation. Runs in O(n^2) time and needs O(1) additional space.
+   * Computes the coarsest weak roles relation relative to the given network with
+   * weakly ordered ties that refines the given relation. Runs in O(n^2) time and
+   * needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          relation to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the coarsest weak roles relation for the given network that refines the given relation.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a comparator that weakly orders ties.
+   * @return the coarsest weak roles relation for the given network that refines
+   *         the given relation.
    */
   public static <V> BinaryRelation refiningWeakRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, BinaryRelation refinedRelation,
@@ -500,15 +498,14 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak roles ranking relative to the given network. Runs in O(m + n log n) time and
-   * needs O(n) additional space.
+   * Computes the weak roles ranking relative to the given network with weakly
+   * ordered ties. Runs in O(m + n log n) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak roles ranking for the given network.
    */
   public static <V> Ranking weakRolesRanking(int n,
@@ -518,18 +515,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak roles ranking relative to the given network that refines the given
-   * ranking. Runs in O(n^2) time and needs O(n^2) additional space.
+   * Computes the coarsest weak roles ranking relative to the given network with
+   * weakly ordered ties that refines the given ranking. Runs in O(n^2) time and
+   * needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          ranking to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the coarsest weak roles ranking for the given network that refines the given ranking.
+   * @param <V>            type representing ties.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @param comparator     a comparator that weakly orders ties.
+   * @return the coarsest weak roles ranking for the given network that refines
+   *         the given ranking.
    */
   public static <V> Ranking refiningWeakRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -538,15 +535,14 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak roles relation relative to the given network. Runs in O(m + n log n) time and
-   * needs O(n) additional space.
+   * Computes the weak roles relation relative to the given network with weakly
+   * ordered ties. Runs in O(m + n log n) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak roles relation for the given network.
    */
   public static <V> BinaryRelation weakRolesRelation(int n,
@@ -556,18 +552,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak roles relation relative to the given network that refines the given
-   * relation. Runs in O(n^2) time and needs O(1) additional space.
+   * Computes the coarsest weak roles relation relative to the given network with
+   * weakly ordered ties that refines the given relation. Runs in O(n^2) time and
+   * needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          relation to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the coarsest weak roles relation for the given network that refines the given relation.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a comparator that weakly orders ties.
+   * @return the coarsest weak roles relation for the given network that refines
+   *         the given relation.
    */
   public static <V> BinaryRelation refiningWeakRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -592,15 +588,14 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak roles ranking relative to the given network. Runs in O(m*m) time and needs
-   * O(1) additional space.
+   * Computes the weak roles ranking relative to the given network with partially
+   * ordered ties. Runs in O(m*m) time and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the weak roles ranking for the given network.
    */
   public static <V> Ranking weakRolesRanking(int n,
@@ -610,18 +605,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak roles ranking relative to the given network that refines the given
-   * relation. Runs in O(m*m) time and needs O(1) additional space.
+   * Computes the coarsest weak roles ranking relative to the given network with
+   * partially ordered ties that refines the given relation. Runs in O(m*m) time
+   * and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          ranking to refine
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the coarsest weak roles ranking for the given network that refines the given ranking.
+   * @param <V>            type representing ties.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @param comparator     a comparator that partially orders ties.
+   * @return the coarsest weak roles ranking for the given network that refines
+   *         the given ranking.
    */
   public static <V> Ranking refiningWeakRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -631,15 +626,14 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak roles relation relative to the given network. Runs in O(m*m) time and needs
-   * O(1) additional space.
+   * Computes the weak roles relation relative to the given network with partially
+   * ordered ties. Runs in O(m*m) time and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the weak roles relation for the given network.
    */
   public static <V> BinaryRelation weakRolesRelation(int n,
@@ -649,18 +643,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak roles relation relative to the given network that refines the given
-   * relation. Runs in O(m*m) time and needs O(1) additional space.
+   * Computes the coarsest weak roles relation relative to the given network with
+   * partially ordered ties that refines the given relation. Runs in O(m*m) time
+   * and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          relation to refine
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the coarsest weak roles relation for the given network that refines the given relation.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a comparator that partially orders ties.
+   * @return the coarsest weak roles relation for the given network that refines
+   *         the given relation.
    */
   public static <V> BinaryRelation refiningWeakRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -673,16 +667,16 @@ public class MiscRankedRoles {
   // is not guaranteed to produce rankings for all inputs
 
   /**
-   * Computes the weak roles relation relative to the given network. Runs in O(m*m) time and needs
-   * O(1) additional space.
+   * Computes the weak roles relation relative to the given network with some
+   * notion of compatibility among ties. Runs in O(m*m) time and needs O(1)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
    * @return the weak roles relation for the given network.
    */
   public static <V> BinaryRelation weakRolesRelation(int n,
@@ -692,19 +686,19 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak roles relation relative to the given network that refines the given
-   * relation. Runs in O(m*m) time and needs O(1) additional space.
+   * Computes the coarsest weak roles relation relative to the given network with
+   * some notion of compatibility among ties that refines the given relation. Runs
+   * in O(m*m) time and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          relation to refine
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @return the coarsest weak roles relation for the given network that refines the given relation.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one.
+   * @return the coarsest weak roles relation for the given network that refines
+   *         the given relation.
    */
   public static <V> BinaryRelation refiningWeakRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -749,13 +743,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak exact roles ranking relative to the given unweighted network. Runs in O(n)
-   * time and needs O(n) additional space.
+   * Computes the weak exact roles ranking relative to the given unweighted
+   * network. Runs in O(n) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak exact roles ranking for the given network.
    */
   public static Ranking weakExactRolesRanking(int n, NetworkView<?, ?> positionView) {
@@ -763,17 +756,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak exact roles ranking relative to the given network that refines the
-   * given relation. Runs in O(n^2) time and needs O(n^2) additional space.
+   * Computes the coarsest weak exact roles ranking relative to the given network
+   * that refines the given relation. Runs in O(n^2) time and needs O(n^2)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          ranking to refine
-   * @return the coarsest weak exact roles ranking for the given network that refines the given
-   *         ranking.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @return the coarsest weak exact roles ranking for the given network that
+   *         refines the given ranking.
    */
   public static Ranking refiningWeakExactRoles(int n, NetworkView<?, ?> positionView,
       Ranking refinedRanking) {
@@ -781,13 +773,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak exact roles relation relative to the given unweighted network. Runs in O(n)
-   * time and needs O(n) additional space.
+   * Computes the weak exact roles relation relative to the given unweighted
+   * network. Runs in O(n) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak exact roles relation for the given network.
    */
   public static BinaryRelation weakExactRolesRelation(int n,
@@ -796,17 +787,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak exact roles relation relative to the given network that refines the
-   * given relation. Runs in O(n^2) time and needs O(n^2) additional space.
+   * Computes the coarsest weak exact roles relation relative to the given network
+   * that refines the given relation. Runs in O(n^2) time and needs O(n^2)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          relation to refine
-   * @return the coarsest weak exact roles relation for the given network that refines the given
-   *         relation.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @return the coarsest weak exact roles relation for the given network that
+   *         refines the given relation.
    */
   public static BinaryRelation refiningWeakExactRoles(int n, NetworkView<?, ?> positionView,
       BinaryRelation refinedRelation) {
@@ -934,13 +924,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak exact roles ranking relative to the given unweighted network. Runs in O(n)
-   * time and needs O(n) additional space.
+   * Computes the weak exact roles ranking relative to the given unweighted
+   * network. Runs in O(n) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak exact roles ranking for the given network.
    */
   public static Ranking weakExactRolesRanking(int n,
@@ -949,17 +938,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak exact roles ranking relative to the given network that refines the
-   * given relation. Runs in O(n^2) time and needs O(n^2) additional space.
+   * Computes the coarsest weak exact roles ranking relative to the given network
+   * that refines the given relation. Runs in O(n^2) time and needs O(n^2)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          ranking to refine
-   * @return the coarsest weak exact roles ranking for the given network that refines the given
-   *         ranking.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @return the coarsest weak exact roles ranking for the given network that
+   *         refines the given ranking.
    */
   public static Ranking refiningWeakExactRoles(int n,
       TransposableNetworkView<?, ?> positionView, Ranking refinedRanking) {
@@ -967,13 +955,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak exact roles relation relative to the given unweighted network. Runs in O(n)
-   * time and needs O(n) additional space.
+   * Computes the weak exact roles relation relative to the given unweighted
+   * network. Runs in O(n) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak exact roles relation for the given network.
    */
   public static BinaryRelation weakExactRolesRelation(int n,
@@ -982,17 +969,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak exact roles relation relative to the given network that refines the
-   * given relation. Runs in O(n^2) time and needs O(n^2) additional space.
+   * Computes the coarsest weak exact roles relation relative to the given network
+   * that refines the given relation. Runs in O(n^2) time and needs O(n^2)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          Relation to refine
-   * @return the coarsest weak exact roles relation for the given network that refines the given
-   *         relation.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @return the coarsest weak exact roles relation for the given network that
+   *         refines the given relation.
    */
   public static BinaryRelation refiningWeakExactRoles(int n,
       TransposableNetworkView<?, ?> positionView, BinaryRelation refinedRelation) {
@@ -1008,15 +994,14 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak exact roles ranking relative to the given network. Runs in O(m n) time and
-   * needs O(m) additional space.
+   * Computes the weak exact roles ranking relative to the given network with
+   * weakly ordered ties. Runs in O(m n) time and needs O(m) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak exact roles ranking for the given network.
    */
   public static <V> Ranking weakExactRolesRanking(int n,
@@ -1026,19 +1011,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak exact roles ranking relative to the given network that refines the
-   * given relation. Runs in O(m n) time and needs O(m+n^2) additional space.
+   * Computes the coarsest weak exact roles ranking relative to the given network
+   * with weakly ordered ties that refines the given relation. Runs in O(m n) time
+   * and needs O(m+n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          ranking to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the coarsest weak exact roles ranking for the given network that refines the given
-   *         ranking.
+   * @param <V>            type representing ties.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @param comparator     a comparator that weakly orders ties.
+   * @return the coarsest weak exact roles ranking for the given network that
+   *         refines the given ranking.
    */
   public static <V> Ranking refiningWeakExactRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, Ranking refinedRanking,
@@ -1047,15 +1031,14 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak exact roles relation relative to the given network. Runs in O(m n) time and
-   * needs O(m + n) additional space.
+   * Computes the weak exact roles relation relative to the given network with
+   * weakly ordered ties. Runs in O(m n) time and needs O(m + n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak exact roles relation for the given network.
    */
   public static <V> BinaryRelation weakExactRolesRelation(int n,
@@ -1065,19 +1048,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak exact roles relation relative to the given network that refines the
-   * given relation. Runs in O(m n) time and needs O(m+n^2) additional space.
+   * Computes the coarsest weak exact roles relation relative to the given network
+   * with weakly ordered ties that refines the given relation. Runs in O(m n) time
+   * and needs O(m+n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          relation to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the coarsest weak exact roles relation for the given network that refines the given
-   *         relation.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a comparator that weakly orders ties.
+   * @return the coarsest weak exact roles relation for the given network that
+   *         refines the given relation.
    */
   public static <V> BinaryRelation refiningWeakExactRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, BinaryRelation refinedRelation,
@@ -1129,15 +1111,14 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak exact roles ranking relative to the given network. Runs in O(m n) time and
-   * needs O(m) additional space.
+   * Computes the weak exact roles ranking relative to the given network with
+   * weakly ordered ties. Runs in O(m n) time and needs O(m) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak exact roles ranking for the given network.
    */
   public static <V> Ranking weakExactRolesRanking(int n,
@@ -1147,19 +1128,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak exact roles ranking relative to the given network that refines the
-   * given relation. Runs in O(m n) time and needs O(m+n^2) additional space.
+   * Computes the coarsest weak exact roles ranking relative to the given network
+   * with weakly ordered ties that refines the given relation. Runs in O(m n) time
+   * and needs O(m+n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          ranking to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the coarsest weak exact roles ranking for the given network that refines the given
-   *         ranking.
+   * @param <V>            type representing ties.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @param comparator     a comparator that weakly orders ties.
+   * @return the coarsest weak exact roles ranking for the given network that
+   *         refines the given ranking.
    */
   public static <V> Ranking refiningWeakExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1168,15 +1148,14 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak exact roles relation relative to the given network. Runs in O(m n) time and
-   * needs O(m + n) additional space.
+   * Computes the weak exact roles relation relative to the given network with
+   * weakly ordered ties. Runs in O(m n) time and needs O(m + n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak exact roles relation for the given network.
    */
   public static <V> BinaryRelation weakExactRolesRelation(int n,
@@ -1186,19 +1165,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak exact roles relation relative to the given network that refines the
-   * given relation. Runs in O(m n) time and needs O(m+n^2) additional space.
+   * Computes the coarsest weak exact roles relation relative to the given network
+   * that refines the given relation with weakly ordered ties. Runs in O(m n) time
+   * and needs O(m+n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          relation to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the coarsest weak exact roles relation for the given network that refines the given
-   *         relation.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a comparator that weakly orders ties.
+   * @return the coarsest weak exact roles relation for the given network that
+   *         refines the given relation.
    */
   public static <V> BinaryRelation refiningWeakExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1251,15 +1229,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak exact roles ranking relative to the given network. Runs in O(m^2 sqrt(n))
-   * time and needs O(n) additional space.
+   * Computes the weak exact roles ranking relative to the given network with
+   * partially ordered ties. Runs in O(m^2 sqrt(n)) time and needs O(n) additional
+   * space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the weak exact roles ranking for the given network.
    */
   public static <V> Ranking weakExactRolesRanking(int n,
@@ -1270,19 +1248,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak exact roles ranking relative to the given network that refines the
-   * given relation. Runs in O(m*m) time and needs O(1) additional space.
+   * Computes the coarsest weak exact roles ranking relative to the given network
+   * with partially ordered ties that refines the given relation. Runs in O(m*m)
+   * time and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          ranking to refine
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the coarsest weak exact roles ranking for the given network that refines the given
-   *         ranking.
+   * @param <V>            type representing ties.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @param comparator     a comparator that partially orders ties.
+   * @return the coarsest weak exact roles ranking for the given network that
+   *         refines the given ranking.
    */
   public static <V> Ranking refiningWeakExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1292,15 +1269,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak exact roles relation relative to the given network. Runs in O(m^2 sqrt(n))
-   * time and needs O(n) additional space.
+   * Computes the weak exact roles relation relative to the given network with
+   * partially ordered ties. Runs in O(m^2 sqrt(n)) time and needs O(n) additional
+   * space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the weak exact roles relation for the given network.
    */
   public static <V> BinaryRelation weakExactRolesRelation(int n,
@@ -1310,19 +1287,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak exact roles relation relative to the given network that refines the
-   * given relation. Runs in O(m*m) time and needs O(1) additional space.
+   * Computes the coarsest weak exact roles relation relative to the given network
+   * with partially ordered ties that refines the given relation. Runs in O(m*m)
+   * time and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          relation to refine
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the coarsest weak exact roles relation for the given network that refines the given
-   *         relation.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a comparator that partially orders ties.
+   * @return the coarsest weak exact roles relation for the given network that
+   *         refines the given relation.
    */
   public static <V> BinaryRelation refiningWeakExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1336,16 +1312,16 @@ public class MiscRankedRoles {
   // is not guaranteed to produce rankings for all inputs
 
   /**
-   * Computes the weak exact roles relation relative to the given network. Runs in O(m^2 sqrt(n))
-   * time and needs O(n) additional space.
+   * Computes the weak exact roles relation relative to the given network with
+   * some notion of compatibility between ties. Runs in O(m^2 sqrt(n)) time and
+   * needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
    * @return the weak exact roles relation for the given network.
    */
   public static <V> BinaryRelation weakExactRolesRelation(int n,
@@ -1355,20 +1331,19 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak exact roles relation relative to the given network that refines the
-   * given relation. Runs in O(m*m) time and needs O(1) additional space.
+   * Computes the coarsest weak exact roles relation relative to the given network
+   * with some notion of compatibility between ties that refines the given
+   * relation. Runs in O(m*m) time and needs O(1) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          relation to refine
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @return the coarsest weak exact roles relation for the given network that refines the given
-   *         relation.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one.
+   * @return the coarsest weak exact roles relation for the given network that
+   *         refines the given relation.
    */
   public static <V> BinaryRelation refiningWeakExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -1485,12 +1460,51 @@ public class MiscRankedRoles {
             Mappings.intRange(0, neighboricount)).size() == neighboricount;
   }
 
+  /**
+   * Computes the binary relation under the notion of weak roles with a specified
+   * degree of strictness {@code p}, meaning that in a pairwise comparison of
+   * {@code i} with {@code j}, each edge incident to {@code j} can substitute for
+   * {@code p} edges incident to {@code i}, on the given network with some notion
+   * of compatibility between ties. Runs in O(p^{1.5} m^2 sqrt(n)) time and needs
+   * O(pn) additional space.
+   * 
+   * @param <T>          type representing ties.
+   * @param p            degree of strictness of tie substitution.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
+   * @return the binary relation under the notion of weak roles with the specified
+   *         degree of strictness {@code p} for the given network.
+   */
   public static <T> BinaryRelation pMatchingWeakRoles(int p, int n,
       TransposableNetworkView<T, ?> positionView,
       BiPredicate<? super T, ? super T> comparator) {
     return pMatchingRefiningWeakRoles(p, n, positionView, BinaryRelations.universal(n), comparator);
   }
 
+  /**
+   * Computes the coarsest binary relation that refines the specified relation and
+   * is compatible with the notion of weak roles with a specified degree of
+   * strictness {@code p}, meaning that in a pairwise comparison of {@code i} with
+   * {@code j}, each edge incident to {@code j} can substitute for {@code p} edges
+   * incident to {@code i}, on the given network with some notion of compatibility
+   * between ties. Runs in O(p^{1.5} m^2 sqrt(n)) time and needs O(pn) additional
+   * space.
+   * 
+   * @param <T>             type representing ties.
+   * @param p               degree of strictness of tie substitution.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one.
+   * @return the coarsest binary relation refining the specified relation and
+   *         compatible with the notion of weak roles with a specified degree of
+   *         strictness {@code p} on the given network.
+   */
   public static <T> BinaryRelation pMatchingRefiningWeakRoles(int p, int n,
       TransposableNetworkView<T, ?> positionView, RelationBase refinedRelation,
       BiPredicate<? super T, ? super T> comparator) {
@@ -1532,13 +1546,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles ranking for the given unweighted network. Runs in O(n^2 +
-   * m max deg) time and needs O(n) additional space.
+   * Computes the strong structural roles ranking for the given unweighted
+   * network. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the strong structural roles ranking for the given network.
    */
   public static Ranking strongStructuralRolesRanking(int n,
@@ -1548,17 +1561,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest strong structural roles ranking for the given unweighted network that
-   * refines the given ranking. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest strong structural roles ranking for the given
+   * unweighted network that refines the given ranking. Runs in O(n^2 + m max deg)
+   * time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          Ranking to refine
-   * @return the strong structural roles ranking for the given network that refines the given
-   *         ranking.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @return the strong structural roles ranking for the given network that
+   *         refines the given ranking.
    */
   public static Ranking refiningStrongStructuralRoles(int n, NetworkView<?, ?> positionView,
       Ranking refinedRanking) {
@@ -1567,13 +1579,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles relation for the given unweighted network. Runs in
-   * O(iso(G)n + m max deg) time and needs O(n) additional space.
+   * Computes the strong structural roles relation for the given unweighted
+   * network. Runs in O(iso(G)n + m max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the strong structural roles relation for the given network.
    */
   public static BinaryRelation strongStructuralRolesRelation(int n,
@@ -1583,17 +1594,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest strong structural roles relation for the given unweighted network that
-   * refines the given relation. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest strong structural roles relation for the given
+   * unweighted network that refines the given relation. Runs in O(n^2 + m max
+   * deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          Relation to refine
-   * @return the coarsest strong structural roles relation for the given network that refines the
-   *         given relation.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine..
+   * @return the coarsest strong structural roles relation for the given network
+   *         that refines the given relation.
    */
   public static BinaryRelation refiningStrongStructuralRoles(int n,
       NetworkView<?, ?> positionView, BinaryRelation refinedRelation) {
@@ -1602,15 +1612,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles ranking for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the strong structural roles ranking for the given network with
+   * weakly ordered ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the strong structural roles ranking for the given network.
    */
   public static <V> Ranking strongStructuralRolesRanking(int n,
@@ -1620,19 +1630,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest strong structural roles ranking for the given unweighted network that
-   * refines the given ranking. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest strong structural roles ranking for the given network
+   * with weakly ordered ties that refines the given ranking. Runs in O(n^2 + m
+   * max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          Ranking to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the strong structural roles ranking for the given network that refines the given
-   *         ranking.
+   * @param <V>            type representing ties.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @param comparator     a comparator that weakly orders ties.
+   * @return the strong structural roles ranking for the given network that
+   *         refines the given ranking.
    */
   public static <V> Ranking refiningStrongStructuralRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, Ranking refinedRanking,
@@ -1643,15 +1652,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles relation for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the strong structural roles relation for the given network with
+   * weakly ordered ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the strong structural roles relation for the given network.
    */
   public static <V> BinaryRelation strongStructuralRolesRelation(int n,
@@ -1661,19 +1670,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest strong structural roles relation for the given unweighted network that
-   * refines the given relation. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest strong structural roles relation for the given network
+   * with weakly ordered ties that refines the given relation. Runs in O(n^2 + m
+   * max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          Relation to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the coarsest strong structural roles relation for the given network that refines the
-   *         given relation.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine
+   * @param comparator      a comparator that weakly orders ties.
+   * @return the coarsest strong structural roles relation for the given network
+   *         that refines the given relation.
    */
   public static <V> BinaryRelation refiningStrongStructuralRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, BinaryRelation refinedRelation,
@@ -1684,15 +1692,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles ranking for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the strong structural roles ranking for the given network with
+   * weakly ordered ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the strong structural roles ranking for the given network.
    */
   public static <V> Ranking strongStructuralRolesRanking(int n,
@@ -1702,19 +1710,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest strong structural roles ranking for the given unweighted network that
-   * refines the given ranking. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest strong structural roles ranking for the given network
+   * with weakly ordered ties that refines the given ranking. Runs in O(n^2 + m
+   * max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          Ranking to refine
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the strong structural roles ranking for the given network that refines the given
-   *         ranking.
+   * @param <V>            type representing ties.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @param comparator     a comparator that partially orders ties.
+   * @return the strong structural roles ranking for the given network that
+   *         refines the given ranking.
    */
   public static <V> Ranking refiningStrongStructuralRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, Ranking refinedRanking,
@@ -1725,15 +1732,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles relation for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the strong structural roles relation for the given network with
+   * weakly ordered ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the strong structural roles relation for the given network.
    */
   public static <V> BinaryRelation strongStructuralRolesRelation(int n,
@@ -1743,19 +1750,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest strong structural roles relation for the given unweighted network that
-   * refines the given relation. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest strong structural roles relation for the given network
+   * with partially ordered ties that refines the given relation. Runs in O(n^2 +
+   * m max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          Relation to refine
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the coarsest strong structural roles relation for the given network that refines the
-   *         given relation.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a comparator that partially orders ties.
+   * @return the coarsest strong structural roles relation for the given network
+   *         that refines the given relation.
    */
   public static <V> BinaryRelation refiningStrongStructuralRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, BinaryRelation refinedRelation,
@@ -1766,19 +1772,20 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural ranking for the given network. Runs in O(n^2 + m max deg) time
-   * and needs O(n) additional space.
+   * Computes the strong structural ranking for the given network with a notion of
+   * compatibility between ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * This method is deliberately set to private, since it is not guaranteed to produce valid
-   * rankings for all inputs.
+   * <p>
+   * This method is deliberately set to private, since it is not guaranteed to
+   * produce valid rankings for all inputs.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
    * @return the strong structural roles relation for the given network.
    */
   private static <V> Ranking strongStructuralRolesRanking(int n,
@@ -1788,16 +1795,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles relation for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the strong structural roles relation for the given network with a
+   * notion of compatibility between ties. Runs in O(n^2 + m max deg) time and
+   * needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
    * @return the strong structural roles relation for the given network.
    */
   public static <V> BinaryRelation strongStructuralRolesRelation(int n,
@@ -1807,20 +1814,19 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest strong structural roles relation for the given unweighted network that
-   * refines the given relation. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest strong structural roles relation for the given network
+   * with a notion of compatibility between ties that refines the given relation.
+   * Runs in O(n^2 + m max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          Relation to refine
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @return the coarsest strong structural roles relation for the given network that refines the
-   *         given relation.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one
+   * @return the coarsest strong structural roles relation for the given network
+   *         that refines the given relation.
    */
   public static <V> BinaryRelation refiningStrongStructuralRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, BinaryRelation refinedRelation,
@@ -1870,13 +1876,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles ranking for the given unweighted network. Runs in O(n^2 +
-   * m max deg) time and needs O(n) additional space.
+   * Computes the strong structural roles ranking for the given unweighted
+   * network. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the strong structural roles ranking for the given network.
    */
   public static Ranking strongStructuralRolesRanking(int n,
@@ -1885,15 +1890,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles ranking for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the strong structural roles ranking for the given network with
+   * weakly ordered ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the strong structural roles ranking for the given network.
    */
   public static <V> Ranking strongStructuralRolesRanking(int n,
@@ -1903,15 +1908,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles ranking for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the strong structural roles ranking for the given network with
+   * partially ordered ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the strong structural roles ranking for the given network.
    */
   public static <V> Ranking strongStructuralRolesRanking(int n,
@@ -1921,19 +1926,20 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural ranking for the given network. Runs in O(n^2 + m max deg) time
-   * and needs O(n) additional space.
+   * Computes the strong structural ranking for the given network with a notion of
+   * compatibility between ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * This method is deliberately set to private, since it is not guaranteed to produce valid
-   * rankings for all inputs.
+   * <p>
+   * This method is deliberately set to private, since it is not guaranteed to
+   * produce valid rankings for all inputs.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
    * @return the strong structural roles relation for the given network.
    */
   private static <V> Ranking strongStructuralRolesRanking(int n,
@@ -1943,13 +1949,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles relation for the given unweighted network. Runs in
-   * O(iso(G)n + m max deg) time and needs O(n) additional space.
+   * Computes the strong structural roles relation for the given unweighted
+   * network. Runs in O(iso(G)n + m max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the strong structural roles relation for the given network.
    */
   public static BinaryRelation strongStructuralRolesRelation(int n,
@@ -1958,15 +1963,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles relation for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the strong structural roles relation for the given network with
+   * weakly ordered ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the strong structural roles relation for the given network.
    */
   public static <V> BinaryRelation strongStructuralRolesRelation(int n,
@@ -1976,15 +1981,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles relation for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the strong structural roles relation for the given network with
+   * partially ordered ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the strong structural roles relation for the given network.
    */
   public static <V> BinaryRelation strongStructuralRolesRelation(int n,
@@ -1994,16 +1999,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the strong structural roles relation for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the strong structural roles relation for the given network with a
+   * notion of compatibility between ties. Runs in O(n^2 + m max deg) time and
+   * needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one
    * @return the strong structural roles relation for the given network.
    */
   public static <V> BinaryRelation strongStructuralRolesRelation(int n,
@@ -2046,13 +2051,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles ranking for the given unweighted network. Runs in O(n^2 + m
-   * max deg) time and needs O(n) additional space.
+   * Computes the weak structural roles ranking for the given unweighted network.
+   * Runs in O(n^2 + m max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak structural roles ranking for the given network.
    */
   public static Ranking weakStructuralRolesRanking(int n, NetworkView<?, ?> positionView) {
@@ -2061,16 +2065,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak structural roles ranking for the given unweighted network that
-   * refines the given ranking. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest weak structural roles ranking for the given unweighted
+   * network that refines the given ranking. Runs in O(n^2 + m max deg) time and
+   * needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          Ranking to refine
-   * @return the weak structural roles ranking for the given network that refines the given ranking.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @return the weak structural roles ranking for the given network that refines
+   *         the given ranking.
    */
   public static Ranking refiningWeakStructuralRoles(int n, NetworkView<?, ?> positionView,
       Ranking refinedRanking) {
@@ -2079,13 +2083,12 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles relation for the given unweighted network. Runs in O(n^2 + m
-   * max deg) time and needs O(n) additional space.
+   * Computes the weak structural roles relation for the given unweighted network.
+   * Runs in O(n^2 + m max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak structural roles relation for the given network.
    */
   public static BinaryRelation weakStructuralRolesRelation(int n,
@@ -2095,17 +2098,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak structural roles relation for the given unweighted network that
-   * refines the given relation. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest weak structural roles relation for the given unweighted
+   * network that refines the given relation. Runs in O(n^2 + m max deg) time and
+   * needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          Relation to refine
-   * @return the weak structural roles relation for the given network that refines the given
-   *         ranking.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @return the weak structural roles relation for the given network that refines
+   *         the given ranking.
    */
   public static BinaryRelation refiningWeakStructuralRoles(int n,
       NetworkView<?, ?> positionView, BinaryRelation refinedRelation) {
@@ -2114,15 +2116,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles ranking for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the weak structural roles ranking for the given network with weakly
+   * ordered ties. Runs in O(n^2 + m max deg) time and needs O(n) additional
+   * space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak structural roles ranking for the given network.
    */
   public static <V> Ranking weakStructuralRolesRanking(int n,
@@ -2132,18 +2134,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak structural roles ranking for the given network that refines the
-   * given ranking. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest weak structural roles ranking for the given network
+   * with weakly ordered ties that refines the given ranking. Runs in O(n^2 + m
+   * max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          Ranking to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the weak structural roles ranking for the given network that refines the given ranking.
+   * @param <V>            type representing ties.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @param comparator     a comparator that weakly orders ties.
+   * @return the weak structural roles ranking for the given network that refines
+   *         the given ranking.
    */
   public static <V> Ranking refiningWeakStructuralRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, Ranking refinedRanking,
@@ -2154,15 +2156,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles relation for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the weak structural roles relation for the given network with weakly
+   * ordered ties. Runs in O(n^2 + m max deg) time and needs O(n) additional
+   * space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak structural roles relation for the given network.
    */
   public static <V> BinaryRelation weakStructuralRolesRelation(int n,
@@ -2172,19 +2174,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak structural roles relation for the given network that refines the
-   * given relation. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest weak structural roles relation for the given network
+   * with weakly ordered ties that refines the given relation. Runs in O(n^2 + m
+   * max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          Relation to refine
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the weak structural roles relation for the given network that refines the given
-   *         ranking.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a comparator that weakly orders ties.
+   * @return the weak structural roles relation for the given network that refines
+   *         the given ranking.
    */
   public static <V> BinaryRelation refiningWeakStructuralRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, BinaryRelation refinedRelation,
@@ -2195,15 +2196,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles ranking for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the weak structural roles ranking for the given network with
+   * partially ordered ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the weak structural roles ranking for the given network.
    */
   public static <V> Ranking weakStructuralRolesRanking(int n,
@@ -2213,18 +2214,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak structural roles ranking for the given network that refines the
-   * given ranking. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest weak structural roles ranking for the given network
+   * with partially ordered ties that refines the given ranking. Runs in O(n^2 + m
+   * max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRanking
-   *          Ranking to refine
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the weak structural roles ranking for the given network that refines the given ranking.
+   * @param <V>            type representing ties.
+   * @param n              number of nodes.
+   * @param positionView   network as viewed from the position of the individual
+   *                       nodes.
+   * @param refinedRanking ranking to refine.
+   * @param comparator     a comparator that partially orders ties.
+   * @return the weak structural roles ranking for the given network that refines
+   *         the given ranking.
    */
   public static <V> Ranking refiningWeakStructuralRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, Ranking refinedRanking,
@@ -2235,15 +2236,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles relation for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the weak structural roles relation for the given network with
+   * partially ordered ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the weak structural roles relation for the given network.
    */
   public static <V> BinaryRelation weakStructuralRolesRelation(int n,
@@ -2253,19 +2254,18 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the coarsest weak structural roles relation for the given network that refines the
-   * given relation. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest weak structural roles relation for the given network
+   * with partially ordered ties that refines the given relation. Runs in O(n^2 +
+   * m max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          Relation to refine
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the weak structural roles relation for the given network that refines the given
-   *         ranking.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a comparator that partially orders ties.
+   * @return the weak structural roles relation for the given network that refines
+   *         the given ranking.
    */
   public static <V> BinaryRelation refiningWeakStructuralRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, BinaryRelation refinedRelation,
@@ -2276,19 +2276,20 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural ranking for the given network. Runs in O(n^2 + m max deg) time and
-   * needs O(n) additional space.
+   * Computes the weak structural ranking for the given network with a notion of
+   * compatibility between ties. Runs in O(n^2 + m max deg) time and needs O(n)
+   * additional space.
    * 
-   * This method is deliberately set to private, since it is not guaranteed to produce valid
-   * rankings for all inputs.
+   * <p>
+   * This method is deliberately set to private, since it is not guaranteed to
+   * produce valid rankings for all inputs.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
    * @return the weak structural roles relation for the given network.
    */
   private static <V> Ranking weakStructuralRolesRanking(int n,
@@ -2298,38 +2299,37 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles relation for the given network. Runs in O(n^2 + m max deg)
-   * time and needs O(n) additional space.
+   * Computes the weak structural roles relation for the given network with a
+   * notion of compatibility between ties. Runs in O(n^2 + m max deg) time and
+   * needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
    * @return the weak structural roles relation for the given network.
    */
-  public static <V, T extends V, U extends V> BinaryRelation weakStructuralRolesRelation(int n,
-      NetworkView<T, U> positionView, BiPredicate<? super V, ? super V> comparator) {
+  public static <V> BinaryRelation weakStructuralRolesRelation(int n,
+      NetworkView<? extends V, ? extends V> positionView, BiPredicate<? super V, ? super V> comparator) {
     return weakStructuralRolesInternal(n, positionView, comparator);
   }
 
   /**
-   * Computes the coarsest weak structural roles relation for the given network that refines the
-   * given relation. Runs in O(n^2 + m max deg) time and needs O(n) additional space.
+   * Computes the coarsest weak structural roles relation for the given network
+   * with a notion of compatibility between ties that refines the given relation.
+   * Runs in O(n^2 + m max deg) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param refinedRelation
-   *          Relation to refine
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @return the weak structural roles relation for the given network that refines the given
-   *         ranking.
+   * @param <V>             type representing ties.
+   * @param n               number of nodes.
+   * @param positionView    network as viewed from the position of the individual
+   *                        nodes.
+   * @param refinedRelation relation to refine.
+   * @param comparator      a binary predicate that says whether the first tie's
+   *                        value is compatible with the second one.
+   * @return the weak structural roles relation for the given network that refines
+   *         the given ranking.
    */
   public static <V> BinaryRelation refiningWeakStructuralRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, BinaryRelation refinedRelation,
@@ -2408,30 +2408,27 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles ranking for the given network. Runs in O(m * n log(n)) time
-   * and needs O(n) additional space.
+   * Computes the weak structural roles ranking for the given network. Runs in O(m
+   * * n log(n)) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak structural roles ranking for the given network.
    */
-  public static <V> Ranking weakStructuralRolesRanking(int n,
-      TransposableNetworkView<? extends V, ? extends V> positionView) {
+  public static Ranking weakStructuralRolesRanking(int n, TransposableNetworkView<?, ?> positionView) {
     return weakStructuralRolesRanking(n, positionView, MiscUtils.alwaysTrue());
   }
 
   /**
-   * Computes the weak structural roles ranking for the given network. Runs in O(m * n log(n)) time
-   * and needs O(n) additional space.
+   * Computes the weak structural roles ranking for the given network with weakly
+   * ordered ties. Runs in O(m * n log(n)) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak structural roles ranking for the given network.
    */
   public static <V> Ranking weakStructuralRolesRanking(int n,
@@ -2441,15 +2438,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles ranking for the given network. Runs in O(m * n log(n)) time
-   * and needs O(n) additional space.
+   * Computes the weak structural roles ranking for the given network with
+   * partially ordered ties. Runs in O(m * n log(n)) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the weak structural roles ranking for the given network.
    */
   public static <V> Ranking weakStructuralRolesRanking(int n,
@@ -2459,19 +2456,20 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural ranking for the given network. Runs in O(m * n log(n)) time and
-   * needs O(n) additional space.
+   * Computes the weak structural ranking for the given network with a notion of
+   * compatibility between ties. Runs in O(m * n log(n)) time and needs O(n)
+   * additional space.
    * 
-   * This method is deliberately set to private, since it is not guaranteed to produce valid
-   * rankings for all inputs.
+   * <p>
+   * This method is deliberately set to private, since it is not guaranteed to
+   * produce valid rankings for all inputs.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
    * @return the weak structural roles relation for the given network.
    */
   private static <V> Ranking weakStructuralRolesRanking(int n,
@@ -2481,30 +2479,27 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles relation for the given network. Runs in O(m * n log(n)) time
-   * and needs O(n) additional space.
+   * Computes the weak structural roles relation for the given network. Runs in
+   * O(m * n log(n)) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
    * @return the weak structural roles relation for the given network.
    */
-  public static <V> BinaryRelation weakStructuralRolesRelation(int n,
-      TransposableNetworkView<? extends V, ? extends V> positionView) {
+  public static BinaryRelation weakStructuralRolesRelation(int n, TransposableNetworkView<?, ?> positionView) {
     return weakStructuralRolesTransImpl(n, positionView, MiscUtils.alwaysTrue());
   }
 
   /**
-   * Computes the weak structural roles relation for the given network. Runs in O(m * n log(n)) time
-   * and needs O(n) additional space.
+   * Computes the weak structural roles relation for the given network with weakly
+   * ordered ties. Runs in O(m * n log(n)) time and needs O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that weakly orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that weakly orders ties.
    * @return the weak structural roles relation for the given network.
    */
   public static <V> BinaryRelation weakStructuralRolesRelation(int n,
@@ -2514,15 +2509,15 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles relation for the given network. Runs in O(m * n log(n)) time
-   * and needs O(n) additional space.
+   * Computes the weak structural roles relation for the given network with
+   * partially ordered ties. Runs in O(m * n log(n)) time and needs O(n)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a comparator that partially orders relationships
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a comparator that partially orders ties.
    * @return the weak structural roles relation for the given network.
    */
   public static <V> BinaryRelation weakStructuralRolesRelation(int n,
@@ -2532,16 +2527,16 @@ public class MiscRankedRoles {
   }
 
   /**
-   * Computes the weak structural roles relation for the given network. Runs in O(m * n log(n)) time
-   * and needs O(n) additional space.
+   * Computes the weak structural roles relation for the given network with a
+   * notion of compatibility between ties. Runs in O(m * n log(n)) time and needs
+   * O(n) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param comparator   a binary predicate that says whether the first tie's
+   *                     value is compatible with the second one.
    * @return the weak structural roles relation for the given network.
    */
   public static <V> BinaryRelation weakStructuralRolesRelation(int n,

@@ -18,6 +18,10 @@ package ch.ethz.sn.visone3.roles.impl.blocks.factories;
 
 import ch.ethz.sn.visone3.roles.blocks.OperatorTraits;
 
+/**
+ * Represents the traits for an isotone operator that does not satisfy any of
+ * the other operator traits.
+ */
 public class IsotoneOperatorTraits implements OperatorTraits {
 
   @Override

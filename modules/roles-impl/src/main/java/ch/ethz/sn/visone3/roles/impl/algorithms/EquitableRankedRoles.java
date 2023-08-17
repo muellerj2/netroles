@@ -36,9 +36,8 @@ import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
 
 /**
- * Provides algorithms to compute relative roles, role closure and role interior for exact ranked
- * roles.
- *
+ * Provides algorithms to compute relative roles, role closure and role interior
+ * for equitable roles on the lattices of rankings and binary relations.
  */
 public class EquitableRankedRoles {
 
@@ -46,18 +45,17 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that is exact-relational-roles-consistent relative to the given
-   * network. Runs in O(n m log n) time and O(n^2) additional space.
+   * Computes the maximum ranking that is equitable relative to the specified
+   * ranking on the given network. Runs in O(n m log n) time and O(n^2) additional
+   * space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be exact-relational-roles-consistent
-   *          relative to.
-   * @return the maximum ranking that is exact-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo represents the ranking the output ranking should be
+   *                          equitable relative to.
+   * @return the maximum ranking that is equitable relative to the specified
+   *         ranking on the given network.
    */
   public static Ranking rankedExactRoles(int n, TransposableNetworkView<?, ?> positionView,
       Ranking rankingRelativeTo) {
@@ -65,18 +63,17 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that is exact-relational-roles-consistent relative to the given
-   * network. Runs in O(n m log n) time and O(n^2) additional space.
+   * Computes the maximum relation that is equitable relative to the specified
+   * relation on the given network. Runs in O(n m log n) time and O(n^2)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          exact-relational-roles-consistent relative to.
-   * @return the maximum relation that is exact-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo represents the relation the output relation should
+   *                           be equitable relative to.
+   * @return the maximum relation that is equitable relative to the specified
+   *         relation on the given network.
    */
   public static BinaryRelation rankedExactRoles(int n,
       TransposableNetworkView<?, ?> positionView, BinaryRelation relationRelativeTo) {
@@ -85,21 +82,18 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that refines a given ranking and is
-   * exact-relational-roles-consistent relative to the given unweighted network. Runs in O(m n) time
-   * and needs O(n^2) additional space.
+   * Computes the maximum ranking that refines a given ranking and is equitable
+   * relative to the specified ranking on the given unweighted network. Runs in
+   * O(m n) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be exact-relational-roles-consistent
-   *          relative to.
-   * @param refinedRanking
-   *          the ranking that is refined by the result
-   * @return the maximum ranking that refines refinedRanking and is
-   *         exact-relational-roles-consistent relative to the given network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo represents the ranking the output ranking should be
+   *                          equitable relative to.
+   * @param refinedRanking    ranking to refine.
+   * @return the maximum ranking that refines a given ranking and is equitable
+   *         relative to the specified ranking on the given network.
    */
   public static Ranking refiningRankedExactRoles(int n,
       TransposableNetworkView<?, ?> positionView, Ranking rankingRelativeTo,
@@ -108,21 +102,18 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that refines a given relation and is
-   * exact-relational-roles-consistent relative to the given unweighted network. Runs in O(m*m) time
-   * and needs O(n^2) additional space.
+   * Computes the maximum relation that refines a given relation and is equitable
+   * relative to the specified relation on the given unweighted network. Runs in
+   * O(m*m) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          exact-relational-roles-consistent relative to.
-   * @param refinedRelation
-   *          the relation that is refined by the result
-   * @return the maximum relation that refines refinedRelation and is
-   *         exact-relational-roles-consistent relative to the given network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo represents the relation the output relation should
+   *                           be equitable relative to.
+   * @param refinedRelation    relation to refine.
+   * @return the maximum relation that refines a given relation and is equitable
+   *         relative to the specified relation on the given network.
    */
   public static BinaryRelation refiningRankedExactRoles(int n,
       TransposableNetworkView<?, ?> positionView, BinaryRelation relationRelativeTo,
@@ -185,23 +176,19 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that is exact-relational-roles-consistent relative to the given
-   * network with weakly ordered relationships. Runs in O(m^2 sqrt(n)) time and O(n^2) additional
-   * space.
+   * Computes the maximum ranking that is equitable relative to the specified
+   * ranking on the given network with weakly ordered ties. Runs in O(m^2 sqrt(n))
+   * time and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be exact-relational-roles-consistent
-   *          relative to.
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum ranking that is exact-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo represents the ranking the output ranking should be
+   *                          equitable relative to.
+   * @param comparator        a comparator that weakly orders ties.
+   * @param <V>               base type of represented ties
+   * @return the maximum ranking that is equitable relative to the specified
+   *         ranking on the given network.
    */
   public static <V> Ranking rankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -211,23 +198,19 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that is exact-relational-roles-consistent relative to the given
-   * network with weakly ordered relationships. Runs in O(m^2 sqrt(n)) time and O(n^2) additional
-   * space.
+   * Computes the maximum relation that is equitable relative to the specified
+   * relation on the given network with weakly ordered ties. Runs in O(m^2
+   * sqrt(n)) time and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          exact-relational-roles-consistent relative to.
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum relation that is exact-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo represents the relation the output relation should
+   *                           be equitable relative to.
+   * @param comparator         a comparator that weakly orders ties.
+   * @param <V>                base type of represented ties
+   * @return the maximum relation that is equitable relative to the specified
+   *         relation on the given network.
    */
   public static <V> BinaryRelation rankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -238,25 +221,20 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that refines a given ranking and is
-   * exact-relational-roles-consistent relative to the given network with weakly ordered edge
-   * weights. Runs in O(m^2 sqrt(n)) time and needs O(n^2) additional space.
+   * Computes the maximum ranking that refines a given ranking and is equitable
+   * relative to the specified ranking on the given network with weakly ordered
+   * ties. Runs in O(m^2 sqrt(n)) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be exact-relational-roles-consistent
-   *          relative to.
-   * @param refinedRanking
-   *          the ranking that is refined by the result
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum ranking that refines refinedRanking and is
-   *         exact-relational-roles-consistent relative to the given network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo represents the ranking the output ranking should be
+   *                          equitable relative to.
+   * @param refinedRanking    ranking to refine.
+   * @param comparator        a comparator that weakly orders ties.
+   * @param <V>               base type of represented ties
+   * @return the maximum ranking that refines a given ranking and is equitable
+   *         relative to the specified ranking on the given network.
    */
   public static <V> Ranking refiningRankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -267,25 +245,20 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that refines a given relation and is
-   * exact-relational-roles-consistent relative to the given network with weakly ordered edge
-   * weights. Runs in O(m^2 sqrt(n)) time and needs O(n^2) additional space.
+   * Computes the maximum relation that refines a given relation and is equitable
+   * relative to the specified relation on the given network with weakly ordered
+   * ties. Runs in O(m^2 sqrt(n)) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          exact-relational-roles-consistent relative to.
-   * @param refinedRelation
-   *          the relation that is refined by the result
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum relation that refines refinedRelation and is
-   *         exact-relational-roles-consistent relative to the given network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo represents the relation the output relation should
+   *                           be equitable relative to.
+   * @param refinedRelation    relation to refine.
+   * @param comparator         a comparator that weakly orders ties.
+   * @param <V>                base type of represented ties
+   * @return the maximum ranking that refines a given relation and is equitable
+   *         relative to the specified relation on the given network.
    */
   public static <V> BinaryRelation refiningRankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -296,23 +269,19 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that is exact-relational-roles-consistent relative to the given
-   * network with partially ordered relationships. Runs in O(m^2 sqrt(n)) time and O(n^2) additional
-   * space.
+   * Computes the maximum ranking that is equitable relative to the specified
+   * ranking on the given network with partially ordered ties. Runs in O(m^2
+   * sqrt(n)) time and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be exact-relational-roles-consistent
-   *          relative to.
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum ranking that is exact-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo represents the ranking the output ranking should be
+   *                          equitable relative to.
+   * @param comparator        a comparator that partially orders ties.
+   * @param <V>               base type of represented ties
+   * @return the maximum ranking that is equitable relative to the specified
+   *         ranking on the given network.
    */
   public static <V> Ranking rankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -322,23 +291,19 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that is exact-relational-roles-consistent relative to the given
-   * network with partially ordered relationships. Runs in O(m^2 sqrt(n)) time and O(n^2) additional
-   * space.
+   * Computes the maximum relation that is equitable relative to the specified
+   * relation on the given network with partially ordered ties. Runs in O(m^2
+   * sqrt(n)) time and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          exact-relational-roles-consistent relative to.
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum relation that is exact-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo represents the relation the output relation should
+   *                           be equitable relative to.
+   * @param comparator         a comparator that partially orders ties.
+   * @param <V>                base type of represented ties
+   * @return the maximum relation that is equitable relative to the specified
+   *         relation on the given network.
    */
   public static <V> BinaryRelation rankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -348,25 +313,20 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that refines a given ranking and is
-   * exact-relational-roles-consistent relative to the given network with partially ordered
-   * relationships. Runs in O(m^2 sqrt(n)) time and needs O(n^2) additional space.
+   * Computes the maximum ranking that refines a given ranking and is equitable
+   * relative to the specified ranking on the given network with partially ordered
+   * ties. Runs in O(m^2 sqrt(n)) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be exact-relational-roles-consistent
-   *          relative to.
-   * @param refinedRanking
-   *          the ranking that is refined by the result
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum ranking that refines refinedRanking and is
-   *         exact-relational-roles-consistent relative to the given network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo represents the ranking the output ranking should be
+   *                          equitable relative to.
+   * @param refinedRanking    ranking to refine.
+   * @param comparator        a comparator that partially orders ties.
+   * @param <V>               base type of represented ties
+   * @return the maximum ranking that refines a given ranking and is equitable
+   *         relative to the specified ranking on the given network.
    */
   public static <V> Ranking refiningRankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -376,25 +336,20 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that refines a given relation and is
-   * exact-relational-roles-consistent relative to the given network with partially ordered
-   * relationships. Runs in O(m^2 sqrt(n)) time and needs O(n^2) additional space.
+   * Computes the maximum relation that refines a given relation and is equitable
+   * relative to the specified relation on the given network with partially
+   * ordered ties. Runs in O(m^2 sqrt(n)) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          exact-relational-roles-consistent relative to.
-   * @param refinedRelation
-   *          the relation that is refined by the result
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum relation that refines refinedRelation and is
-   *         exact-relational-roles-consistent relative to the given network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo represents the relation the output relation should
+   *                           be equitable relative to.
+   * @param refinedRelation    relation to refine.
+   * @param comparator         a comparator that partially orders ties.
+   * @param <V>                base type of represented ties
+   * @return the maximum ranking that refines a given relation and is equitable
+   *         relative to the specified relation on the given network.
    */
   public static <V> BinaryRelation refiningRankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -405,24 +360,20 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that is exact-relational-roles-consistent relative to the given
-   * network with partially ordered relationships. Runs in O(m^2 sqrt(n)) time and O(n^2) additional
-   * space.
+   * Computes the maximum ranking that is equitable relative to the specified
+   * ranking on the given network with a notion of compatibility between ties.
+   * Runs in O(m^2 sqrt(n)) time and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be exact-relational-roles-consistent
-   *          relative to.
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum ranking that is exact-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo represents the ranking the output ranking should be
+   *                          equitable relative to.
+   * @param comparator        a binary predicate that says whether the first tie's
+   *                          value is compatible with the second one
+   * @param <V>               base type of represented ties
+   * @return the maximum ranking that is equitable relative to the specified
+   *         ranking on the given network.
    */
   private static <V> Ranking rankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -432,24 +383,20 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that is exact-relational-roles-consistent relative to the given
-   * network with partially ordered relationships. Runs in O(m^2 sqrt(n)) time and O(n^2) additional
-   * space.
+   * Computes the maximum relation that is equitable relative to the specified
+   * relation on the given network with a notion of compatibility between ties.
+   * Runs in O(m^2 sqrt(n)) time and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          exact-relational-roles-consistent relative to.
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum relation that is exact-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo represents the relation the output relation should
+   *                           be equitable relative to.
+   * @param comparator         a binary predicate that says whether the first
+   *                           tie's value is compatible with the second one
+   * @param <V>                base type of represented ties
+   * @return the maximum relation that is equitable relative to the specified
+   *         relation on the given network.
    */
   public static <V> BinaryRelation rankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -459,30 +406,27 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that refines a given ranking and is
-   * exact-relational-roles-consistent relative to the given network with partially ordered
-   * relationships. Runs in O(m^2 sqrt(n)) time and needs O(n^2) additional space.
+   * Computes the maximum ranking that refines a given ranking and is equitable
+   * relative to the specified ranking on the given network with a notion of
+   * compatibility between ties. Runs in O(m^2 sqrt(n)) time and needs O(n^2)
+   * additional space.
    * 
    * <p>
-   * Note that this method is deliberately made private, since the result is not guaranteed to be a
-   * ranking if the relation underlying the comparator argument is not transitive.
+   * Note that this method is deliberately made private, since the result is not
+   * guaranteed to be a ranking if the relation underlying the comparator argument
+   * is not transitive.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be exact-relational-roles-consistent
-   *          relative to.
-   * @param refinedRanking
-   *          the ranking that is refined by the result
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum ranking that refines refinedRanking and is
-   *         exact-relational-roles-consistent relative to the given network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo represents the ranking the output ranking should be
+   *                          equitable relative to.
+   * @param refinedRanking    ranking to refine.
+   * @param comparator        a binary predicate that says whether the first tie's
+   *                          value is compatible with the second one
+   * @param <V>               base type of represented ties
+   * @return the maximum ranking that refines a given ranking and is equitable
+   *         relative to the specified ranking on the given network.
    */
   private static <V> Ranking refiningRankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -492,26 +436,22 @@ public class EquitableRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that refines a given relation and is
-   * exact-relational-roles-consistent relative to the given network with partially ordered
-   * relationships. Runs in O(m^2 sqrt(n)) time and needs O(n^2) additional space.
+   * Computes the maximum relation that refines a given relation and is equitable
+   * relative to the specified relation on the given network with a notion of
+   * compatibility between ties. Runs in O(m^2 sqrt(n)) time and needs O(n^2)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          exact-relational-roles-consistent relative to.
-   * @param refinedRelation
-   *          the relation that is refined by the result
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @param <V>
-   *          base type of represented ties
-   * @return the maximum relation that refines refinedRelation and is
-   *         exact-relational-roles-consistent relative to the given network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo represents the relation the output relation should
+   *                           be equitable relative to.
+   * @param refinedRelation    relation to refine.
+   * @param comparator         a binary predicate that says whether the first
+   *                           tie's value is compatible with the second one
+   * @param <V>                base type of represented ties
+   * @return the maximum ranking that refines a given relation and is equitable
+   *         relative to the specified relation on the given network.
    */
   public static <V> BinaryRelation refiningRankedExactRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,

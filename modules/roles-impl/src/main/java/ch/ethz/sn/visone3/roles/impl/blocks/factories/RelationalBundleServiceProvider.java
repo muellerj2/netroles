@@ -26,6 +26,9 @@ import ch.ethz.sn.visone3.roles.blocks.factories.VariableRoleOperatorBuilderFact
 import ch.ethz.sn.visone3.roles.spi.RoleOperatorBundleService;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 
+/**
+ * Service implementation providing a bundle of factories for binary relations.
+ */
 public class RelationalBundleServiceProvider implements RoleOperatorBundleService {
 
   @SuppressWarnings("unchecked")

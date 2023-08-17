@@ -37,8 +37,8 @@ import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
 
 /**
- * Provides algorithms to compute relative roles, role closure and role interior for ranked roles.
- * 
+ * Provides algorithms to compute relative roles, role closure and role interior
+ * for regular roles on the lattice of rankings and binary relations.
  */
 public class RegularRankedRoles {
 
@@ -46,18 +46,17 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that is regular-relational-roles-consistent relative to the given
-   * unweighted network. Runs in O(m n) time and needs O(n^2) additional space.
+   * Computes the maximum ranking that is regular relative to the specified
+   * ranking on the given unweighted network. Runs in O(m n) time and needs O(n^2)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be
-   *          regular-relational-roles-consistent relative to.
-   * @return the maximum ranking that is regular-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @return the maximum ranking that is regular relative to the specified ranking
+   *         on the given network.
    */
   public static Ranking rankedRegularRoles(int n, NetworkView<?, ?> positionView,
       Ranking rankingRelativeTo) {
@@ -66,18 +65,17 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that is regular-relational-roles-consistent relative to the given
-   * unweighted network. Runs in O(m n) time and needs O(n^2) additional space.
+   * Computes the maximum ranking that is regular relative to the specified
+   * ranking on the given unweighted network. Runs in O(m n) time and needs O(n^2)
+   * additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be
-   *          regular-relational-roles-consistent relative to.
-   * @return the maximum ranking that is regular-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @return the maximum ranking that is regular relative to the specified ranking
+   *         on the given network.
    */
   public static Ranking rankedRegularRoles(int n,
       TransposableNetworkView<?, ?> positionView, Ranking rankingRelativeTo) {
@@ -85,18 +83,17 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that is regular-relational-roles-consistent relative to the given
-   * unweighted network. Runs in O(m n) time and needs O(n^2) additional space.
+   * Computes the maximum relation that is regular relative to the specified
+   * relation on the given unweighted network. Runs in O(m n) time and needs
+   * O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          regular-relational-roles-consistent relative to.
-   * @return the maximum relation that is regular-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @return the maximum relation that is regular relative to specified relation
+   *         on the given network.
    */
   public static BinaryRelation rankedRegularRoles(int n, NetworkView<?, ?> positionView,
       BinaryRelation relationRelativeTo) {
@@ -105,18 +102,17 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that is regular-relational-roles-consistent relative to the given
-   * unweighted network. Runs in O(m n) time and needs O(n^2) additional space.
+   * Computes the maximum relation that is regular relative to the specified
+   * relation on the given unweighted network. Runs in O(m n) time and needs
+   * O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          regular-relational-roles-consistent relative to.
-   * @return the maximum relation that is regular-relational-roles-consistent relative to the given
-   *         network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @return the maximum relation that is regular relative to specified relation
+   *         on the given network.
    */
   public static BinaryRelation rankedRegularRoles(int n,
       TransposableNetworkView<?, ?> positionView, BinaryRelation relationRelativeTo) {
@@ -124,21 +120,18 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that refines a given ranking and is
-   * regular-relational-roles-consistent relative to the given network. Runs in O(m n) time and
-   * needs O(n^2) additional space.
+   * Computes the maximum ranking that refines a given ranking and is regular
+   * relative to the specified ranking on the given network. Runs in O(m n) time
+   * and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be
-   *          regular-relational-roles-consistent relative to.
-   * @param refinedRanking
-   *          the ranking that is refined by the result
-   * @return the maximum ranking that refines refinedRanking and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @param refinedRanking    the ranking to refine.
+   * @return the maximum ranking that refines a given ranking and is regular
+   *         relative to the specified ranking the given network.
    */
   public static Ranking refiningRankedRegularRoles(int n, NetworkView<?, ?> positionView,
       Ranking rankingRelativeTo, Ranking refinedRanking) {
@@ -146,21 +139,18 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that refines a given ranking and is
-   * regular-relational-roles-consistent relative to the given network. Runs in O(m n) time and
-   * needs O(n^2) additional space.
+   * Computes the maximum ranking that refines a given ranking and is regular
+   * relative to the specified ranking on the given network. Runs in O(m^2) time
+   * and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be
-   *          regular-relational-roles-consistent relative to.
-   * @param refinedRanking
-   *          the ranking that is refined by the result
-   * @return the maximum ranking that refines refinedRanking and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @param refinedRanking    the ranking to refine.
+   * @return the maximum ranking that refines a given ranking and is regular
+   *         relative to the specified ranking on the given network.
    */
   public static Ranking refiningRankedRegularRoles(int n,
       TransposableNetworkView<?, ?> positionView, Ranking rankingRelativeTo,
@@ -170,21 +160,18 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that refines a given relation and is
-   * regular-relational-roles-consistent relative to the given network. Runs in O(m n) time and
-   * needs O(n^2) additional space.
+   * Computes the maximum relation that refines a given relation and is regular
+   * relative to the specified relation on the given network. Runs in O(m^2) time
+   * and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          regular-relational-roles-consistent relative to.
-   * @param refinedRelation
-   *          the relation that is refined by the result
-   * @return the maximum ranking that refines refinedRelation and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @param refinedRelation    the relation to refine.
+   * @return the maximum relation that refines a given relation and is regular
+   *         relative to the specified relation on the given network.
    */
   public static BinaryRelation refiningRankedRegularRoles(int n,
       NetworkView<?, ?> positionView, BinaryRelation relationRelativeTo,
@@ -193,21 +180,18 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that refines a given relation and is
-   * regular-relational-roles-consistent relative to the given network. Runs in O(m n) time and
-   * needs O(n^2) additional space.
+   * Computes the maximum relation that refines a given relation and is regular
+   * relative to the specified relation on the given network. Runs in O(m^2) time
+   * and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          regular-relational-roles-consistent relative to.
-   * @param refinedRelation
-   *          the relation that is refined by the result
-   * @return the maximum ranking that refines refinedRelation and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @param refinedRelation    the relation to refine.
+   * @return the maximum relation that refines a given relation and is regular
+   *         relative to the specified relation on the given network.
    */
   public static BinaryRelation refiningRankedRegularRoles(int n,
       TransposableNetworkView<?, ?> positionView, BinaryRelation relationRelativeTo,
@@ -244,19 +228,19 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that is regular-relational-roles-consistent relative to the given
-   * network with weakly ordered edges. Runs in O(m n) time and O(n^2) additional space.
+   * Computes the maximum ranking that is regular relative to the specified
+   * ranking on the given network with weakly ordered ties. Runs in O(m n) time
+   * and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be
-   *          regular-relational-roles-consistent relative to.
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the maximum ranking that is ranked-roles-consistent relative to the given network.
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @param comparator        a comparator that weakly orders ties.
+   * @return the maximum ranking that is regular relative to the specified ranking
+   *         on the given network.
    */
   public static <V> Ranking rankedRegularRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
@@ -266,19 +250,19 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that is regular-relational-roles-consistent relative to the given
-   * network with weakly ordered edges. Runs in O(m n) time and O(n^2) additional space.
+   * Computes the maximum ranking that is regular relative to the specified
+   * ranking on the given network with weakly ordered ties. Runs in O(m^2) time
+   * and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be
-   *          regular-relational-roles-consistent relative to.
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the maximum ranking that is ranked-roles-consistent relative to the given network.
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @param comparator        a comparator that weakly orders ties.
+   * @return the maximum ranking that is regular relative to the specified ranking
+   *         on the given network.
    */
   public static <V> Ranking rankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -288,19 +272,19 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that is regular-relational-roles-consistent relative to the given
-   * network with weakly ordered edges. Runs in O(m n) time and O(n^2) additional space.
+   * Computes the maximum relation that is regular relative to the specified
+   * relation on the given network with weakly ordered ties. Runs in O(m n) time
+   * and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          regular-relational-roles-consistent relative to.
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the maximum relation that is ranked-roles-consistent relative to the given network.
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @param comparator         a comparator that weakly orders ties.
+   * @return the maximum relation that is regular relative to specified relation
+   *         on the given network.
    */
   public static <V> BinaryRelation rankedRegularRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, BinaryRelation relationRelativeTo,
@@ -310,19 +294,19 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that is regular-relational-roles-consistent relative to the given
-   * network with weakly ordered edges. Runs in O(m n) time and O(n^2) additional space.
+   * Computes the maximum relation that is regular relative to the specified
+   * relation on the given network with weakly ordered ties. Runs in O(m^2) time
+   * and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          regular-relational-roles-consistent relative to.
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the maximum relation that is ranked-roles-consistent relative to the given network.
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @param comparator         a comparator that weakly orders ties.
+   * @return the maximum relation that is regular relative to specified relation
+   *         on the given network.
    */
   public static <V> BinaryRelation rankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -332,23 +316,20 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that refines a given ranking and is ranked-roles-consistent
-   * relative to the given network with weakly ordered edges. Runs in O(m n) time and needs O(n^2)
-   * additional space.
+   * Computes the maximum ranking that refines a given ranking and is regular
+   * relative to the specified ranking on the given network with weakly ordered
+   * ties. Runs in O(m n) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be
-   *          regular-relational-roles-consistent relative to.
-   * @param refinedRanking
-   *          the ranking that is refined by the result
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the maximum ranking that refines refinedRanking and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @param refinedRanking    the ranking to refine.
+   * @param comparator        a comparator that weakly orders ties.
+   * @return the maximum ranking that refines a given ranking and is regular
+   *         relative to the specified ranking on the given network.
    */
   public static <V> Ranking refiningRankedRegularRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, Ranking rankingRelativeTo,
@@ -357,23 +338,20 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that refines a given ranking and is ranked-roles-consistent
-   * relative to the given network with weakly ordered edges. Runs in O(m n) time and needs O(n^2)
-   * additional space.
+   * Computes the maximum ranking that refines a given ranking and is regular
+   * relative to the given network with weakly ordered ties. Runs in O(m^2) time
+   * and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be
-   *          regular-relational-roles-consistent relative to.
-   * @param refinedRanking
-   *          the ranking that is refined by the result
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the maximum ranking that refines refinedRanking and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @param refinedRanking    the ranking to refine.
+   * @param comparator        a comparator that weakly orders ties.
+   * @return the maximum ranking that refines a given ranking and is regular
+   *         relative to the specified ranking on the given network.
    */
   public static <V> Ranking refiningRankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -383,23 +361,20 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that refines a given relation and is
-   * regular-relational-roles-consistent relative to the given network with weakly ordered edges.
-   * Runs in O(m n) time and needs O(n^2) additional space.
+   * Computes the maximum relation that refines a given relation and is regular
+   * relative to the specified relation on the given network with weakly ordered
+   * ties. Runs in O(m n) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          regular-relational-roles-consistent relative to.
-   * @param refinedRelation
-   *          the ranking that is refined by the result
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the maximum ranking that refines refinedRelation and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @param refinedRelation    the ranking to refine.
+   * @param comparator         a comparator that weakly orders ties.
+   * @return the maximum relation that refines a given relation and is regular
+   *         relative to the specified relation on the given network.
    */
   public static <V> BinaryRelation refiningRankedRegularRoles(int n,
       NetworkView<? extends V, ? extends V> positionView, BinaryRelation relationRelativeTo,
@@ -408,23 +383,20 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that refines a given relation and is
-   * regular-relational-roles-consistent relative to the given network with weakly ordered edges.
-   * Runs in O(m n) time and needs O(n^2) additional space.
+   * Computes the maximum relation that refines a given relation and is regular
+   * relative to the specified relation on the given network with weakly ordered
+   * edges. Runs in O(m^2) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          regular-relational-roles-consistent relative to.
-   * @param refinedRelation
-   *          the ranking that is refined by the result
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the maximum ranking that refines refinedRelation and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @param refinedRelation    the ranking to refine.
+   * @param comparator         a comparator that weakly orders ties.
+   * @return the maximum relation that refines a given relation and is regular
+   *         relative to the specified relation on the given network.
    */
   public static <V> BinaryRelation refiningRankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -467,20 +439,19 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that is regular-relational-roles-consistent relative to the given
-   * network with partially ordered edges. Runs in O(n m log n) time and O(n^2) additional space.
+   * Computes the maximum ranking that is regular relative to the specified
+   * ranking on the given network with partially ordered ties. Runs in O(m^2) time
+   * and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be
-   *          regular-relational-roles-consistent relative to.
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the maximum ranking that is regular-relational-roles-consistent relative to the given
-   *         network.
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @param comparator        a comparator that partially orders ties.
+   * @return the maximum ranking that is regular relative to the specified ranking
+   *         on the given network.
    */
   public static <V> Ranking rankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -490,20 +461,19 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that is regular-relational-roles-consistent relative to the given
-   * network with partially ordered edges. Runs in O(n m log n) time and O(n^2) additional space.
+   * Computes the maximum relation that is regular relative to the specified
+   * relation on the given network with partially ordered ties. Runs in O(m^2)
+   * time and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          regular-relational-roles-consistent relative to.
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the maximum ranking that is regular-relational-roles-consistent relative to the given
-   *         network.
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @param comparator         a comparator that partially orders ties.
+   * @return the maximum relation that is regular relative to specified relation
+   *         on the given network.
    */
   public static <V> BinaryRelation rankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -513,23 +483,20 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that refines a given ranking and is
-   * regular-relational-roles-consistent relative to the given network with partially ordered edges.
-   * Runs in O(m^2) time and needs O(n^2) additional space.
+   * Computes the maximum ranking that refines a given ranking and is regular
+   * relative to the specified ranking on the given network with partially ordered
+   * ties. Runs in O(m^2) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be ranked-roles-consistent relative
-   *          to.
-   * @param refinedRanking
-   *          the ranking that is refined by the result
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the maximum ranking that refines refinedRanking and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @param refinedRanking    the ranking to refine.
+   * @param comparator        a comparator that partially orders ties.
+   * @return the maximum ranking that refines a given ranking and is regular
+   *         relative to specified ranking on the given network.
    */
   public static <V> Ranking refiningRankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -539,23 +506,20 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that refines a given relation and is
-   * regular-relational-roles-consistent relative to the given network with partially ordered edges.
-   * Runs in O(m^2) time and needs O(n^2) additional space.
+   * Computes the maximum relation that refines a given relation and is regular
+   * relative to the specified relation on the given network with partially
+   * ordered ties. Runs in O(m^2) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be ranked-roles-consistent relative
-   *          to.
-   * @param refinedRelation
-   *          the relation that is refined by the result
-   * @param comparator
-   *          a comparator that partially orders relationships
-   * @return the maximum relation that refines refinedRelation and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @param refinedRelation    the relation that is refined by the result
+   * @param comparator         a comparator that partially orders ties.
+   * @return the maximum relation that refines a given relation and is regular
+   *         relative to the specified relation on the given network.
    */
   public static <V> BinaryRelation refiningRankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -567,23 +531,22 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that is regular-relational-roles-consistent relative to the given
-   * network with partially ordered edges. Runs in O(n m log n) time and O(n^2) additional space.
+   * Computes the maximum ranking that is regular relative to the specified
+   * ranking on the given network with a notion of compatibility between the ties.
+   * Runs in O(m^2) time and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be
-   *          regular-relational-roles-consistent relative to.
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @return the maximum ranking that is regular-relational-roles-consistent relative to the given
-   *         network.
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @param comparator        a binary predicate that says whether the first tie's
+   *                          value is compatible with the second one.
+   * @return the maximum ranking that is regular relative to the specified ranking
+   *         on the given network.
    */
-  public static <V> Ranking rankedRegularRoles(int n,
+  private static <V> Ranking rankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       Ranking rankingRelativeTo, BiPredicate<? super V, ? super V> comparator) {
     return refiningRankedRegularRoles(n, positionView, rankingRelativeTo, Rankings.universal(n),
@@ -591,21 +554,20 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that is regular-relational-roles-consistent relative to the given
-   * network with partially ordered edges. Runs in O(n m log n) time and O(n^2) additional space.
+   * Computes the maximum relation that is regular relative to the specified
+   * relation on the given network with a notion of compatibility between the
+   * ties. Runs in O(m^2) time and O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be
-   *          regular-relational-roles-consistent relative to.
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @return the maximum ranking that is regular-relational-roles-consistent relative to the given
-   *         network.
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @param comparator         a binary predicate that says whether the first
+   *                           tie's value is compatible with the second one.
+   * @return the maximum relation that is regular relative to specified relation
+   *         on the given network.
    */
   public static <V> BinaryRelation rankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -615,26 +577,23 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum ranking that refines a given ranking and is
-   * regular-relational-roles-consistent relative to the given network with partially ordered edges.
+   * Computes the maximum ranking that refines a given ranking and is regular
+   * relative to the given network with a notion of compatibility between ties.
    * Runs in O(m^2) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param rankingRelativeTo
-   *          represents the ranking the output ranking should be ranked-roles-consistent relative
-   *          to.
-   * @param refinedRanking
-   *          the ranking that is refined by the result
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @return the maximum ranking that refines refinedRanking and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param <V>               type representing ties.
+   * @param n                 number of nodes.
+   * @param positionView      network as viewed from the position of the
+   *                          individual nodes.
+   * @param rankingRelativeTo the ranking the output ranking should be regular
+   *                          relative to.
+   * @param refinedRanking    the ranking to refine.
+   * @param comparator        a binary predicate that says whether the first tie's
+   *                          value is compatible with the second one.
+   * @return the maximum ranking that refines a given ranking and is regular
+   *         relative to the specified ranking on the given network.
    */
-  public static <V> Ranking refiningRankedRegularRoles(int n,
+  private static <V> Ranking refiningRankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
       Ranking rankingRelativeTo, Ranking refinedRanking,
       BiPredicate<? super V, ? super V> comparator) {
@@ -642,24 +601,22 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the maximum relation that refines a given relation and is
-   * regular-relational-roles-consistent relative to the given network with partially ordered edges.
-   * Runs in O(m^2) time and needs O(n^2) additional space.
+   * Computes the maximum relation that refines a given relation and is regular
+   * relative to the specified relation on the given network with a notion of
+   * compatibility between ties. Runs in O(m^2) time and needs O(n^2) additional
+   * space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relationRelativeTo
-   *          represents the relation the output relation should be ranked-roles-consistent relative
-   *          to.
-   * @param refinedRelation
-   *          the relation that is refined by the result
-   * @param comparator
-   *          a binary predicate that says whether the first relationship's value is compatible with
-   *          the second one
-   * @return the maximum relation that refines refinedRelation and is
-   *         regular-relational-roles-consistent relative to the given network.
+   * @param <V>                type representing ties.
+   * @param n                  number of nodes.
+   * @param positionView       network as viewed from the position of the
+   *                           individual nodes.
+   * @param relationRelativeTo the relation the output relation should be regular
+   *                           relative to.
+   * @param refinedRelation    the relation to refine.
+   * @param comparator         a binary predicate that says whether the first
+   *                           tie's value is compatible with the second one.
+   * @return the maximum relation that refines a given relation and is regular
+   *         relative to the specified relation on the given network.
    */
   public static <V> BinaryRelation refiningRankedRegularRoles(int n,
       TransposableNetworkView<? extends V, ? extends V> positionView,
@@ -699,16 +656,15 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the ranked roles interior of a given unweighted network. Runs in O(m n) time and needs
-   * O(n^2) additional space.
+   * Computes the regular interior of the specified ranking for the given
+   * unweighted network. Runs in O(m n) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param ranking
-   *          Initial ranking whose interior is sought
-   * @return the ranked roles interior of the ranking for the given network
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param ranking      initial ranking whose interior is sought.
+   * @return the regular interior of the ranking for the given network on the
+   *         lattice of rankings.
    */
   public static Ranking computeRankedRolesInterior(int n, NetworkView<?, ?> positionView,
       Ranking ranking) {
@@ -717,16 +673,15 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the ranked roles interior of a given unweighted network. Runs in O(m n) time and needs
-   * O(n^2) additional space.
+   * Computes the regular interior of the specified relation for a given
+   * unweighted network. Runs in O(m n) time and needs O(n^2) additional space.
    * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relation
-   *          Initial relation whose interior is sought
-   * @return the ranked roles interior of the ranking for the given network
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param relation     initial relation whose interior is sought.
+   * @return the regular interior of the relation for the given network on the
+   *         lattice of binary relations.
    */
   public static BinaryRelation computeRankedRolesInterior(int n,
       NetworkView<?, ?> positionView, BinaryRelation relation) {
@@ -830,18 +785,15 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the ranked roles closure of a given ranking for an unweighted network. Runs in O(n^3)
-   * time and needs O(n^2) additional space.
+   * Computes the ecological closure of a given ranking for an unweighted network.
+   * Runs in O(n^3) time and needs O(n^2) additional space.
    * 
-   * Note: The underlying lattice is the lattice of preorders.
-   * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param ranking
-   *          Initial ranking whose closure is sought
-   * @return the ranked roles closure of the ranking for the given network
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param ranking      initial ranking whose closure is sought.
+   * @return the ecological closure of the ranking for the given network on the
+   *         lattice of rankings.
    */
   public static Ranking computeRankedRolesClosure(int n, NetworkView<?, ?> positionView,
       Ranking ranking) {
@@ -998,19 +950,15 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the ranked roles closure of a given binary relation for an unweighted network. Runs in
-   * O(n^3) time and needs O(n^2) additional space.
+   * Computes the ecological closure of a given binary relation for an unweighted
+   * network. Runs in O(m n) time and needs O(n^2) additional space.
    * 
-   * <p>
-   * Note: The underlying lattice is the lattice of binary relations.
-   * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relation
-   *          Initial relation whose closure is sought
-   * @return the ranked roles closure of the relation for the given network
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param relation     initial relation whose closure is sought.
+   * @return the ecological closure of the relation for the given network on the
+   *         lattice of binary relations.
    */
   public static BinaryRelation computeRankedRolesClosure(int n,
       NetworkView<?, ?> positionView, BinaryRelation relation) {
@@ -1083,20 +1031,17 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the ranked roles closure of a given ranking/preorder for a network with weakly ordered
-   * edge weights. Runs in O(m^2+n^3) time and needs O(n^2) additional space.
+   * Computes the ecological closure of a given ranking for a network with weakly
+   * ordered ties. Runs in O(m^2+n^3) time and needs O(n^2) additional space.
    * 
-   * Note: The underlying lattice is the lattice of preorders.
-   * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param ranking
-   *          Initial ranking whose closure is sought
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the ranked roles closure of the ranking for the given network
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param ranking      initial ranking whose closure is sought.
+   * @param comparator   a comparator that weakly orders ties.
+   * @return the ecological closure of the ranking for the given network on the
+   *         lattice of rankings.
    */
   public static <V> Ranking computeRankedRolesClosure(int n,
       NetworkView<? extends V, ? extends V> positionView, Ranking ranking,
@@ -1249,20 +1194,17 @@ public class RegularRankedRoles {
   }
 
   /**
-   * Computes the ranked roles closure of a given relation for a network with weakly ordered edges.
-   * Runs in O(m^2) time and needs O(n^2) additional space.
+   * Computes the regular closure of a given relation for a network with weakly
+   * ordered ties. Runs in O(m^2) time and needs O(n^2) additional space.
    * 
-   * Note: The underlying lattice is the lattice of binary relations.
-   * 
-   * @param n
-   *          Number of nodes
-   * @param positionView
-   *          Network as viewed from the position of the individual nodes
-   * @param relation
-   *          Initial relation whose closure is sought
-   * @param comparator
-   *          a comparator that weakly orders relationships
-   * @return the ranked roles closure of the relation for the given network
+   * @param <V>          type representing ties.
+   * @param n            number of nodes.
+   * @param positionView network as viewed from the position of the individual
+   *                     nodes.
+   * @param relation     initial relation whose closure is sought.
+   * @param comparator   a comparator that weakly orders ties.
+   * @return the ecological closure of the relation for the given network on the
+   *         lattice of binary relations.
    */
   public static <V> BinaryRelation computeRankedRolesClosure(int n,
       NetworkView<? extends V, ? extends V> positionView, BinaryRelation relation,
