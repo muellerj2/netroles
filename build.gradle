@@ -69,6 +69,7 @@ subprojects {
   javadoc {
     failOnError true
     options.tags = [ "implNote" ]
+    options.addBooleanOption('Xwerror', true)
   }
   
   tasks.withType(GenerateModuleMetadata) {
