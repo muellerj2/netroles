@@ -57,12 +57,14 @@ subprojects {
   jar {
     from ("$rootDir") {
       include "LICENSE"
+	  into "META-INF"
     }
   }
   
   sourcesJar {
     from ("$rootDir") {
       include "LICENSE"
+	  into "META-INF"
     }
   }
   
@@ -70,6 +72,13 @@ subprojects {
     failOnError true
     options.tags = [ "implNote" ]
     options.addBooleanOption('Xwerror', true)
+  }
+  
+  javadocJar {
+    from ("$rootDir") {
+      include "LICENSE"
+	  into "META-INF"
+    }
   }
   
   tasks.withType(GenerateModuleMetadata) {
