@@ -29,11 +29,9 @@ import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 public interface BuilderFactory<U> extends BuilderFactoryBase<U> {
 
   @Override
-  <T> OperatorBuilder<T, U, ?> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView);
+  <T> OperatorBuilder<T, U, ?> of(NetworkView<? extends T, ? extends T> positionView);
 
   @Override
-  <T> OperatorBuilder<T, U, ?> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView);
+  <T> OperatorBuilder<T, U, ?> of(TransposableNetworkView<? extends T, ? extends T> positionView);
 
 }

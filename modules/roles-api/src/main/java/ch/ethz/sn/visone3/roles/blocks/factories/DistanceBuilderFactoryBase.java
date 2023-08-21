@@ -32,10 +32,9 @@ public interface DistanceBuilderFactoryBase<U>
     extends BuilderFactoryBase<Operator<U, IntDistanceMatrix>> {
 
   @Override
-  <T> DistanceOperatorBuilderBase<T, U, ?, ?, ?, ?, ?, ?> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView);
+  <T> DistanceOperatorBuilderBase<T, U, ?, ?, ?, ?, ?, ?> of(NetworkView<? extends T, ? extends T> positionView);
 
   @Override
-  <T> DistanceOperatorBuilderBase<T, U, ?, ?, ?, ?, ?, ?> of(int numNodes,
+  <T> DistanceOperatorBuilderBase<T, U, ?, ?, ?, ?, ?, ?> of(
       TransposableNetworkView<? extends T, ? extends T> positionView);
 }

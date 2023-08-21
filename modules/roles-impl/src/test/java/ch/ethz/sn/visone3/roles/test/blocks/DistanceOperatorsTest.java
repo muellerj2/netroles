@@ -120,6 +120,11 @@ public class DistanceOperatorsTest {
       private Relation rel = network.asRelation();
 
       @Override
+      public int countNodes() {
+        return rel.countUnionDomain();
+      }
+
+      @Override
       public Iterable<? extends Relationship> ties(int lhsComparison, int rhsComparison, int node) {
         return rel.getRelationshipsFrom(node);
       }
@@ -173,7 +178,6 @@ public class DistanceOperatorsTest {
     Network network2 = MatrixSource.fromAdjacency(adj, false).getNetwork();
     NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
-    int n2 = network2.countMonadicIndices();
 
     IntDistanceMatrix result = DistanceMatrices.fromMatrix(new int[][] { //
         { 0, 6, 9, 8, 8, 9, 8, 8, 10, 10, 10, 10, 10, 10, 10 }, //
@@ -194,18 +198,18 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2).make(),
+        DistanceOperators.EQUIVALENCE.strongStructural().of(outgoingView2).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4), result, true,
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, outgoingView2).make(),
+        DistanceOperators.RANKING.strongStructural().of(outgoingView2).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, outgoingView2).make(),
+        DistanceOperators.BINARYRELATION.strongStructural().of(outgoingView2).make(),
         BinaryRelations.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
         result, true, true, false, false, () -> {
@@ -230,19 +234,19 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4), result, true,
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, swappingOutgoingView(network2)).make(),
+        DistanceOperators.RANKING.strongStructural().of(swappingOutgoingView(network2)).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .make(),
         BinaryRelations.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
@@ -268,20 +272,20 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.strongStructural().of(outgoingView2)
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4), result, true,
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, outgoingView2)
+        DistanceOperators.RANKING.strongStructural().of(outgoingView2)
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.strongStructural().of(outgoingView2)
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
@@ -307,20 +311,20 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4), result, true,
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.strongStructural().of(swappingOutgoingView(network2))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
@@ -346,7 +350,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.strongStructural().of(outgoingView2)
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -354,7 +358,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, outgoingView2)
+        DistanceOperators.RANKING.strongStructural().of(outgoingView2)
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -363,7 +367,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.strongStructural().of(outgoingView2)
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -391,7 +395,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -399,7 +403,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.strongStructural().of(swappingOutgoingView(network2))
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -408,7 +412,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -436,7 +440,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.strongStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -450,7 +454,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.strongStructural()
-        .of(n2, outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -466,7 +470,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.strongStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -501,7 +505,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -517,7 +521,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.strongStructural().of(swappingOutgoingView(network2))
             .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -534,7 +538,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -570,7 +574,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.strongStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -585,7 +589,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.strongStructural()
-        .of(n2, outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -601,7 +605,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.strongStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -636,7 +640,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -652,7 +656,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.strongStructural().of(swappingOutgoingView(network2))
             .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -669,7 +673,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -705,7 +709,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.strongStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -721,7 +725,7 @@ public class DistanceOperatorsTest {
         true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.strongStructural()
-        .of(n2, outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -739,7 +743,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.strongStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -776,7 +780,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -794,7 +798,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.strongStructural().of(swappingOutgoingView(network2))
             .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -813,7 +817,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -851,7 +855,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.EQUIVALENCE.strongStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -867,7 +871,7 @@ public class DistanceOperatorsTest {
             result, true, true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.strongStructural()
-        .of(n2, outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -884,7 +888,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.BINARYRELATION.strongStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.BINARYRELATION.strongStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -920,7 +924,7 @@ public class DistanceOperatorsTest {
         { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0 } });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -937,7 +941,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.strongStructural().of(swappingOutgoingView(network2))
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -955,7 +959,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -992,7 +996,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.EQUIVALENCE.strongStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1009,7 +1013,7 @@ public class DistanceOperatorsTest {
             true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.strongStructural()
-        .of(n2, outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -1026,7 +1030,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.BINARYRELATION.strongStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.BINARYRELATION.strongStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1063,7 +1067,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1080,7 +1084,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.strongStructural().of(swappingOutgoingView(network2))
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1098,7 +1102,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1135,7 +1139,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.EQUIVALENCE.strongStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1154,7 +1158,7 @@ public class DistanceOperatorsTest {
             result, true, true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.strongStructural()
-        .of(n2, outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -1173,7 +1177,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.BINARYRELATION.strongStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.BINARYRELATION.strongStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1213,7 +1217,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1232,7 +1236,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.strongStructural().of(swappingOutgoingView(network2))
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1252,7 +1256,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1291,7 +1295,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.EQUIVALENCE.strongStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 2;
             })).make(),
@@ -1299,7 +1303,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.RANKING.strongStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.RANKING.strongStructural().of(outgoingView2)
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).make(),
@@ -1308,7 +1312,7 @@ public class DistanceOperatorsTest {
             result, true, true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.BINARYRELATION.strongStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).make(),
@@ -1336,7 +1340,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).make(),
@@ -1344,7 +1348,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.strongStructural()
-        .of(n2, swappingOutgoingView(network2)).compPredicate(
+        .of(swappingOutgoingView(network2)).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -1354,7 +1358,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).make(),
@@ -1382,7 +1386,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.EQUIVALENCE.strongStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).failCost(Relationship::getRight).make(),
@@ -1390,7 +1394,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.RANKING.strongStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.RANKING.strongStructural().of(outgoingView2)
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).failCost(Relationship::getRight).make(),
@@ -1399,7 +1403,7 @@ public class DistanceOperatorsTest {
             result, true, true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.BINARYRELATION.strongStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).failCost(Relationship::getRight).make(),
@@ -1427,7 +1431,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).failCost(Relationship::getRight).make(),
@@ -1435,7 +1439,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.strongStructural()
-        .of(n2, swappingOutgoingView(network2)).compPredicate(
+        .of(swappingOutgoingView(network2)).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -1445,7 +1449,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).failCost(Relationship::getRight).make(),
@@ -1473,7 +1477,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.EQUIVALENCE.strongStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -1484,7 +1488,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.RANKING.strongStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.RANKING.strongStructural().of(outgoingView2)
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -1496,7 +1500,7 @@ public class DistanceOperatorsTest {
             result, true, true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.BINARYRELATION.strongStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -1527,7 +1531,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
@@ -1537,7 +1541,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.strongStructural()
-        .of(n2, swappingOutgoingView(network2)).compPredicate(
+        .of(swappingOutgoingView(network2)).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -1549,7 +1553,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.strongStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.strongStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
@@ -1585,7 +1589,6 @@ public class DistanceOperatorsTest {
     Network network2 = MatrixSource.fromAdjacency(adj, false).getNetwork();
     NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
-    int n2 = network2.countMonadicIndices();
 
     IntDistanceMatrix result = DistanceMatrices.fromMatrix(new int[][] { //
         { 0, 5, 8, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10, 10 }, //
@@ -1606,18 +1609,18 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, outgoingView2).make(),
+        DistanceOperators.EQUIVALENCE.weakStructural().of(outgoingView2).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4), result, true,
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, outgoingView2).make(),
+        DistanceOperators.RANKING.weakStructural().of(outgoingView2).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, outgoingView2).make(),
+        DistanceOperators.BINARYRELATION.weakStructural().of(outgoingView2).make(),
         BinaryRelations.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
         result, true, true, false, false, () -> {
@@ -1641,19 +1644,19 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4), result, true,
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, swappingOutgoingView(network2)).make(),
+        DistanceOperators.RANKING.weakStructural().of(swappingOutgoingView(network2)).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .make(),
         BinaryRelations.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
@@ -1679,20 +1682,20 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weakStructural().of(outgoingView2)
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4), result, true,
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weakStructural().of(outgoingView2)
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weakStructural().of(outgoingView2)
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
@@ -1717,20 +1720,20 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4), result, true,
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weakStructural().of(swappingOutgoingView(network2))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
@@ -1756,7 +1759,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weakStructural().of(outgoingView2)
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -1764,7 +1767,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weakStructural().of(outgoingView2)
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -1773,7 +1776,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weakStructural().of(outgoingView2)
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -1801,7 +1804,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -1809,7 +1812,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weakStructural().of(swappingOutgoingView(network2))
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -1818,7 +1821,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .substCost((rshipi, rshipj) -> rshipj == null ? rshipi.getRight()
                 : Math.max(0, rshipi.getRight() - rshipj.getRight()))
             .make(),
@@ -1846,7 +1849,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weakStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -1860,7 +1863,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weakStructural()
-        .of(n2, outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -1876,7 +1879,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weakStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -1911,7 +1914,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1927,7 +1930,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weakStructural().of(swappingOutgoingView(network2))
             .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1944,7 +1947,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -1980,7 +1983,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weakStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -1995,7 +1998,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weakStructural()
-        .of(n2, outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -2011,7 +2014,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weakStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -2046,7 +2049,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2062,7 +2065,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weakStructural().of(swappingOutgoingView(network2))
             .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2079,7 +2082,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2115,7 +2118,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weakStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -2132,7 +2135,7 @@ public class DistanceOperatorsTest {
         true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weakStructural()
-        .of(n2, outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -2151,7 +2154,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weakStructural()
-        .of(n2, outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -2189,7 +2192,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2208,7 +2211,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weakStructural().of(swappingOutgoingView(network2))
             .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2228,7 +2231,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2266,7 +2269,7 @@ public class DistanceOperatorsTest {
         { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0 } });
 
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.EQUIVALENCE.weakStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.EQUIVALENCE.weakStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2282,7 +2285,7 @@ public class DistanceOperatorsTest {
             result, true, true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weakStructural()
-        .of(n2, outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -2299,7 +2302,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.BINARYRELATION.weakStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.BINARYRELATION.weakStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2336,7 +2339,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2353,7 +2356,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weakStructural().of(swappingOutgoingView(network2))
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2371,7 +2374,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2408,7 +2411,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.EQUIVALENCE.weakStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.EQUIVALENCE.weakStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2425,7 +2428,7 @@ public class DistanceOperatorsTest {
             true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weakStructural()
-        .of(n2, outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -2442,7 +2445,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.BINARYRELATION.weakStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.BINARYRELATION.weakStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2479,7 +2482,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2496,7 +2499,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weakStructural().of(swappingOutgoingView(network2))
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2514,7 +2517,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2551,7 +2554,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.EQUIVALENCE.weakStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.EQUIVALENCE.weakStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2570,7 +2573,7 @@ public class DistanceOperatorsTest {
             result, true, true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weakStructural()
-        .of(n2, outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
+        .of(outgoingView2).comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
             lhsworth = Math.max(rshipi.getLeft(), rshipi.getRight()) / 2;
@@ -2590,7 +2593,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.BINARYRELATION.weakStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.BINARYRELATION.weakStructural().of(outgoingView2)
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2630,7 +2633,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2650,7 +2653,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weakStructural().of(swappingOutgoingView(network2))
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2671,7 +2674,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (Math.min(rshipi.getLeft(), rshipi.getRight()) == 0) {
@@ -2711,7 +2714,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.EQUIVALENCE.weakStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).make(),
@@ -2719,7 +2722,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.RANKING.weakStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.RANKING.weakStructural().of(outgoingView2)
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).make(),
@@ -2728,7 +2731,7 @@ public class DistanceOperatorsTest {
             result, true, true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.BINARYRELATION.weakStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).make(),
@@ -2756,7 +2759,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).make(),
@@ -2764,7 +2767,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weakStructural()
-        .of(n2, swappingOutgoingView(network2)).compPredicate(
+        .of(swappingOutgoingView(network2)).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -2774,7 +2777,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).make(),
@@ -2802,7 +2805,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.EQUIVALENCE.weakStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).failCost(Relationship::getRight).make(),
@@ -2810,7 +2813,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.RANKING.weakStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.RANKING.weakStructural().of(outgoingView2)
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).failCost(Relationship::getRight).make(),
@@ -2819,7 +2822,7 @@ public class DistanceOperatorsTest {
             result, true, true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.BINARYRELATION.weakStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).failCost(Relationship::getRight).make(),
@@ -2847,7 +2850,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).failCost(Relationship::getRight).make(),
@@ -2855,7 +2858,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weakStructural()
-        .of(n2, swappingOutgoingView(network2)).compPredicate(
+        .of(swappingOutgoingView(network2)).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -2865,7 +2868,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             })).failCost(Relationship::getRight).make(),
@@ -2893,7 +2896,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.EQUIVALENCE.weakStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -2904,7 +2907,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.RANKING.weakStructural().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.RANKING.weakStructural().of(outgoingView2)
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -2916,7 +2919,7 @@ public class DistanceOperatorsTest {
             result, true, true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, outgoingView2).compPredicate(
+        DistanceOperators.BINARYRELATION.weakStructural().of(outgoingView2).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -2947,7 +2950,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weakStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -2958,7 +2961,7 @@ public class DistanceOperatorsTest {
         true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weakStructural()
-        .of(n2, swappingOutgoingView(network2)).compPredicate(
+        .of(swappingOutgoingView(network2)).compPredicate(
             ((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -2970,7 +2973,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weakStructural().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weakStructural().of(swappingOutgoingView(network2))
             .comp(((BiPredicate<? super Relationship, ? super Relationship>) (rshipi, rshipj) -> {
               return Math.abs(rshipi.getRight() - rshipj.getRight()) < 3;
             }))
@@ -3006,20 +3009,20 @@ public class DistanceOperatorsTest {
     final int n = network.countMonadicIndices();
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n, incomingView).make(),
+        DistanceOperators.EQUIVALENCE.weak().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return incomingView.countTies(j) > 0 ? 0 : incomingView.countTies(i);
         }), true, true, false, false, () -> {
         });
-    OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak().of(n, incomingView).make(),
+    OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return incomingView.countTies(j) > 0 ? 0 : incomingView.countTies(i);
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n, incomingView).make(),
+        DistanceOperators.BINARYRELATION.weak().of(incomingView).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return incomingView.countTies(j) > 0 ? 0 : incomingView.countTies(i);
@@ -3027,21 +3030,21 @@ public class DistanceOperatorsTest {
         });
 
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weak()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return incomingView.countTies(j) > 0 ? 0 : incomingView.countTies(i);
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return incomingView.countTies(j) > 0 ? 0 : incomingView.countTies(i);
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weak()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return incomingView.countTies(j) > 0 ? 0 : incomingView.countTies(i);
@@ -3049,7 +3052,7 @@ public class DistanceOperatorsTest {
         });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n, swappingOutgoingView(network)).make(),
+        DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network)).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return network.asRelation().countRelationshipsFrom(j) > 0 ? 0
@@ -3057,7 +3060,7 @@ public class DistanceOperatorsTest {
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n, swappingOutgoingView(network)).make(),
+        DistanceOperators.RANKING.weak().of(swappingOutgoingView(network)).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return network.asRelation().countRelationshipsFrom(j) > 0 ? 0
@@ -3065,7 +3068,7 @@ public class DistanceOperatorsTest {
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n, swappingOutgoingView(network)).make(),
+        DistanceOperators.BINARYRELATION.weak().of(swappingOutgoingView(network)).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return network.asRelation().countRelationshipsFrom(j) > 0 ? 0
@@ -3084,18 +3087,18 @@ public class DistanceOperatorsTest {
       return count;
     });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n, incomingView).failCost(Relationship::getLeft)
+        DistanceOperators.EQUIVALENCE.weak().of(incomingView).failCost(Relationship::getLeft)
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n, incomingView).failCost(Relationship::getLeft).make(),
+        DistanceOperators.RANKING.weak().of(incomingView).failCost(Relationship::getLeft).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n, incomingView).failCost(Relationship::getLeft)
+        DistanceOperators.BINARYRELATION.weak().of(incomingView).failCost(Relationship::getLeft)
             .make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
@@ -3103,21 +3106,21 @@ public class DistanceOperatorsTest {
 
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
             .failCost(Relationship::getLeft).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
             .failCost(Relationship::getLeft).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
             .failCost(Relationship::getLeft).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
@@ -3134,19 +3137,19 @@ public class DistanceOperatorsTest {
       return count;
     });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n, swappingOutgoingView(network))
+        DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n, swappingOutgoingView(network))
+        DistanceOperators.RANKING.weak().of(swappingOutgoingView(network))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n, swappingOutgoingView(network))
+        DistanceOperators.BINARYRELATION.weak().of(swappingOutgoingView(network))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
@@ -3165,7 +3168,7 @@ public class DistanceOperatorsTest {
             { 15, 15, 9, 9, 7, 15, 15, 0, 0, 0 }, //
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n, incomingView)
+        DistanceOperators.EQUIVALENCE.weak().of(incomingView)
             .substCost(
                 (ri, rj) -> rj == null ? ri.getLeft() : Math.max(ri.getLeft() - rj.getLeft(), 0))
             .make(),
@@ -3174,7 +3177,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().of(n, incomingView)
+            DistanceOperators.RANKING.weak().of(incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft(), 0))
                 .make(),
@@ -3183,7 +3186,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weak().of(n, incomingView)
+            DistanceOperators.BINARYRELATION.weak().of(incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft(), 0))
                 .make(),
@@ -3195,7 +3198,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.EQUIVALENCE.weak()
-                .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+                .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft(), 0))
                 .make(),
@@ -3205,7 +3208,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.RANKING.weak()
-                .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+                .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft(), 0))
                 .make(),
@@ -3215,7 +3218,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weak()
-                .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+                .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft(), 0))
                 .make(),
@@ -3225,7 +3228,7 @@ public class DistanceOperatorsTest {
             });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n, swappingOutgoingView(network))
+        DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network))
             .substCost(
                 (ri, rj) -> rj == null ? ri.getRight() : Math.max(ri.getRight() - rj.getRight(), 0))
             .make(),
@@ -3234,7 +3237,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().of(n, swappingOutgoingView(network))
+            DistanceOperators.RANKING.weak().of(swappingOutgoingView(network))
                 .substCost((ri, rj) -> rj == null ? ri.getRight()
                     : Math.max(ri.getRight() - rj.getRight(), 0))
                 .make(),
@@ -3243,7 +3246,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weak().of(n, swappingOutgoingView(network))
+            DistanceOperators.BINARYRELATION.weak().of(swappingOutgoingView(network))
                 .substCost((ri, rj) -> rj == null ? ri.getRight()
                     : Math.max(ri.getRight() - rj.getRight(), 0))
                 .make(),
@@ -3255,7 +3258,6 @@ public class DistanceOperatorsTest {
     Network network2 = createNetwork();
     final NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
-    final int n2 = network2.countMonadicIndices();
 
     result = DistanceMatrices.fromMatrix(new int[][] { //
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
@@ -3271,57 +3273,57 @@ public class DistanceOperatorsTest {
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
     });
 
-    OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weak().of(n2, outgoingView2)
+    OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weak().of(outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
-    OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak().of(n2, outgoingView2)
+    OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak().of(outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weak()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weak()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weak().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -3342,21 +3344,21 @@ public class DistanceOperatorsTest {
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
     });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weak().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weak().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -3364,7 +3366,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
@@ -3372,7 +3374,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -3380,28 +3382,28 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weak().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -3422,7 +3424,7 @@ public class DistanceOperatorsTest {
         { 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1 }, //
     });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weak().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -3431,7 +3433,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weak().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -3440,7 +3442,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -3450,7 +3452,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -3460,7 +3462,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -3470,7 +3472,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -3479,7 +3481,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -3488,7 +3490,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -3497,7 +3499,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weak().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -3521,7 +3523,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weak().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3530,7 +3532,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weak().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3539,7 +3541,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3549,7 +3551,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3559,7 +3561,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3569,7 +3571,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3578,7 +3580,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3587,7 +3589,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3597,7 +3599,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION
-            .weak().of(n2, swappingOutgoingView(network2))
+            .weak().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3621,7 +3623,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weak().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3630,7 +3632,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weak().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3639,7 +3641,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3649,7 +3651,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3659,7 +3661,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3669,7 +3671,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3678,7 +3680,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3687,7 +3689,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3696,7 +3698,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weak().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3719,7 +3721,7 @@ public class DistanceOperatorsTest {
         { 1, 1, 1, 1, 3, 1, 3, 3, 3, 3, 1 }, //
     });
 
-    OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weak().of(n2, outgoingView2)
+    OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weak().of(outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3728,7 +3730,7 @@ public class DistanceOperatorsTest {
         .make(), Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true,
         false, false, () -> {
         });
-    OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak().of(n2, outgoingView2)
+    OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak().of(outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3739,7 +3741,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weak()
-        .of(n2, outgoingView2)
+        .of(outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3750,7 +3752,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weak()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3760,7 +3762,7 @@ public class DistanceOperatorsTest {
         false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3771,7 +3773,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weak()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3782,7 +3784,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3793,7 +3795,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak()
-        .of(n2, swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2))
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3804,7 +3806,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weak()
-        .of(n2, swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2))
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3831,7 +3833,7 @@ public class DistanceOperatorsTest {
 
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.EQUIVALENCE.weak().of(n2, outgoingView2)
+            DistanceOperators.EQUIVALENCE.weak().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -3840,7 +3842,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().of(n2, outgoingView2)
+            DistanceOperators.RANKING.weak().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -3849,7 +3851,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weak().of(n2, outgoingView2)
+            DistanceOperators.BINARYRELATION.weak().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -3860,7 +3862,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.EQUIVALENCE.weak()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -3870,7 +3872,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.RANKING.weak()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -3880,7 +3882,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weak()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -3890,7 +3892,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.EQUIVALENCE.weak().of(n2, swappingOutgoingView(network2))
+            DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -3899,7 +3901,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().of(n2, swappingOutgoingView(network2))
+            DistanceOperators.RANKING.weak().of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -3908,7 +3910,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weak().of(n2, swappingOutgoingView(network2))
+            DistanceOperators.BINARYRELATION.weak().of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -3933,7 +3935,7 @@ public class DistanceOperatorsTest {
 
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.EQUIVALENCE.weak().of(n2, outgoingView2)
+            DistanceOperators.EQUIVALENCE.weak().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -3942,7 +3944,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().of(n2, outgoingView2)
+            DistanceOperators.RANKING.weak().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -3951,7 +3953,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weak().of(n2, outgoingView2)
+            DistanceOperators.BINARYRELATION.weak().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -3962,7 +3964,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.EQUIVALENCE.weak()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -3972,7 +3974,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.RANKING.weak()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -3982,7 +3984,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weak()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -3992,7 +3994,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.EQUIVALENCE.weak().of(n2, swappingOutgoingView(network2))
+            DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -4001,7 +4003,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().of(n2, swappingOutgoingView(network2))
+            DistanceOperators.RANKING.weak().of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -4010,7 +4012,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weak().of(n2, swappingOutgoingView(network2))
+            DistanceOperators.BINARYRELATION.weak().of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -4034,7 +4036,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weak().of(outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4043,7 +4045,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weak().of(outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4052,7 +4054,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().of(outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4062,7 +4064,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4072,7 +4074,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4082,7 +4084,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4091,7 +4093,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network2))
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4100,7 +4102,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().of(swappingOutgoingView(network2))
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4109,7 +4111,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weak().of(swappingOutgoingView(network2))
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4142,21 +4144,21 @@ public class DistanceOperatorsTest {
     final int n = network.countMonadicIndices();
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n, incomingView).make(),
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(incomingView.countTies(i) - incomingView.countTies(j), 0);
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n, incomingView).make(),
+        DistanceOperators.RANKING.weaklyEquitable().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(incomingView.countTies(i) - incomingView.countTies(j), 0);
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n, incomingView).make(),
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(incomingView).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(incomingView.countTies(i) - incomingView.countTies(j), 0);
@@ -4164,21 +4166,21 @@ public class DistanceOperatorsTest {
         });
 
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weaklyEquitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(incomingView.countTies(i) - incomingView.countTies(j), 0);
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weaklyEquitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(incomingView.countTies(i) - incomingView.countTies(j), 0);
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weaklyEquitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(incomingView.countTies(i) - incomingView.countTies(j), 0);
@@ -4186,7 +4188,7 @@ public class DistanceOperatorsTest {
         });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n, swappingOutgoingView(network)).make(),
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network)).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(network.asRelation().countRelationshipsFrom(i)
@@ -4194,7 +4196,7 @@ public class DistanceOperatorsTest {
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n, swappingOutgoingView(network)).make(),
+        DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network)).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(network.asRelation().countRelationshipsFrom(i)
@@ -4202,7 +4204,7 @@ public class DistanceOperatorsTest {
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n, swappingOutgoingView(network))
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(swappingOutgoingView(network))
             .make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
@@ -4225,19 +4227,19 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n, incomingView)
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(incomingView)
             .failCost(Relationship::getLeft).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n, incomingView)
+        DistanceOperators.RANKING.weaklyEquitable().of(incomingView)
             .failCost(Relationship::getLeft).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n, incomingView)
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(incomingView)
             .failCost(Relationship::getLeft).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
@@ -4245,40 +4247,40 @@ public class DistanceOperatorsTest {
 
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weaklyEquitable()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
             .failCost(Relationship::getLeft).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weaklyEquitable()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
             .failCost(Relationship::getLeft).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weaklyEquitable()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
             .failCost(Relationship::getLeft).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n, swappingOutgoingView(network))
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n, swappingOutgoingView(network))
+        DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n, swappingOutgoingView(network))
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(swappingOutgoingView(network))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
@@ -4298,7 +4300,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n, incomingView)
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(incomingView)
             .substCost(
                 (ri, rj) -> rj == null ? ri.getLeft() : Math.max(ri.getLeft() - rj.getLeft(), 0))
             .make(),
@@ -4307,7 +4309,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weaklyEquitable().of(n, incomingView)
+            DistanceOperators.RANKING.weaklyEquitable().of(incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft(), 0))
                 .make(),
@@ -4316,7 +4318,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weaklyEquitable().of(n, incomingView)
+            DistanceOperators.BINARYRELATION.weaklyEquitable().of(incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft(), 0))
                 .make(),
@@ -4328,7 +4330,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.EQUIVALENCE.weaklyEquitable()
-                .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+                .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft(), 0))
                 .make(),
@@ -4338,7 +4340,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.RANKING.weaklyEquitable()
-                .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+                .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft(), 0))
                 .make(),
@@ -4348,7 +4350,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weaklyEquitable()
-                .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+                .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft(), 0))
                 .make(),
@@ -4359,7 +4361,7 @@ public class DistanceOperatorsTest {
 
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n, swappingOutgoingView(network))
+            DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network))
                 .substCost((ri, rj) -> rj == null ? ri.getRight()
                     : Math.max(ri.getRight() - rj.getRight(), 0))
                 .make(),
@@ -4367,7 +4369,7 @@ public class DistanceOperatorsTest {
             false, () -> {
             });
     OperatorTestUtilities.checkOperator(
-            DistanceOperators.RANKING.weaklyEquitable().of(n, swappingOutgoingView(network))
+        DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network))
                 .substCost((ri, rj) -> rj == null ? ri.getRight()
                     : Math.max(ri.getRight() - rj.getRight(), 0))
                 .make(),
@@ -4376,7 +4378,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weaklyEquitable().of(n, swappingOutgoingView(network))
+            DistanceOperators.BINARYRELATION.weaklyEquitable().of(swappingOutgoingView(network))
                 .substCost((ri, rj) -> rj == null ? ri.getRight()
                     : Math.max(ri.getRight() - rj.getRight(), 0))
                 .make(),
@@ -4388,7 +4390,6 @@ public class DistanceOperatorsTest {
     Network network2 = createNetwork();
     final NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
-    final int n2 = network2.countMonadicIndices();
 
     result = DistanceMatrices.fromMatrix(new int[][] { //
         { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 }, //
@@ -4405,60 +4406,60 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weaklyEquitable().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weaklyEquitable()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weaklyEquitable()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weaklyEquitable()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -4479,21 +4480,21 @@ public class DistanceOperatorsTest {
         { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 }, //
     });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weaklyEquitable().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -4501,7 +4502,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
@@ -4509,7 +4510,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -4517,28 +4518,28 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -4560,7 +4561,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4569,7 +4570,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weaklyEquitable().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4578,7 +4579,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4588,7 +4589,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4598,7 +4599,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4608,7 +4609,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4617,7 +4618,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4626,7 +4627,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4635,7 +4636,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -4659,7 +4660,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4668,7 +4669,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weaklyEquitable().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4677,7 +4678,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4687,7 +4688,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4697,7 +4698,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4707,7 +4708,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4716,7 +4717,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4725,7 +4726,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4734,7 +4735,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4758,7 +4759,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4767,7 +4768,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weaklyEquitable().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4776,7 +4777,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4786,7 +4787,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4796,7 +4797,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4806,7 +4807,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4815,7 +4816,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4824,7 +4825,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4833,7 +4834,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4857,7 +4858,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.EQUIVALENCE.weaklyEquitable().of(outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4867,7 +4868,7 @@ public class DistanceOperatorsTest {
         false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.RANKING.weaklyEquitable().of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.RANKING.weaklyEquitable().of(outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4878,7 +4879,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weaklyEquitable()
-        .of(n2, outgoingView2)
+        .of(outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4889,7 +4890,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weaklyEquitable()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4899,7 +4900,7 @@ public class DistanceOperatorsTest {
         false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weaklyEquitable()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4910,7 +4911,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weaklyEquitable()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4921,7 +4922,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4932,7 +4933,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4943,7 +4944,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -4970,7 +4971,7 @@ public class DistanceOperatorsTest {
 
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, outgoingView2)
+            DistanceOperators.EQUIVALENCE.weaklyEquitable().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -4979,7 +4980,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weaklyEquitable().of(n2, outgoingView2)
+            DistanceOperators.RANKING.weaklyEquitable().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -4988,7 +4989,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, outgoingView2)
+            DistanceOperators.BINARYRELATION.weaklyEquitable().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -4999,7 +5000,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.EQUIVALENCE.weaklyEquitable()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -5009,7 +5010,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.RANKING.weaklyEquitable()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -5019,7 +5020,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weaklyEquitable()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -5029,7 +5030,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+            DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -5038,7 +5039,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+            DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -5046,7 +5047,7 @@ public class DistanceOperatorsTest {
             result, true, true, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -5069,7 +5070,7 @@ public class DistanceOperatorsTest {
 
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, outgoingView2)
+            DistanceOperators.EQUIVALENCE.weaklyEquitable().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -5078,7 +5079,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weaklyEquitable().of(n2, outgoingView2)
+            DistanceOperators.RANKING.weaklyEquitable().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -5087,7 +5088,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, outgoingView2)
+            DistanceOperators.BINARYRELATION.weaklyEquitable().of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -5098,7 +5099,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.EQUIVALENCE.weaklyEquitable()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -5108,7 +5109,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.RANKING.weaklyEquitable()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -5118,7 +5119,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weaklyEquitable()
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -5128,7 +5129,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+            DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -5137,7 +5138,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+            DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -5147,7 +5148,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weaklyEquitable()
-                .of(n2, swappingOutgoingView(network2))
+                .of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -5171,7 +5172,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5180,7 +5181,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.RANKING.weaklyEquitable().of(outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5189,7 +5190,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5199,7 +5200,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5209,7 +5210,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5219,7 +5220,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weaklyEquitable()
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5228,7 +5229,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5237,7 +5238,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5246,7 +5247,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weaklyEquitable().of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weaklyEquitable().of(swappingOutgoingView(network2))
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5266,21 +5267,21 @@ public class DistanceOperatorsTest {
     final int n = network.countMonadicIndices();
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n, incomingView).make(),
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(incomingView.countTies(i) - 2 * incomingView.countTies(j), 0);
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n, incomingView).make(),
+        DistanceOperators.RANKING.weak().strictness(2).of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(incomingView.countTies(i) - 2 * incomingView.countTies(j), 0);
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n, incomingView).make(),
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(incomingView).make(),
         BinaryRelations
             .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
@@ -5289,21 +5290,21 @@ public class DistanceOperatorsTest {
         });
 
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weak().strictness(2)
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(incomingView.countTies(i) - 2 * incomingView.countTies(j), 0);
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak().strictness(2)
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(incomingView.countTies(i) - 2 * incomingView.countTies(j), 0);
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weak().strictness(2)
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView).make(),
         BinaryRelations
             .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
@@ -5312,7 +5313,7 @@ public class DistanceOperatorsTest {
         });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n, swappingOutgoingView(network))
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(swappingOutgoingView(network))
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
@@ -5321,7 +5322,7 @@ public class DistanceOperatorsTest {
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n, swappingOutgoingView(network)).make(),
+        DistanceOperators.RANKING.weak().strictness(2).of(swappingOutgoingView(network)).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         new LazyIntDistanceMatrixImpl(n, (i, j) -> {
           return Math.max(network.asRelation().countRelationshipsFrom(i)
@@ -5329,7 +5330,7 @@ public class DistanceOperatorsTest {
         }), true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n, swappingOutgoingView(network))
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(swappingOutgoingView(network))
             .make(),
         BinaryRelations
             .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
@@ -5345,20 +5346,20 @@ public class DistanceOperatorsTest {
           .skip(2 * incomingView.countTies(j)).mapToInt(Integer::intValue).sum();
     });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n, incomingView)
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(incomingView)
             .failCost(Relationship::getLeft)
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n, incomingView)
+        DistanceOperators.RANKING.weak().strictness(2).of(incomingView)
             .failCost(Relationship::getLeft).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n, incomingView)
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(incomingView)
             .failCost(Relationship::getLeft)
             .make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -5367,21 +5368,21 @@ public class DistanceOperatorsTest {
 
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak().strictness(2)
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
             .failCost(Relationship::getLeft).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak().strictness(2)
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
             .failCost(Relationship::getLeft).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak().strictness(2)
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
             .failCost(Relationship::getLeft).make(),
         BinaryRelations
             .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
@@ -5395,19 +5396,19 @@ public class DistanceOperatorsTest {
           .sum();
     });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n, swappingOutgoingView(network))
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(swappingOutgoingView(network))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n, swappingOutgoingView(network))
+        DistanceOperators.RANKING.weak().strictness(2).of(swappingOutgoingView(network))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n, swappingOutgoingView(network))
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(swappingOutgoingView(network))
             .failCost(Relationship::getRight).make(),
         BinaryRelations
             .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
@@ -5429,7 +5430,7 @@ public class DistanceOperatorsTest {
         });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n, incomingView)
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(incomingView)
             .substCost(
                 (ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft() / 2, 0))
@@ -5439,7 +5440,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().strictness(2).of(n, incomingView)
+            DistanceOperators.RANKING.weak().strictness(2).of(incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft() / 2, 0))
                 .make(),
@@ -5448,7 +5449,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weak().strictness(2).of(n, incomingView)
+            DistanceOperators.BINARYRELATION.weak().strictness(2).of(incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft() / 2, 0))
                 .make(),
@@ -5460,7 +5461,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.EQUIVALENCE.weak().strictness(2)
-                .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+                .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft() / 2, 0))
                 .make(),
@@ -5471,7 +5472,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.RANKING.weak().strictness(2)
-                .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+                .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft() / 2, 0))
                 .make(),
@@ -5481,7 +5482,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weak().strictness(2)
-                .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+                .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
                 .substCost((ri, rj) -> rj == null ? ri.getLeft()
                     : Math.max(ri.getLeft() - rj.getLeft() / 2, 0))
                 .make(),
@@ -5491,7 +5492,7 @@ public class DistanceOperatorsTest {
             });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n, swappingOutgoingView(network))
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(swappingOutgoingView(network))
             .substCost(
                 (ri, rj) -> rj == null ? ri.getRight()
                     : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5501,7 +5502,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().strictness(2).of(n, swappingOutgoingView(network))
+            DistanceOperators.RANKING.weak().strictness(2).of(swappingOutgoingView(network))
                 .substCost((ri, rj) -> rj == null ? ri.getRight()
                     : Math.max(ri.getRight() - rj.getRight() / 2, 0))
                 .make(),
@@ -5511,7 +5512,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weak().strictness(2)
-                .of(n, swappingOutgoingView(network))
+                .of(swappingOutgoingView(network))
                 .substCost((ri, rj) -> rj == null ? ri.getRight()
                     : Math.max(ri.getRight() - rj.getRight() / 2, 0))
                 .make(),
@@ -5523,7 +5524,6 @@ public class DistanceOperatorsTest {
     Network network2 = createNetwork();
     final NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
-    final int n2 = network2.countMonadicIndices();
 
     result = DistanceMatrices.fromMatrix(new int[][] { //
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
@@ -5540,58 +5540,58 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weak().strictness(2)
-        .of(n2, outgoingView2)
+        .of(outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak().strictness(2)
-        .of(n2, outgoingView2)
+        .of(outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weak().strictness(2)
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak().strictness(2)
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weak().strictness(2)
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().strictness(2).of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -5613,21 +5613,21 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.RANKING.weak().strictness(2).of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -5635,7 +5635,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
@@ -5643,7 +5643,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -5651,28 +5651,28 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2), result, true, true, false,
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().strictness(2).of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .failCost(Relationship::getRight).make(),
         BinaryRelations.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
@@ -5694,7 +5694,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5703,7 +5703,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.RANKING.weak().strictness(2).of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5712,7 +5712,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5722,7 +5722,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5732,7 +5732,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5742,7 +5742,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5751,7 +5751,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5760,7 +5760,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().strictness(2).of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5769,7 +5769,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(swappingOutgoingView(network2))
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .substCost((ri,
                 rj) -> rj == null ? ri.getRight() : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -5793,7 +5793,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5802,7 +5802,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.RANKING.weak().strictness(2).of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5811,7 +5811,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5821,7 +5821,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5831,7 +5831,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5841,7 +5841,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5850,7 +5850,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5859,7 +5859,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().strictness(2).of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5869,7 +5869,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION
-            .weak().strictness(2).of(n2, swappingOutgoingView(network2))
+            .weak().strictness(2).of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5893,7 +5893,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5902,7 +5902,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.RANKING.weak().strictness(2).of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5911,7 +5911,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5921,7 +5921,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5931,7 +5931,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5941,7 +5941,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5950,7 +5950,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5959,7 +5959,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().strictness(2).of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5968,7 +5968,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -5992,7 +5992,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.EQUIVALENCE.weak().strictness(2).of(outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -6002,7 +6002,7 @@ public class DistanceOperatorsTest {
         false, false, () -> {
         });
     OperatorTestUtilities
-        .checkOperator(DistanceOperators.RANKING.weak().strictness(2).of(n2, outgoingView2)
+        .checkOperator(DistanceOperators.RANKING.weak().strictness(2).of(outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -6013,7 +6013,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weak().strictness(2)
-        .of(n2, outgoingView2)
+        .of(outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -6024,7 +6024,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.EQUIVALENCE.weak().strictness(2)
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -6034,7 +6034,7 @@ public class DistanceOperatorsTest {
         false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak().strictness(2)
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -6045,7 +6045,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weak().strictness(2)
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -6056,7 +6056,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -6067,7 +6067,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.RANKING.weak().strictness(2)
-        .of(n2, swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2))
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -6078,7 +6078,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(DistanceOperators.BINARYRELATION.weak().strictness(2)
-        .of(n2, swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2))
         .compPartial((rshipi, rshipj) -> (rshipi.getRight() >= 4) == (rshipj.getRight() >= 4)
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -6105,7 +6105,7 @@ public class DistanceOperatorsTest {
 
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, outgoingView2)
+            DistanceOperators.EQUIVALENCE.weak().strictness(2).of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -6114,7 +6114,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().strictness(2).of(n2, outgoingView2)
+            DistanceOperators.RANKING.weak().strictness(2).of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -6123,7 +6123,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, outgoingView2)
+            DistanceOperators.BINARYRELATION.weak().strictness(2).of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -6134,7 +6134,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.EQUIVALENCE.weak().strictness(2)
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -6144,7 +6144,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.RANKING.weak().strictness(2)
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -6154,7 +6154,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weak().strictness(2)
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -6165,7 +6165,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.EQUIVALENCE.weak().strictness(2)
-                .of(n2, swappingOutgoingView(network2))
+                .of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -6174,7 +6174,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+            DistanceOperators.RANKING.weak().strictness(2).of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -6184,7 +6184,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weak().strictness(2)
-                .of(n2, swappingOutgoingView(network2))
+                .of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .make(),
@@ -6209,7 +6209,7 @@ public class DistanceOperatorsTest {
 
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, outgoingView2)
+            DistanceOperators.EQUIVALENCE.weak().strictness(2).of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -6218,7 +6218,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().strictness(2).of(n2, outgoingView2)
+            DistanceOperators.RANKING.weak().strictness(2).of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -6227,7 +6227,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, outgoingView2)
+            DistanceOperators.BINARYRELATION.weak().strictness(2).of(outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -6238,7 +6238,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.EQUIVALENCE.weak().strictness(2)
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -6248,7 +6248,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.RANKING.weak().strictness(2)
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -6258,7 +6258,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weak().strictness(2)
-                .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+                .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -6269,7 +6269,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.EQUIVALENCE.weak().strictness(2)
-                .of(n2, swappingOutgoingView(network2))
+                .of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -6278,7 +6278,7 @@ public class DistanceOperatorsTest {
             });
     OperatorTestUtilities
         .checkOperator(
-            DistanceOperators.RANKING.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+            DistanceOperators.RANKING.weak().strictness(2).of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -6288,7 +6288,7 @@ public class DistanceOperatorsTest {
     OperatorTestUtilities
         .checkOperator(
             DistanceOperators.BINARYRELATION.weak().strictness(2)
-                .of(n2, swappingOutgoingView(network2))
+                .of(swappingOutgoingView(network2))
                 .compPredicate(
                     (rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
                 .failCost(Relationship::getRight).make(),
@@ -6312,7 +6312,7 @@ public class DistanceOperatorsTest {
     });
 
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -6321,7 +6321,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.RANKING.weak().strictness(2).of(outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -6330,7 +6330,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, outgoingView2)
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -6340,7 +6340,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.EQUIVALENCE.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -6350,7 +6350,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.RANKING.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -6360,7 +6360,7 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         DistanceOperators.BINARYRELATION.weak().strictness(2)
-            .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -6369,7 +6369,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.EQUIVALENCE.weak().strictness(2).of(swappingOutgoingView(network2))
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -6378,7 +6378,7 @@ public class DistanceOperatorsTest {
         false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.RANKING.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.RANKING.weak().strictness(2).of(swappingOutgoingView(network2))
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -6387,7 +6387,7 @@ public class DistanceOperatorsTest {
         result, true, true, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        DistanceOperators.BINARYRELATION.weak().strictness(2).of(n2, swappingOutgoingView(network2))
+        DistanceOperators.BINARYRELATION.weak().strictness(2).of(swappingOutgoingView(network2))
             .compPredicate((rshipi, rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2)
             .substCost((ri, rj) -> rj == null ? ri.getRight()
                 : Math.max(ri.getRight() - rj.getRight() / 2, 0))
@@ -6403,7 +6403,6 @@ public class DistanceOperatorsTest {
       Function<TransposableNetworkView<Relationship, Relationship>, BiPredicate<Relationship, Relationship>> inputBasedTest) {
 
     Network network = createNetwork3();
-    int n = network.countMonadicIndices();
     NetworkView<Relationship, Relationship> outgoingView = NetworkView
         .fromNetworkRelation(network, Direction.OUTGOING);
     TransposableNetworkView<Relationship, Relationship> swappingView = swappingOutgoingView(
@@ -6413,37 +6412,37 @@ public class DistanceOperatorsTest {
     ToIntBiFunction<Relationship, Relationship> substCostOp = (ri, rj) -> rj == null ? ri.getRight()
         : Math.max(ri.getRight() - rj.getRight() / 2, 0);
 
-    OperatorTestUtilities.checkOperator(regularTypeBlockBuilder.get().of(n, outgoingView).make(),
-        input, weakTypeBlockBuilder.get().of(n, outgoingView)
+    OperatorTestUtilities.checkOperator(regularTypeBlockBuilder.get().of(outgoingView).make(), input,
+        weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView)).make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, outgoingView).failCost(failCostOp).make(), input,
-        weakTypeBlockBuilder.get().of(n, outgoingView).comp(inputBasedTest.apply(outgoingView))
+        regularTypeBlockBuilder.get().of(outgoingView).failCost(failCostOp).make(), input,
+        weakTypeBlockBuilder.get().of(outgoingView).comp(inputBasedTest.apply(outgoingView))
             .failCost(failCostOp).make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, outgoingView).substCost(substCostOp).make(), input,
-        weakTypeBlockBuilder.get().of(n, outgoingView).comp(inputBasedTest.apply(outgoingView))
+        regularTypeBlockBuilder.get().of(outgoingView).substCost(substCostOp).make(), input,
+        weakTypeBlockBuilder.get().of(outgoingView).comp(inputBasedTest.apply(outgoingView))
             .substCost(substCostOp).make().apply(input),
         true, false, false, false, () -> {
         });
-    OperatorTestUtilities.checkOperator(regularTypeBlockBuilder.get().of(n, swappingView).make(),
-        input, weakTypeBlockBuilder.get().of(n, swappingView)
+    OperatorTestUtilities.checkOperator(regularTypeBlockBuilder.get().of(swappingView).make(), input,
+        weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView)).make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, swappingView).failCost(failCostOp).make(), input,
-        weakTypeBlockBuilder.get().of(n, swappingView).comp(inputBasedTest.apply(swappingView))
+        regularTypeBlockBuilder.get().of(swappingView).failCost(failCostOp).make(), input,
+        weakTypeBlockBuilder.get().of(swappingView).comp(inputBasedTest.apply(swappingView))
             .failCost(failCostOp).make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, swappingView).substCost(substCostOp).make(), input,
-        weakTypeBlockBuilder.get().of(n, swappingView).comp(inputBasedTest.apply(swappingView))
+        regularTypeBlockBuilder.get().of(swappingView).substCost(substCostOp).make(), input,
+        weakTypeBlockBuilder.get().of(swappingView).comp(inputBasedTest.apply(swappingView))
             .substCost(substCostOp).make().apply(input),
         true, false, false, false, () -> {
         });
@@ -6452,28 +6451,28 @@ public class DistanceOperatorsTest {
         .compare(rshipi.getRight() >= 4, rshipj.getRight() >= 4);
 
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, outgoingView).comp(comparator).make(), input,
-        weakTypeBlockBuilder.get().of(n, outgoingView)
+        regularTypeBlockBuilder.get().of(outgoingView).comp(comparator).make(), input,
+        weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, outgoingView).compWeak(comparator).failCost(failCostOp)
+        regularTypeBlockBuilder.get().of(outgoingView).compWeak(comparator).failCost(failCostOp)
             .make(),
         input,
-        weakTypeBlockBuilder.get().of(n, outgoingView)
+        weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .failCost(failCostOp).make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, outgoingView).comp(comparator).substCost(substCostOp)
+        regularTypeBlockBuilder.get().of(outgoingView).comp(comparator).substCost(substCostOp)
             .make(),
         input,
-        weakTypeBlockBuilder.get().of(n, outgoingView)
+        weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .substCost(substCostOp).make().apply(input),
@@ -6481,28 +6480,28 @@ public class DistanceOperatorsTest {
         });
 
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, swappingView).comp(comparator).make(), input,
-        weakTypeBlockBuilder.get().of(n, swappingView)
+        regularTypeBlockBuilder.get().of(swappingView).comp(comparator).make(), input,
+        weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, swappingView).compWeak(comparator).failCost(failCostOp)
+        regularTypeBlockBuilder.get().of(swappingView).compWeak(comparator).failCost(failCostOp)
             .make(),
         input,
-        weakTypeBlockBuilder.get().of(n, swappingView)
+        weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .failCost(failCostOp).make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, swappingView).comp(comparator).substCost(substCostOp)
+        regularTypeBlockBuilder.get().of(swappingView).comp(comparator).substCost(substCostOp)
             .make(),
         input,
-        weakTypeBlockBuilder.get().of(n, swappingView)
+        weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .substCost(substCostOp).make().apply(input),
@@ -6521,17 +6520,17 @@ public class DistanceOperatorsTest {
     };
 
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, outgoingView).comp(partialFromComparator).make(), input,
-        weakTypeBlockBuilder.get().of(n, outgoingView)
+        regularTypeBlockBuilder.get().of(outgoingView).comp(partialFromComparator).make(), input,
+        weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(regularTypeBlockBuilder
-        .get().of(n, outgoingView).compPartial(partialFromComparator).failCost(failCostOp).make(),
+        .get().of(outgoingView).compPartial(partialFromComparator).failCost(failCostOp).make(),
         input,
-        weakTypeBlockBuilder.get().of(n, outgoingView)
+        weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .failCost(failCostOp).make().apply(input),
@@ -6539,9 +6538,9 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         regularTypeBlockBuilder
-            .get().of(n, outgoingView).comp(partialFromComparator).substCost(substCostOp).make(),
+            .get().of(outgoingView).comp(partialFromComparator).substCost(substCostOp).make(),
         input,
-        weakTypeBlockBuilder.get().of(n, outgoingView)
+        weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .substCost(substCostOp).make().apply(input),
@@ -6549,17 +6548,17 @@ public class DistanceOperatorsTest {
         });
 
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, swappingView).comp(partialFromComparator).make(), input,
-        weakTypeBlockBuilder.get().of(n, swappingView)
+        regularTypeBlockBuilder.get().of(swappingView).comp(partialFromComparator).make(), input,
+        weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(regularTypeBlockBuilder
-        .get().of(n, swappingView).compPartial(partialFromComparator).failCost(failCostOp).make(),
+        .get().of(swappingView).compPartial(partialFromComparator).failCost(failCostOp).make(),
         input,
-        weakTypeBlockBuilder.get().of(n, swappingView)
+        weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .failCost(failCostOp).make().apply(input),
@@ -6567,9 +6566,9 @@ public class DistanceOperatorsTest {
         });
     OperatorTestUtilities.checkOperator(
         regularTypeBlockBuilder
-            .get().of(n, swappingView).comp(partialFromComparator).substCost(substCostOp).make(),
+            .get().of(swappingView).comp(partialFromComparator).substCost(substCostOp).make(),
         input,
-        weakTypeBlockBuilder.get().of(n, swappingView)
+        weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView)
                 .and((rshipi, rshipj) -> comparator.compare(rshipi, rshipj) <= 0))
             .substCost(substCostOp).make().apply(input),
@@ -6582,8 +6581,8 @@ public class DistanceOperatorsTest {
             : PartialComparator.ComparisonResult.INCOMPARABLE;
 
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, outgoingView).comp(partialComparator).make(), input,
-        weakTypeBlockBuilder.get().of(n, outgoingView)
+        regularTypeBlockBuilder.get().of(outgoingView).comp(partialComparator).make(), input,
+        weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView).and((rshipi, rshipj) -> {
               PartialComparator.ComparisonResult result = partialComparator.compare(rshipi, rshipj);
               return result == PartialComparator.ComparisonResult.EQUAL
@@ -6592,9 +6591,9 @@ public class DistanceOperatorsTest {
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, outgoingView).compPartial(partialComparator)
+        regularTypeBlockBuilder.get().of(outgoingView).compPartial(partialComparator)
             .failCost(failCostOp).make(),
-        input, weakTypeBlockBuilder.get().of(n, outgoingView)
+        input, weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView).and((rshipi, rshipj) -> {
               PartialComparator.ComparisonResult result = partialComparator.compare(rshipi, rshipj);
               return result == PartialComparator.ComparisonResult.EQUAL
@@ -6603,9 +6602,9 @@ public class DistanceOperatorsTest {
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, outgoingView).comp(partialComparator)
+        regularTypeBlockBuilder.get().of(outgoingView).comp(partialComparator)
             .substCost(substCostOp).make(),
-        input, weakTypeBlockBuilder.get().of(n, outgoingView)
+        input, weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView).and((rshipi, rshipj) -> {
               PartialComparator.ComparisonResult result = partialComparator.compare(rshipi, rshipj);
               return result == PartialComparator.ComparisonResult.EQUAL
@@ -6615,8 +6614,8 @@ public class DistanceOperatorsTest {
         });
 
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, swappingView).comp(partialComparator).make(), input,
-        weakTypeBlockBuilder.get().of(n, swappingView)
+        regularTypeBlockBuilder.get().of(swappingView).comp(partialComparator).make(), input,
+        weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView).and((rshipi, rshipj) -> {
               PartialComparator.ComparisonResult result = partialComparator.compare(rshipi, rshipj);
               return result == PartialComparator.ComparisonResult.EQUAL
@@ -6625,9 +6624,9 @@ public class DistanceOperatorsTest {
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, swappingView).compPartial(partialComparator)
+        regularTypeBlockBuilder.get().of(swappingView).compPartial(partialComparator)
             .failCost(failCostOp).make(),
-        input, weakTypeBlockBuilder.get().of(n, swappingView)
+        input, weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView).and((rshipi, rshipj) -> {
               PartialComparator.ComparisonResult result = partialComparator.compare(rshipi, rshipj);
               return result == PartialComparator.ComparisonResult.EQUAL
@@ -6636,9 +6635,9 @@ public class DistanceOperatorsTest {
         true, false, false, false, () -> {
         });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, swappingView).comp(partialComparator)
+        regularTypeBlockBuilder.get().of(swappingView).comp(partialComparator)
             .substCost(substCostOp).make(),
-        input, weakTypeBlockBuilder.get().of(n, swappingView)
+        input, weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView).and((rshipi, rshipj) -> {
               PartialComparator.ComparisonResult result = partialComparator.compare(rshipi, rshipj);
               return result == PartialComparator.ComparisonResult.EQUAL
@@ -6650,52 +6649,52 @@ public class DistanceOperatorsTest {
     BiPredicate<Relationship, Relationship> predicate = (rshipi,
         rshipj) -> Math.abs(rshipi.getRight() - rshipj.getRight()) < 2;
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, outgoingView).comp(predicate).make(), input,
-        weakTypeBlockBuilder.get().of(n, outgoingView)
+        regularTypeBlockBuilder.get().of(outgoingView).comp(predicate).make(), input,
+        weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView).and(predicate)).make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities
         .checkOperator(
             regularTypeBlockBuilder
-                .get().of(n, outgoingView).compPredicate(predicate).failCost(failCostOp).make(),
+                .get().of(outgoingView).compPredicate(predicate).failCost(failCostOp).make(),
             input,
-            weakTypeBlockBuilder.get().of(n, outgoingView)
+            weakTypeBlockBuilder.get().of(outgoingView)
                 .comp(inputBasedTest.apply(outgoingView).and(predicate)).failCost(failCostOp).make()
                 .apply(input),
             true, false, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, outgoingView).comp(predicate).substCost(substCostOp)
+        regularTypeBlockBuilder.get().of(outgoingView).comp(predicate).substCost(substCostOp)
             .make(),
         input,
-        weakTypeBlockBuilder.get().of(n, outgoingView)
+        weakTypeBlockBuilder.get().of(outgoingView)
             .comp(inputBasedTest.apply(outgoingView).and(predicate)).substCost(substCostOp).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, swappingView).comp(predicate).make(), input,
-        weakTypeBlockBuilder.get().of(n, swappingView)
+        regularTypeBlockBuilder.get().of(swappingView).comp(predicate).make(), input,
+        weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView).and(predicate)).make().apply(input),
         true, false, false, false, () -> {
         });
     OperatorTestUtilities
         .checkOperator(
             regularTypeBlockBuilder
-                .get().of(n, swappingView).compPredicate(predicate).failCost(failCostOp).make(),
+                .get().of(swappingView).compPredicate(predicate).failCost(failCostOp).make(),
             input,
-            weakTypeBlockBuilder.get().of(n, swappingView)
+            weakTypeBlockBuilder.get().of(swappingView)
                 .comp(inputBasedTest.apply(swappingView).and(predicate)).failCost(failCostOp).make()
                 .apply(input),
             true, false, false, false, () -> {
             });
     OperatorTestUtilities.checkOperator(
-        regularTypeBlockBuilder.get().of(n, swappingView).comp(predicate).substCost(substCostOp)
+        regularTypeBlockBuilder.get().of(swappingView).comp(predicate).substCost(substCostOp)
             .make(),
         input,
-        weakTypeBlockBuilder.get().of(n, swappingView)
+        weakTypeBlockBuilder.get().of(swappingView)
             .comp(inputBasedTest.apply(swappingView).and(predicate)).substCost(substCostOp).make()
             .apply(input),
         true, false, false, false, () -> {

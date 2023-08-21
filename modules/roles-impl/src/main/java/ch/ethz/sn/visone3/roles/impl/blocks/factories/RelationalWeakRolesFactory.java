@@ -34,9 +34,9 @@ class RelationalWeakRolesFactory
     implements VariableRoleOperatorBuilderFactory<BinaryRelation> {
 
   @Override
-  public <T> RoleOperatorBuilder<T, BinaryRelation> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
+  public <T> RoleOperatorBuilder<T, BinaryRelation> of(NetworkView<? extends T, ? extends T> positionView) {
     final int p = getPValue();
+    final int numNodes = positionView.countNodes();
     return new AbstractRoleOperatorBuilder<T, BinaryRelation>() {
 
       @Override
@@ -235,12 +235,12 @@ class RelationalWeakRolesFactory
   }
 
   @Override
-  public <T> RoleOperatorBuilder<T, BinaryRelation> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView) {
+  public <T> RoleOperatorBuilder<T, BinaryRelation> of(TransposableNetworkView<? extends T, ? extends T> positionView) {
     if (positionView instanceof NetworkView<?, ?>) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) positionView);
+      return of((NetworkView<? extends T, ? extends T>) positionView);
     }
     final int p = getPValue();
+    final int numNodes = positionView.countNodes();
     return new AbstractRoleOperatorBuilder<T, BinaryRelation>() {
 
       @Override

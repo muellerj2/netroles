@@ -35,9 +35,9 @@ class RelationalGenericRolesFactory
     implements VariableGenericRoleOperatorBuilderFactory<BinaryRelation> {
 
   @Override
-  public <T> GenericRoleOperatorBuilder<T, BinaryRelation> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
+  public <T> GenericRoleOperatorBuilder<T, BinaryRelation> of(NetworkView<? extends T, ? extends T> positionView) {
     final int p = getPValue();
+    final int numNodes = positionView.countNodes();
     return new AbstractGenericRoleOperatorBuilder<T, BinaryRelation>() {
 
       @Override
@@ -256,12 +256,13 @@ class RelationalGenericRolesFactory
   }
 
   @Override
-  public <T> GenericRoleOperatorBuilder<T, BinaryRelation> of(int numNodes,
+  public <T> GenericRoleOperatorBuilder<T, BinaryRelation> of(
       TransposableNetworkView<? extends T, ? extends T> positionView) {
     if (positionView instanceof NetworkView<?, ?>) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) positionView);
+      return of((NetworkView<? extends T, ? extends T>) positionView);
     }
     final int p = getPValue();
+    final int numNodes = positionView.countNodes();
     return new AbstractGenericRoleOperatorBuilder<T, BinaryRelation>() {
 
       @Override

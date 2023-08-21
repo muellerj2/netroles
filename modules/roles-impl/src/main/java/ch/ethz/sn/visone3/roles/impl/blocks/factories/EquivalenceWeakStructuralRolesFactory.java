@@ -35,25 +35,27 @@ class EquivalenceWeakStructuralRolesFactory
     WeakStructuralRoleOperatorBuilderFactory<ConstMapping.OfInt> {
 
   @Override
-  public <T> RoleOperatorBuilder<T, ConstMapping.OfInt> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
-    return of(numNodes, positionView, null);
+  public <T> RoleOperatorBuilder<T, ConstMapping.OfInt> of(NetworkView<? extends T, ? extends T> positionView) {
+    return of(positionView, null);
   }
 
   @Override
-  public <T> RoleOperatorBuilder<T, OfInt> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView) {
-    return of(numNodes, positionView, null);
+  public <T> RoleOperatorBuilder<T, OfInt> of(TransposableNetworkView<? extends T, ? extends T> positionView) {
+    return of(positionView, null);
   }
 
   @Override
-  public <T> RoleOperatorBuilder<T, OfInt> of(int numNodes,
-      NetworkView<? extends T, ? extends T> oneDirection,
+  public <T> RoleOperatorBuilder<T, OfInt> of(NetworkView<? extends T, ? extends T> oneDirection,
       NetworkView<? extends T, ? extends T> otherDirectionNonfinal) {
     if (oneDirection == otherDirectionNonfinal) {
       otherDirectionNonfinal = null;
     }
     final NetworkView<? extends T, ? extends T> otherDirection = otherDirectionNonfinal;
+    final int numNodes = oneDirection.countNodes();
+
+    if (otherDirection != null && numNodes != otherDirection.countNodes()) {
+      throw new IllegalArgumentException("mismatched in node numbers between directions");
+    }
 
     return new AbstractNoBiPredicateRoleOperatorBuilder<T, ConstMapping.OfInt>() {
       @Override
@@ -104,8 +106,7 @@ class EquivalenceWeakStructuralRolesFactory
   }
 
   @Override
-  public <T> RoleOperatorBuilder<T, OfInt> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> oneDirection,
+  public <T> RoleOperatorBuilder<T, OfInt> of(TransposableNetworkView<? extends T, ? extends T> oneDirection,
       TransposableNetworkView<? extends T, ? extends T> otherDirectionNonfinal) {
     if (oneDirection == otherDirectionNonfinal) {
       otherDirectionNonfinal = null;
@@ -114,10 +115,14 @@ class EquivalenceWeakStructuralRolesFactory
 
     if (oneDirection instanceof NetworkView<?, ?>
         && (otherDirection == null || otherDirection instanceof NetworkView<?, ?>)) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) oneDirection,
+      return of((NetworkView<? extends T, ? extends T>) oneDirection,
           (NetworkView<? extends T, ? extends T>) otherDirection);
     }
 
+    final int numNodes = oneDirection.countNodes();
+    if (otherDirection != null && numNodes != otherDirection.countNodes()) {
+      throw new IllegalArgumentException("mismatched in node numbers between directions");
+    }
     return new AbstractNoBiPredicateRoleOperatorBuilder<T, ConstMapping.OfInt>() {
       @Override
       RoleOperator<ConstMapping.OfInt> makeConcrete() {

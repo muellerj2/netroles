@@ -173,9 +173,15 @@ public interface NetworkView<T, U> extends TransposableNetworkView<T, U> {
     final Relation rel = network.asRelation();
     boolean directed = network.isDirected();
     int uniqueTiesCount = directed ? rel.countRelationships() : 2 * network.asUndirectedGraph().countEdges();
+    int numNodes = rel.countUnionDomain();
     switch (direction) {
     case INCOMING:
       return new NetworkView<Relationship, Relationship>() {
+
+        @Override
+        public int countNodes() {
+          return numNodes;
+        }
 
         @Override
         public Iterable<Relationship> ties(int node) {
@@ -244,6 +250,11 @@ public interface NetworkView<T, U> extends TransposableNetworkView<T, U> {
       };
     case OUTGOING:
       return new NetworkView<Relationship, Relationship>() {
+
+        @Override
+        public int countNodes() {
+          return numNodes;
+        }
 
         @Override
         public Iterable<Relationship> ties(int node) {

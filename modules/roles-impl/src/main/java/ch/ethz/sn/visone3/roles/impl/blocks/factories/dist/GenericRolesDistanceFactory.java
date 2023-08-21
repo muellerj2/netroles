@@ -37,9 +37,9 @@ class GenericRolesDistanceFactory<U>
     implements GenericDistanceBuilderFactory<U> {
 
   @Override
-  public <T> GenericDistanceOperatorBuilder<T, U> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
+  public <T> GenericDistanceOperatorBuilder<T, U> of(NetworkView<? extends T, ? extends T> positionView) {
     final int p = getPValue();
+    final int numNodes = positionView.countNodes();
     return new AbstractGenericDistanceOperatorBuilder<T, U>() {
 
       @Override
@@ -411,13 +411,13 @@ class GenericRolesDistanceFactory<U>
   }
 
   @Override
-  public <T> GenericDistanceOperatorBuilder<T, U> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView) {
+  public <T> GenericDistanceOperatorBuilder<T, U> of(TransposableNetworkView<? extends T, ? extends T> positionView) {
     if (positionView instanceof NetworkView) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) positionView);
+      return of((NetworkView<? extends T, ? extends T>) positionView);
     }
 
     final int p = getPValue();
+    final int numNodes = positionView.countNodes();
     return new AbstractGenericDistanceOperatorBuilder<T, U>() {
 
       @Override

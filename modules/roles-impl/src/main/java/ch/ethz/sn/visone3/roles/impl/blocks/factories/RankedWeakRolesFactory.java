@@ -33,9 +33,9 @@ class RankedWeakRolesFactory
     implements EquitableLooseRoleOperatorBuilderFactory<Ranking> {
 
   @Override
-  public <T> RoleOperatorBuilder<T, Ranking> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
+  public <T> RoleOperatorBuilder<T, Ranking> of(NetworkView<? extends T, ? extends T> positionView) {
     final boolean exact = isExact();
+    final int numNodes = positionView.countNodes();
     return new AbstractNoBiPredicateRoleOperatorBuilder<T, Ranking>() {
 
       @Override
@@ -130,12 +130,12 @@ class RankedWeakRolesFactory
   }
 
   @Override
-  public <T> RoleOperatorBuilder<T, Ranking> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView) {
+  public <T> RoleOperatorBuilder<T, Ranking> of(TransposableNetworkView<? extends T, ? extends T> positionView) {
     if (positionView instanceof NetworkView<?, ?>) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) positionView);
+      return of((NetworkView<? extends T, ? extends T>) positionView);
     }
     final boolean exact = isExact();
+    final int numNodes = positionView.countNodes();
     return new AbstractNoBiPredicateRoleOperatorBuilder<T, Ranking>() {
 
       @Override

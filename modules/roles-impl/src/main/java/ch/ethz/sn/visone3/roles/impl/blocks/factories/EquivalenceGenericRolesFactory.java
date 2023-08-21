@@ -35,9 +35,9 @@ class EquivalenceGenericRolesFactory extends
     implements EquitableLooseGenericRoleOperatorBuilderFactory<ConstMapping.OfInt> {
 
   @Override
-  public <T> GenericRoleOperatorBuilder<T, ConstMapping.OfInt> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
+  public <T> GenericRoleOperatorBuilder<T, ConstMapping.OfInt> of(NetworkView<? extends T, ? extends T> positionView) {
     boolean exact = isExact();
+    final int numNodes = positionView.countNodes();
     return new AbstractGenericNoBiPredicateRoleOperatorBuilder<T, ConstMapping.OfInt>() {
 
       @Override
@@ -96,12 +96,13 @@ class EquivalenceGenericRolesFactory extends
   }
 
   @Override
-  public <T> GenericRoleOperatorBuilder<T, ConstMapping.OfInt> of(int numNodes,
+  public <T> GenericRoleOperatorBuilder<T, ConstMapping.OfInt> of(
       TransposableNetworkView<? extends T, ? extends T> positionView) {
     if (positionView instanceof NetworkView<?, ?>) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) positionView);
+      return of((NetworkView<? extends T, ? extends T>) positionView);
     }
     boolean exact = isExact();
+    final int numNodes = positionView.countNodes();
     return new AbstractGenericNoBiPredicateRoleOperatorBuilder<T, ConstMapping.OfInt>() {
 
       @Override

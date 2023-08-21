@@ -33,11 +33,9 @@ public interface GenericRoleOperatorBuilderFactory<U>
     extends GenericBuilderFactory<U, RoleOperator<U>> {
 
   @Override
-  <T> GenericRoleOperatorBuilder<T, U> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView);
+  <T> GenericRoleOperatorBuilder<T, U> of(NetworkView<? extends T, ? extends T> positionView);
 
   @Override
-  <T> GenericRoleOperatorBuilder<T, U> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView);
+  <T> GenericRoleOperatorBuilder<T, U> of(TransposableNetworkView<? extends T, ? extends T> positionView);
 
 }

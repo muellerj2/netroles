@@ -16,6 +16,11 @@
  */
 package ch.ethz.sn.visone3.roles.impl.blocks.factories.dist;
 
+import java.util.Comparator;
+import java.util.function.BiPredicate;
+import java.util.function.ToIntBiFunction;
+import java.util.function.ToIntFunction;
+
 import ch.ethz.sn.visone3.roles.blocks.Operator;
 import ch.ethz.sn.visone3.roles.blocks.builders.DistanceOperatorBuilder;
 import ch.ethz.sn.visone3.roles.blocks.factories.DistanceBuilderFactory;
@@ -25,16 +30,11 @@ import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
 
-import java.util.Comparator;
-import java.util.function.BiPredicate;
-import java.util.function.ToIntBiFunction;
-import java.util.function.ToIntFunction;
-
 class GenericWeakStructuralRolesDistanceFactory<U> implements DistanceBuilderFactory<U> {
 
   @Override
-  public <T> DistanceOperatorBuilder<T, U> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
+  public <T> DistanceOperatorBuilder<T, U> of(NetworkView<? extends T, ? extends T> positionView) {
+    final int numNodes = positionView.countNodes();
     return new AbstractDistanceOperatorBuilder<T, U>() {
 
       @Override
@@ -123,11 +123,11 @@ class GenericWeakStructuralRolesDistanceFactory<U> implements DistanceBuilderFac
   }
 
   @Override
-  public <T> DistanceOperatorBuilder<T, U> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView) {
+  public <T> DistanceOperatorBuilder<T, U> of(TransposableNetworkView<? extends T, ? extends T> positionView) {
     if (positionView instanceof NetworkView) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) positionView);
+      return of((NetworkView<? extends T, ? extends T>) positionView);
     }
+    final int numNodes = positionView.countNodes();
     return new AbstractDistanceOperatorBuilder<T, U>() {
 
       @Override

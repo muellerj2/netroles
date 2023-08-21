@@ -19,6 +19,10 @@ package ch.ethz.sn.visone3.roles.test.blocks;
 import static ch.ethz.sn.visone3.roles.test.blocks.OperatorTestUtilities.checkRoleOperator;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Comparator;
+
+import org.junit.jupiter.api.Test;
+
 import ch.ethz.sn.visone3.lang.Mapping;
 import ch.ethz.sn.visone3.lang.Mappings;
 import ch.ethz.sn.visone3.networks.Direction;
@@ -32,10 +36,6 @@ import ch.ethz.sn.visone3.roles.blocks.RoleOperators;
 import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.position.TransposableNetworkView;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
-
-import org.junit.jupiter.api.Test;
-
-import java.util.Comparator;
 
 public class EquivalenceOperatorsTest {
 
@@ -172,6 +172,11 @@ public class EquivalenceOperatorsTest {
       private Relation rel = network.asRelation();
 
       @Override
+      public int countNodes() {
+        return rel.countUnionDomain();
+      }
+
+      @Override
       public Iterable<? extends Relationship> ties(int lhsComparison, int rhsComparison, int node) {
         return rel.getRelationshipsFrom(node);
       }
@@ -205,10 +210,9 @@ public class EquivalenceOperatorsTest {
   public void testStrongStructuralEquivalenceBlocks() {
 
     final Network network = createNetwork();
-    final int n = network.asRelation().countUnionDomain();
     final NetworkView<?, ?> incomingView = NetworkView.fromNetworkRelation(network,
         Direction.INCOMING);
-    checkRoleOperator(RoleOperators.EQUIVALENCE.strongStructural().of(n, incomingView).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.strongStructural().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 3, 4, 5, 6, 7, 8, 0), true, true, false, false,
         () -> {
@@ -223,7 +227,7 @@ public class EquivalenceOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.strongStructural()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 3, 4, 5, 6, 7, 8, 0), true, true, false, false,
         () -> {
@@ -239,7 +243,7 @@ public class EquivalenceOperatorsTest {
     TransposableNetworkView<?, ?> transposingOutgoingView = swappingOutgoingView(network);
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.strongStructural().of(n, transposingOutgoingView).make(),
+        RoleOperators.EQUIVALENCE.strongStructural().of(transposingOutgoingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 3, 4, 5, 6, 7, 7, 0), true, true, false, false,
         () -> {
@@ -253,11 +257,10 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0));
 
     final Network networkWithLoops = createNetworkWithLoops();
-    final int nWithLoops = network.asRelation().countUnionDomain();
     final NetworkView<?, ?> incomingViewWithLoops = NetworkView
         .fromNetworkRelation(networkWithLoops, Direction.INCOMING);
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.strongStructural().of(nWithLoops, incomingViewWithLoops).make(),
+        RoleOperators.EQUIVALENCE.strongStructural().of(incomingViewWithLoops).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), true, true, false, false,
         () -> {
@@ -271,7 +274,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2));
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.strongStructural()
-            .of(nWithLoops, swappingOutgoingView(networkWithLoops)).make(),
+            .of(swappingOutgoingView(networkWithLoops)).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 3), true, true, false, false,
         () -> {
@@ -305,10 +308,9 @@ public class EquivalenceOperatorsTest {
     Network network2 = MatrixSource.fromAdjacency(adj, false).getNetwork();
     NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
-    int n2 = network2.countMonadicIndices();
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2)
+        RoleOperators.EQUIVALENCE.strongStructural().of(outgoingView2)
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> 0)).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 4, 2, 5, 5, 6, 6, 6, 7, 7, 8, 9), true, true,
@@ -322,7 +324,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 8, 9, 10, 11, 12),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2)
+    checkRoleOperator(RoleOperators.EQUIVALENCE.strongStructural().of(outgoingView2)
         .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0 && rshipi.getLeft() >= 4) {
@@ -345,7 +347,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 10, 11, 12, 13),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.strongStructural().of(n2, outgoingView2)
+    checkRoleOperator(RoleOperators.EQUIVALENCE.strongStructural().of(outgoingView2)
         .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0 && rshipi.getLeft() >= 4) {
@@ -370,7 +372,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        RoleOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (rshipi.getRight() == 0) {
@@ -395,7 +397,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.strongStructural().of(n2, swappingOutgoingView(network2))
+        RoleOperators.EQUIVALENCE.strongStructural().of(swappingOutgoingView(network2))
             .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (rshipi.getRight() == 0) {
@@ -425,13 +427,12 @@ public class EquivalenceOperatorsTest {
   public void testWeakStructuralEquivalenceBlocks() {
 
     final Network network = createNetwork();
-    final int n = network.asRelation().countUnionDomain();
     final NetworkView<?, ?> incomingView = NetworkView.fromNetworkRelation(network,
         Direction.INCOMING);
     final NetworkView<?, ?> outgoingView = NetworkView.fromNetworkRelation(network,
         Direction.OUTGOING);
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.weakStructural().of(n, incomingView, outgoingView).make(),
+        RoleOperators.EQUIVALENCE.weakStructural().of(incomingView, outgoingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 3, 4, 5, 6, 7, 7, 0), true, true, false, false,
         () -> {
@@ -445,7 +446,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.weakStructural().unidirectional().of(n, incomingView).make(),
+        RoleOperators.EQUIVALENCE.weakStructural().unidirectional().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 3, 4, 5, 6, 7, 7, 0), true, true, false, false,
         () -> {
@@ -460,7 +461,7 @@ public class EquivalenceOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.weakStructural()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView,
+            .of((TransposableNetworkView<?, ?>) incomingView,
                 (TransposableNetworkView<?, ?>) outgoingView)
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
@@ -477,7 +478,7 @@ public class EquivalenceOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.weakStructural().unidirectional()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 3, 4, 5, 6, 7, 7, 0), true, true, false, false,
         () -> {
@@ -494,7 +495,7 @@ public class EquivalenceOperatorsTest {
     TransposableNetworkView<?, ?> transposingOutgoingView2 = swappingOutgoingView(network);
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.weakStructural()
-            .of(n, transposingOutgoingView, transposingOutgoingView).make(),
+            .of(transposingOutgoingView, transposingOutgoingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 3, 4, 5, 6, 7, 8, 0), true, true, false, false,
         () -> {
@@ -507,7 +508,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 3, 4, 5, 6, 7, 8, 9),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0));
     checkRoleOperator(RoleOperators.EQUIVALENCE.weakStructural()
-            .of(n, transposingOutgoingView, transposingOutgoingView2).make(),
+        .of(transposingOutgoingView, transposingOutgoingView2).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 3, 4, 5, 6, 7, 8, 0), true, true, false, false,
         () -> {
@@ -520,7 +521,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 3, 4, 5, 6, 7, 8, 9),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0));
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.weakStructural().unidirectional().of(n, transposingOutgoingView)
+        RoleOperators.EQUIVALENCE.weakStructural().unidirectional().of(transposingOutgoingView)
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 3, 4, 5, 6, 7, 8, 0), true, true, false, false,
@@ -535,14 +536,13 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0));
 
     final Network networkWithLoops = createNetworkWithLoops();
-    final int nWithLoops = network.asRelation().countUnionDomain();
     final NetworkView<?, ?> incomingViewWithLoops = NetworkView
         .fromNetworkRelation(networkWithLoops, Direction.INCOMING);
     final NetworkView<?, ?> outgoingViewWithLoops = NetworkView
         .fromNetworkRelation(networkWithLoops, Direction.OUTGOING);
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.weakStructural()
-            .of(nWithLoops, incomingViewWithLoops, outgoingViewWithLoops).make(),
+            .of(incomingViewWithLoops, outgoingViewWithLoops).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 3), true, true, false, false,
         () -> {
@@ -556,7 +556,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0));
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.weakStructural()
-            .of(nWithLoops, swappingOutgoingView(networkWithLoops),
+            .of(swappingOutgoingView(networkWithLoops),
                 swappingOutgoingView(networkWithLoops))
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
@@ -592,10 +592,9 @@ public class EquivalenceOperatorsTest {
     Network network2 = MatrixSource.fromAdjacency(adj, false).getNetwork();
     NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
-    int n2 = network2.countMonadicIndices();
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.weakStructural().of(n2, outgoingView2, outgoingView2)
+        RoleOperators.EQUIVALENCE.weakStructural().of(outgoingView2, outgoingView2)
             .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> 0)).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 3, 2, 4, 4, 5, 5, 5, 6, 6, 7, 7), true, true,
@@ -610,7 +609,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.weakStructural().of(n2, outgoingView2, outgoingView2)
+        RoleOperators.EQUIVALENCE.weakStructural().of(outgoingView2, outgoingView2)
             .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (rshipi.getRight() == 0) {
@@ -635,7 +634,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.weakStructural()
-        .of(n2, outgoingView2,
+        .of(outgoingView2,
             NetworkView.fromNetworkRelation(network2, Direction.INCOMING))
         .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
@@ -660,7 +659,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.weakStructural()
-        .of(n2, outgoingView2,
+        .of(outgoingView2,
             NetworkView.fromNetworkRelation(network2, Direction.INCOMING))
         .compPartial((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
@@ -687,7 +686,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.weakStructural()
-        .of(n2, swappingOutgoingView(network2), swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2), swappingOutgoingView(network2))
         .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0 && rshipi.getLeft() >= 4) {
@@ -711,7 +710,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.weakStructural()
-        .of(n2, swappingOutgoingView(network2), swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2), swappingOutgoingView(network2))
         .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0 && rshipi.getLeft() >= 4) {
@@ -757,9 +756,8 @@ public class EquivalenceOperatorsTest {
     Network network = MatrixSource.fromAdjacency(adj, DyadType.UNDIRECTED).getNetwork();
     final NetworkView<?, ?> incomingView = NetworkView.fromNetworkRelation(network,
         Direction.INCOMING);
-    final int n = network.countMonadicIndices();
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.weak().of(n, incomingView).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.weak().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 0, 0, 1, 1, 1), true, true, false, false,
         () -> {
@@ -772,7 +770,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 3, 4, 4, 4),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.weak().of(n, (TransposableNetworkView<?, ?>) incomingView)
+        RoleOperators.EQUIVALENCE.weak().of((TransposableNetworkView<?, ?>) incomingView)
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 0, 0, 1, 1, 1), true, true, false, false,
@@ -785,7 +783,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 3, 4, 4, 4),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
-    checkRoleOperator(RoleOperators.EQUIVALENCE.weak().of(n, swappingOutgoingView(network)).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.weak().of(swappingOutgoingView(network)).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 0, 0, 1, 1, 1), true, true, false, false,
         () -> {
@@ -798,7 +796,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 3, 4, 4, 4),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.weaklyEquitable().loose().of(n, incomingView).make(),
+        RoleOperators.EQUIVALENCE.weaklyEquitable().loose().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 0, 0, 1, 1, 1), true, true, false, false,
         () -> {
@@ -811,7 +809,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 3, 4, 4, 4),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.weak().equitable().loose().of(n, incomingView).make(),
+        RoleOperators.EQUIVALENCE.weak().equitable().loose().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 0, 0, 1, 1, 1), true, true, false, false,
         () -> {
@@ -829,7 +827,7 @@ public class EquivalenceOperatorsTest {
         .fromNetworkRelation(network2, Direction.OUTGOING);
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.weak().of(network2.countMonadicIndices(), outgoingView2)
+        RoleOperators.EQUIVALENCE.weak().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
@@ -844,7 +842,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 2, 3, 4, 5, 6, 7, 8),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     checkRoleOperator(RoleOperators.EQUIVALENCE.weak()
-        .of(network2.countMonadicIndices(), swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2))
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
         Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 2, 3, 4, 2, 3, 5, 0), true, true, false, false,
@@ -859,8 +857,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.weak()
-            .of(network2.countMonadicIndices(),
-                (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2),
@@ -875,7 +872,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 2, 3, 4, 5, 6, 7, 8),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.weak().of(network2.countMonadicIndices(), outgoingView2)
+        RoleOperators.EQUIVALENCE.weak().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> rshipi.getRight() == rshipj.getRight()
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -893,8 +890,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0));
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.weak()
-            .of(network2.countMonadicIndices(),
-                (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> rshipi.getRight() == rshipj.getRight()
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -912,7 +908,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0));
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.weak()
-            .of(network2.countMonadicIndices(), swappingOutgoingView(network2))
+            .of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> rshipi.getRight() == rshipj.getRight()
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -930,7 +926,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0));
 
     assertThrows(UnsupportedOperationException.class, () -> RoleOperators.EQUIVALENCE.weak()
-        .of(network2.countMonadicIndices(), outgoingView2).compPredicate((rshipi, rshipj) -> true));
+        .of(outgoingView2).compPredicate((rshipi, rshipj) -> true));
   }
 
   @Test
@@ -939,9 +935,8 @@ public class EquivalenceOperatorsTest {
 
     final NetworkView<Relationship, Relationship> incomingView = NetworkView
         .fromNetworkRelation(network, Direction.INCOMING);
-    final int n = network.countMonadicIndices();
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.weaklyEquitable().of(n, incomingView).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.weaklyEquitable().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 3),
         Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 0, 1, 2, 3, 0, 0, 0), true, true, false, false,
         () -> {
@@ -956,7 +951,7 @@ public class EquivalenceOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.weaklyEquitable()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 3),
         Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 0, 1, 2, 3, 0, 0, 0), true, true, false, false,
         () -> {
@@ -970,7 +965,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.weaklyEquitable().of(n, swappingOutgoingView(network)).make(),
+        RoleOperators.EQUIVALENCE.weaklyEquitable().of(swappingOutgoingView(network)).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 3),
         Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 0, 1, 2, 3, 0, 0, 0), true, true, false, false,
         () -> {
@@ -983,7 +978,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 2, 3, 4, 5, 6, 6, 6),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.weaklyEquitable().of(n, incomingView)
+    checkRoleOperator(RoleOperators.EQUIVALENCE.weaklyEquitable().of(incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
@@ -1001,7 +996,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.weaklyEquitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
@@ -1019,7 +1014,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.weaklyEquitable()
-        .of(n, swappingOutgoingView(network)).compWeak((rshipi, rshipj) -> {
+        .of(swappingOutgoingView(network)).compWeak((rshipi, rshipj) -> {
           boolean igreat = rshipi.getRight() >= 4;
           boolean jgreat = rshipj.getRight() >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -1035,7 +1030,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 3, 4, 5, 6, 7, 7, 8),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.weaklyEquitable().of(n, incomingView)
+    checkRoleOperator(RoleOperators.EQUIVALENCE.weaklyEquitable().of(incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
@@ -1054,7 +1049,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.weaklyEquitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
@@ -1073,7 +1068,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.weaklyEquitable()
-        .of(n, swappingOutgoingView(network)).compPartial((rshipi, rshipj) -> {
+        .of(swappingOutgoingView(network)).compPartial((rshipi, rshipj) -> {
           boolean igreat = rshipi.getRight() >= 4;
           boolean jgreat = rshipj.getRight() >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -1164,10 +1159,7 @@ public class EquivalenceOperatorsTest {
     final NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
 
-    final int n = network.countMonadicIndices();
-    final int n2 = network2.countMonadicIndices();
-
-    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(n, incomingView).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1), true, false, false, false,
         () -> {
@@ -1181,7 +1173,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.regular().equitable().loose().of(n, incomingView).make(),
+        RoleOperators.EQUIVALENCE.regular().equitable().loose().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1), true, false, false, false,
         () -> {
@@ -1194,7 +1186,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 5),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().loose().of(n, incomingView).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().loose().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1), true, false, false, false,
         () -> {
@@ -1207,7 +1199,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 5),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(n, incomingView).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 4, 4, 4, 4, 4), true, false, false, false,
         () -> {
@@ -1220,7 +1212,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 4, 5, 5, 6, 6),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(n2, outgoingView2).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(outgoingView2).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 1, 2, 2, 3, 3, 2, 2, 3, 3), true, false, false,
         false, () -> {
@@ -1235,7 +1227,7 @@ public class EquivalenceOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.regular()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1), true, false, false, false,
         () -> {
@@ -1250,7 +1242,7 @@ public class EquivalenceOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.regular()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 4, 4, 4, 4, 4), true, false, false, false,
         () -> {
@@ -1265,7 +1257,7 @@ public class EquivalenceOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.regular()
-            .of(n2, (TransposableNetworkView<?, ?>) outgoingView2).make(),
+            .of((TransposableNetworkView<?, ?>) outgoingView2).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 1, 2, 2, 3, 3, 2, 2, 3, 3), true, false, false,
         false, () -> {
@@ -1279,7 +1271,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.regular().of(n, swappingOutgoingView(network)).make(),
+        RoleOperators.EQUIVALENCE.regular().of(swappingOutgoingView(network)).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 1, 1, 1), true, false, false, false,
         () -> {
@@ -1293,7 +1285,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.regular().of(n, swappingOutgoingView(network)).make(),
+        RoleOperators.EQUIVALENCE.regular().of(swappingOutgoingView(network)).make(),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 3, 3, 3, 3), true, false, false, false,
         () -> {
@@ -1307,7 +1299,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 2, 2, 2, 2, 2));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.regular().of(n2, swappingOutgoingView(network2)).make(),
+        RoleOperators.EQUIVALENCE.regular().of(swappingOutgoingView(network2)).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 1, 2, 2, 3, 3, 2, 2, 3, 3), true, false, false,
         false, () -> {
@@ -1321,7 +1313,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.regular().of(n, incomingView).compWeak((rshipi, rshipj) -> {
+        RoleOperators.EQUIVALENCE.regular().of(incomingView).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -1338,7 +1330,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.regular().of(n, incomingView).compWeak((rshipi, rshipj) -> {
+        RoleOperators.EQUIVALENCE.regular().of(incomingView).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -1355,7 +1347,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.regular().of(n2, outgoingView2).compWeak((rshipi, rshipj) -> {
+        RoleOperators.EQUIVALENCE.regular().of(outgoingView2).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -1372,7 +1364,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.regular()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1390,7 +1382,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.regular()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1408,7 +1400,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.regular()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1425,7 +1417,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 6, 4, 4, 5, 6),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(n, swappingOutgoingView(network))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(swappingOutgoingView(network))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1442,7 +1434,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 5),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(n, swappingOutgoingView(network))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(swappingOutgoingView(network))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1459,7 +1451,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 4, 5, 5, 6, 6),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 2, 2, 2, 2, 2));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(n2, swappingOutgoingView(network2))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(swappingOutgoingView(network2))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1477,7 +1469,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.regular().of(n, incomingView).compPartial((rshipi, rshipj) -> {
+        RoleOperators.EQUIVALENCE.regular().of(incomingView).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -1495,7 +1487,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.regular().of(n, incomingView).compPartial((rshipi, rshipj) -> {
+        RoleOperators.EQUIVALENCE.regular().of(incomingView).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -1513,7 +1505,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.regular().of(n2, outgoingView2).compPartial((rshipi, rshipj) -> {
+        RoleOperators.EQUIVALENCE.regular().of(outgoingView2).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -1531,7 +1523,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.regular()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1550,7 +1542,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.regular()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1569,7 +1561,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.regular()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1587,7 +1579,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 6, 4, 4, 5, 6),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(n, swappingOutgoingView(network))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(swappingOutgoingView(network))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1605,7 +1597,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 5),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(n, swappingOutgoingView(network))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(swappingOutgoingView(network))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1623,7 +1615,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 4, 5, 5, 6, 6),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 2, 2, 2, 2, 2));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(n2, swappingOutgoingView(network2))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().of(swappingOutgoingView(network2))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1642,7 +1634,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2));
 
     assertThrows(UnsupportedOperationException.class, () -> RoleOperators.EQUIVALENCE.regular()
-        .of(n, incomingView).compPredicate((i, j) -> true));
+        .of(incomingView).compPredicate((i, j) -> true));
   }
 
   @Test
@@ -1656,10 +1648,7 @@ public class EquivalenceOperatorsTest {
     final NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
 
-    final int n = network.countMonadicIndices();
-    final int n2 = network2.countMonadicIndices();
-
-    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(n, incomingView).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 2, 3, 3, 2, 2), true, false, false, false,
         () -> {
@@ -1672,7 +1661,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 5),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().equitable().of(n, incomingView).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.regular().equitable().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 2, 3, 3, 2, 2), true, false, false, false,
         () -> {
@@ -1686,7 +1675,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.equitable().loose().equitable().of(n, incomingView).make(),
+        RoleOperators.EQUIVALENCE.equitable().loose().equitable().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 2, 3, 3, 2, 2), true, false, false, false,
         () -> {
@@ -1699,7 +1688,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 5),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(n, incomingView).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 4, 5, 5, 4, 4), true, false, false, false,
         () -> {
@@ -1712,7 +1701,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 4, 5, 5, 6, 6),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(n2, outgoingView2).make(),
+    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(outgoingView2).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 0, 2, 3, 3, 4, 5, 3, 3, 4, 5), true, false, false,
         false, () -> {
@@ -1727,7 +1716,7 @@ public class EquivalenceOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.equitable()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 2, 3, 3, 2, 2), true, false, false, false,
         () -> {
@@ -1742,7 +1731,7 @@ public class EquivalenceOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.equitable()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 4, 5, 5, 4, 4), true, false, false, false,
         () -> {
@@ -1757,7 +1746,7 @@ public class EquivalenceOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.EQUIVALENCE.equitable()
-            .of(n2, (TransposableNetworkView<?, ?>) outgoingView2).make(),
+            .of((TransposableNetworkView<?, ?>) outgoingView2).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 0, 2, 3, 3, 4, 5, 3, 3, 4, 5), true, false, false,
         false, () -> {
@@ -1771,7 +1760,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.equitable().of(n, swappingOutgoingView(network)).make(),
+        RoleOperators.EQUIVALENCE.equitable().of(swappingOutgoingView(network)).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 2, 3, 3, 2, 2), true, false, false, false,
         () -> {
@@ -1785,7 +1774,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.equitable().of(n, swappingOutgoingView(network)).make(),
+        RoleOperators.EQUIVALENCE.equitable().of(swappingOutgoingView(network)).make(),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 3, 3), true, false, false, false,
         () -> {
@@ -1799,7 +1788,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 2, 2, 2, 2, 2));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.equitable().of(n2, swappingOutgoingView(network2)).make(),
+        RoleOperators.EQUIVALENCE.equitable().of(swappingOutgoingView(network2)).make(),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 0, 2, 3, 3, 4, 4, 3, 3, 4, 4), true, false, false,
         false, () -> {
@@ -1813,7 +1802,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.equitable().of(n, incomingView).compWeak((rshipi, rshipj) -> {
+        RoleOperators.EQUIVALENCE.equitable().of(incomingView).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -1830,7 +1819,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.equitable().of(n, incomingView).compWeak((rshipi, rshipj) -> {
+        RoleOperators.EQUIVALENCE.equitable().of(incomingView).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -1847,7 +1836,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.equitable().of(n2, outgoingView2).compWeak((rshipi, rshipj) -> {
+        RoleOperators.EQUIVALENCE.equitable().of(outgoingView2).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -1864,7 +1853,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1882,7 +1871,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1900,7 +1889,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.equitable()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1917,7 +1906,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 6, 4, 4, 5, 6),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(n, swappingOutgoingView(network))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(swappingOutgoingView(network))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1934,7 +1923,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 5),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(n, swappingOutgoingView(network))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(swappingOutgoingView(network))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1951,7 +1940,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 4, 5, 5, 6, 6),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 2, 2, 2, 2, 2));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(n2, swappingOutgoingView(network2))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(swappingOutgoingView(network2))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -1969,7 +1958,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.equitable().of(n, incomingView).compPartial((rshipi, rshipj) -> {
+        RoleOperators.EQUIVALENCE.equitable().of(incomingView).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -1987,7 +1976,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(
-        RoleOperators.EQUIVALENCE.equitable().of(n, incomingView).compPartial((rshipi, rshipj) -> {
+        RoleOperators.EQUIVALENCE.equitable().of(incomingView).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -2004,7 +1993,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 4, 5, 5, 6, 6),
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(n2, outgoingView2)
+    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(outgoingView2)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -2023,7 +2012,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -2042,7 +2031,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -2061,7 +2050,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3));
 
     checkRoleOperator(RoleOperators.EQUIVALENCE.equitable()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -2079,7 +2068,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 6, 4, 4, 5, 6),
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(n, swappingOutgoingView(network))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(swappingOutgoingView(network))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -2097,7 +2086,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 3, 4, 4, 5, 5),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(n, swappingOutgoingView(network))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(swappingOutgoingView(network))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -2115,7 +2104,7 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 4, 5, 5, 6, 6),
         Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 2, 2, 2, 2, 2, 2));
 
-    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(n2, swappingOutgoingView(network2))
+    checkRoleOperator(RoleOperators.EQUIVALENCE.equitable().of(swappingOutgoingView(network2))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -2134,6 +2123,6 @@ public class EquivalenceOperatorsTest {
         Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 2, 2));
 
     assertThrows(UnsupportedOperationException.class, () -> RoleOperators.EQUIVALENCE.equitable()
-        .of(n, incomingView).compPredicate((i, j) -> true));
+        .of(incomingView).compPredicate((i, j) -> true));
   }
 }

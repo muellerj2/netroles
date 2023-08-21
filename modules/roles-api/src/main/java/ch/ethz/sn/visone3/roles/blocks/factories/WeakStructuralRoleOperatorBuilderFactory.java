@@ -54,8 +54,6 @@ public interface WeakStructuralRoleOperatorBuilderFactory<U> {
    * 
    * @param <T>
    *          common tie type
-   * @param numNodes
-   *          number of nodes in the underlying network
    * @param oneDirection
    *          position view in one direction
    * @param otherDirection
@@ -63,8 +61,7 @@ public interface WeakStructuralRoleOperatorBuilderFactory<U> {
    *          represents the other direction in some way
    * @return an operator builder
    */
-  <T> RoleOperatorBuilder<T, U> of(int numNodes,
-      NetworkView<? extends T, ? extends T> oneDirection,
+  <T> RoleOperatorBuilder<T, U> of(NetworkView<? extends T, ? extends T> oneDirection,
       NetworkView<? extends T, ? extends T> otherDirection);
 
   /**
@@ -82,8 +79,6 @@ public interface WeakStructuralRoleOperatorBuilderFactory<U> {
    * 
    * @param <T>
    *          common tie type
-   * @param numNodes
-   *          number of nodes in the underlying network
    * @param oneDirection
    *          position view in one direction
    * @param otherDirection
@@ -91,8 +86,7 @@ public interface WeakStructuralRoleOperatorBuilderFactory<U> {
    *          represents the other direction in some way
    * @return an operator builder
    */
-  <T> RoleOperatorBuilder<T, U> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> oneDirection,
+  <T> RoleOperatorBuilder<T, U> of(TransposableNetworkView<? extends T, ? extends T> oneDirection,
       TransposableNetworkView<? extends T, ? extends T> otherDirection);
 
   /**

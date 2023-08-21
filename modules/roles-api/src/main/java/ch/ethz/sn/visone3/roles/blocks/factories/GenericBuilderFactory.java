@@ -41,10 +41,8 @@ public interface GenericBuilderFactory<U, V extends Operator<U, ?>>
     extends BuilderFactoryBase<V> {
 
   @Override
-  <T> GenericOperatorBuilder<T, U, V, ?> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView);
+  <T> GenericOperatorBuilder<T, U, V, ?> of(NetworkView<? extends T, ? extends T> positionView);
 
   @Override
-  <T> GenericOperatorBuilder<T, U, V, ?> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView);
+  <T> GenericOperatorBuilder<T, U, V, ?> of(TransposableNetworkView<? extends T, ? extends T> positionView);
 }

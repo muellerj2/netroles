@@ -21,6 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Comparator;
+
+import org.junit.jupiter.api.Test;
+
 import ch.ethz.sn.visone3.lang.Mapping;
 import ch.ethz.sn.visone3.lang.Mappings;
 import ch.ethz.sn.visone3.networks.Direction;
@@ -41,10 +45,6 @@ import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilders;
 import ch.ethz.sn.visone3.roles.test.structures.BinaryRelationsTest;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
-
-import org.junit.jupiter.api.Test;
-
-import java.util.Comparator;
 
 public class RankingOperatorsTest {
 
@@ -214,6 +214,11 @@ public class RankingOperatorsTest {
       private Relation rel = network.asRelation();
 
       @Override
+      public int countNodes() {
+        return rel.countUnionDomain();
+      }
+
+      @Override
       public Iterable<? extends Relationship> ties(int lhsComparison, int rhsComparison, int node) {
         return rel.getRelationshipsFrom(node);
       }
@@ -247,11 +252,10 @@ public class RankingOperatorsTest {
   public void testStrongStructuralRankingBlocks() {
 
     final Network network = createNetwork();
-    final int n = network.asRelation().countUnionDomain();
     final NetworkView<?, ?> incomingView = NetworkView.fromNetworkRelation(network,
         Direction.INCOMING);
 
-    checkRoleOperator(RoleOperators.RANKING.strongStructural().of(n, incomingView).make(),
+    checkRoleOperator(RoleOperators.RANKING.strongStructural().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -349,7 +353,7 @@ public class RankingOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.RANKING.strongStructural()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -448,7 +452,7 @@ public class RankingOperatorsTest {
     TransposableNetworkView<?, ?> transposingOutgoingView = swappingOutgoingView(network);
 
     checkRoleOperator(
-        RoleOperators.RANKING.strongStructural().of(n, transposingOutgoingView).make(),
+        RoleOperators.RANKING.strongStructural().of(transposingOutgoingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -545,11 +549,10 @@ public class RankingOperatorsTest {
             }));
 
     final Network networkWithLoops = createNetworkWithLoops();
-    final int nWithLoops = network.asRelation().countUnionDomain();
     final NetworkView<?, ?> incomingViewWithLoops = NetworkView
         .fromNetworkRelation(networkWithLoops, Direction.INCOMING);
     checkRoleOperator(
-        RoleOperators.RANKING.strongStructural().of(nWithLoops, incomingViewWithLoops).make(),
+        RoleOperators.RANKING.strongStructural().of(incomingViewWithLoops).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -647,7 +650,7 @@ public class RankingOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.RANKING.strongStructural()
-            .of(nWithLoops, swappingOutgoingView(networkWithLoops)).make(),
+            .of(swappingOutgoingView(networkWithLoops)).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -764,10 +767,9 @@ public class RankingOperatorsTest {
     Network network2 = MatrixSource.fromAdjacency(adj, false).getNetwork();
     NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
-    int n2 = network2.countMonadicIndices();
 
     checkRoleOperator(
-        RoleOperators.RANKING.strongStructural().of(n2, outgoingView2)
+        RoleOperators.RANKING.strongStructural().of(outgoingView2)
             .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> 0)).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 4, 4)),
@@ -1028,7 +1030,7 @@ public class RankingOperatorsTest {
         { false, false, false, false, false, false, false, false, false, false, false, false, false,
             false, true }, //
     });
-    checkRoleOperator(RoleOperators.RANKING.strongStructural().of(n2, outgoingView2)
+    checkRoleOperator(RoleOperators.RANKING.strongStructural().of(outgoingView2)
         .comp(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0 && rshipi.getLeft() >= 4) {
@@ -1094,7 +1096,7 @@ public class RankingOperatorsTest {
         { false, false, false, false, false, false, false, false, false, false, false, false, false,
             false, true }, //
     });
-    checkRoleOperator(RoleOperators.RANKING.strongStructural().of(n2, outgoingView2)
+    checkRoleOperator(RoleOperators.RANKING.strongStructural().of(outgoingView2)
         .comp(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0 && rshipi.getLeft() >= 4) {
@@ -1162,7 +1164,7 @@ public class RankingOperatorsTest {
         { false, false, false, false, false, false, true, true, false, false, false, false, false,
             true, true } });
     checkRoleOperator(
-        RoleOperators.RANKING.strongStructural().of(n2, swappingOutgoingView(network2))
+        RoleOperators.RANKING.strongStructural().of(swappingOutgoingView(network2))
 
             .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
@@ -1246,7 +1248,7 @@ public class RankingOperatorsTest {
         { false, false, false, false, false, false, true, true, false, false, false, false, false,
             true, true } });
     checkRoleOperator(
-        RoleOperators.RANKING.strongStructural().of(n2, swappingOutgoingView(network2))
+        RoleOperators.RANKING.strongStructural().of(swappingOutgoingView(network2))
             .compPartial((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
               int lhsworth = 0;
               if (rshipi.getRight() == 0) {
@@ -1304,14 +1306,13 @@ public class RankingOperatorsTest {
   public void testWeakStructuralRankingBlocks() {
 
     final Network network = createNetwork();
-    final int n = network.asRelation().countUnionDomain();
     final NetworkView<?, ?> incomingView = NetworkView.fromNetworkRelation(network,
         Direction.INCOMING);
     final NetworkView<?, ?> outgoingView = NetworkView.fromNetworkRelation(network,
         Direction.OUTGOING);
 
     checkRoleOperator(
-        RoleOperators.RANKING.weakStructural().of(n, incomingView, outgoingView).make(),
+        RoleOperators.RANKING.weakStructural().of(incomingView, outgoingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -1408,7 +1409,7 @@ public class RankingOperatorsTest {
             }));
 
     checkRoleOperator(
-        RoleOperators.RANKING.weakStructural().unidirectional().of(n, incomingView).make(),
+        RoleOperators.RANKING.weakStructural().unidirectional().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -1505,7 +1506,7 @@ public class RankingOperatorsTest {
             }));
 
     checkRoleOperator(
-        RoleOperators.RANKING.weakStructural().of(n, incomingView, incomingView).make(),
+        RoleOperators.RANKING.weakStructural().of(incomingView, incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -1603,7 +1604,7 @@ public class RankingOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.RANKING.weakStructural()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView,
+            .of((TransposableNetworkView<?, ?>) incomingView,
                 (TransposableNetworkView<?, ?>) outgoingView)
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
@@ -1703,7 +1704,7 @@ public class RankingOperatorsTest {
 
     checkRoleOperator(
         RoleOperators.RANKING.weakStructural().unidirectional()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -1803,7 +1804,7 @@ public class RankingOperatorsTest {
     TransposableNetworkView<?, ?> transposingOutgoingView2 = swappingOutgoingView(network);
     checkRoleOperator(
         RoleOperators.RANKING.weakStructural()
-            .of(n, transposingOutgoingView, transposingOutgoingView).make(),
+            .of(transposingOutgoingView, transposingOutgoingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -1900,7 +1901,7 @@ public class RankingOperatorsTest {
             }));
     checkRoleOperator(
         RoleOperators.RANKING.weakStructural()
-            .of(n, transposingOutgoingView, transposingOutgoingView2).make(),
+            .of(transposingOutgoingView, transposingOutgoingView2).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -1996,7 +1997,7 @@ public class RankingOperatorsTest {
                 { true, true, true, true, true, true, true, true, true, true, true }, //
             }));
     checkRoleOperator(
-        RoleOperators.RANKING.weakStructural().unidirectional().of(n, transposingOutgoingView)
+        RoleOperators.RANKING.weakStructural().unidirectional().of(transposingOutgoingView)
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
@@ -2094,14 +2095,13 @@ public class RankingOperatorsTest {
             }));
 
     final Network networkWithLoops = createNetworkWithLoops();
-    final int nWithLoops = network.asRelation().countUnionDomain();
     final NetworkView<?, ?> incomingViewWithLoops = NetworkView
         .fromNetworkRelation(networkWithLoops, Direction.INCOMING);
     final NetworkView<?, ?> outgoingViewWithLoops = NetworkView
         .fromNetworkRelation(networkWithLoops, Direction.OUTGOING);
     checkRoleOperator(
         RoleOperators.RANKING.weakStructural()
-            .of(nWithLoops, incomingViewWithLoops, outgoingViewWithLoops).make(),
+            .of(incomingViewWithLoops, outgoingViewWithLoops).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         Rankings.fromMatrixUnsafe(new boolean[][] {
             { true, false, false, true, false, false, false, false, false, false, true }, //
@@ -2198,7 +2198,7 @@ public class RankingOperatorsTest {
             }));
     checkRoleOperator(
         RoleOperators.RANKING.weakStructural()
-            .of(nWithLoops, swappingOutgoingView(networkWithLoops),
+            .of(swappingOutgoingView(networkWithLoops),
                 swappingOutgoingView(networkWithLoops))
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
@@ -2317,7 +2317,6 @@ public class RankingOperatorsTest {
     Network network2 = MatrixSource.fromAdjacency(adj, false).getNetwork();
     NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
-    int n2 = network2.countMonadicIndices();
 
     Ranking weakResult = Rankings.fromMatrixUnsafe(new boolean[][] {
         { true, false, false, false, false, false, false, false, false, false, false, false, false,
@@ -2351,7 +2350,7 @@ public class RankingOperatorsTest {
         { false, false, false, false, false, false, true, true, false, false, false, false, false,
             true, true } });
     checkRoleOperator(
-        RoleOperators.RANKING.weakStructural().of(n2, outgoingView2, outgoingView2)
+        RoleOperators.RANKING.weakStructural().of(outgoingView2, outgoingView2)
             .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> 0)).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3)),
@@ -2416,7 +2415,7 @@ public class RankingOperatorsTest {
             true, true }, //
         { false, false, false, false, false, false, true, true, false, false, false, false, false,
             true, true } });
-    checkRoleOperator(RoleOperators.RANKING.weakStructural().of(n2, outgoingView2, outgoingView2)
+    checkRoleOperator(RoleOperators.RANKING.weakStructural().of(outgoingView2, outgoingView2)
         .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0) {
@@ -2461,7 +2460,7 @@ public class RankingOperatorsTest {
                 Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3)),
             weakResult));
 
-    checkRoleOperator(RoleOperators.RANKING.weakStructural().unidirectional().of(n2, outgoingView2)
+    checkRoleOperator(RoleOperators.RANKING.weakStructural().unidirectional().of(outgoingView2)
         .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0) {
@@ -2538,7 +2537,7 @@ public class RankingOperatorsTest {
         { false, false, false, false, false, false, true, true, false, false, false, false, false,
             true, true } });
     checkRoleOperator(RoleOperators.RANKING.weakStructural()
-        .of(n2, outgoingView2,
+        .of(outgoingView2,
             NetworkView.fromNetworkRelation(network2, Direction.INCOMING))
         .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
@@ -2622,7 +2621,7 @@ public class RankingOperatorsTest {
         { false, false, false, false, false, false, true, true, false, false, false, false, false,
             true, true } });
     checkRoleOperator(RoleOperators.RANKING.weakStructural()
-        .of(n2, outgoingView2,
+        .of(outgoingView2,
             NetworkView.fromNetworkRelation(network2, Direction.INCOMING))
         .compPartial((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
@@ -2676,7 +2675,7 @@ public class RankingOperatorsTest {
                 Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3)),
             weakResult));
 
-    checkRoleOperator(RoleOperators.RANKING.weakStructural().of(n2, outgoingView2, outgoingView2)
+    checkRoleOperator(RoleOperators.RANKING.weakStructural().of(outgoingView2, outgoingView2)
         .compPartial((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0) {
@@ -2729,7 +2728,7 @@ public class RankingOperatorsTest {
                 Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3)),
             weakResult));
 
-    checkRoleOperator(RoleOperators.RANKING.weakStructural().unidirectional().of(n2, outgoingView2)
+    checkRoleOperator(RoleOperators.RANKING.weakStructural().unidirectional().of(outgoingView2)
         .compPartial((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0) {
@@ -2815,7 +2814,7 @@ public class RankingOperatorsTest {
             false, true }, //
     });
     checkRoleOperator(RoleOperators.RANKING.weakStructural()
-        .of(n2, swappingOutgoingView(network2), swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2), swappingOutgoingView(network2))
         .compWeak(((Comparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0 && rshipi.getLeft() >= 4) {
@@ -2889,7 +2888,7 @@ public class RankingOperatorsTest {
             false, true }, //
     });
     checkRoleOperator(RoleOperators.RANKING.weakStructural()
-        .of(n2, swappingOutgoingView(network2), swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2), swappingOutgoingView(network2))
         .compPartial(((PartialComparator<? super Relationship>) (rshipi, rshipj) -> {
           int lhsworth = 0;
           if (rshipi.getRight() == 0 && rshipi.getLeft() >= 4) {
@@ -2953,7 +2952,6 @@ public class RankingOperatorsTest {
     Network network = MatrixSource.fromAdjacency(adj, DyadType.UNDIRECTED).getNetwork();
     final NetworkView<?, ?> incomingView = NetworkView.fromNetworkRelation(network,
         Direction.INCOMING);
-    final int n = network.countMonadicIndices();
 
     Ranking result = Rankings.fromMatrixUnsafe(new boolean[][] { //
         { true, true, true, true, true, true, true, true, true, true }, //
@@ -2967,12 +2965,12 @@ public class RankingOperatorsTest {
         { false, false, true, true, true, false, false, true, true, true }, //
         { false, false, true, true, true, false, false, true, true, true }, //
     });
-    checkConstRoleOperator(RoleOperators.RANKING.weak().of(n, incomingView).make(),
+    checkConstRoleOperator(RoleOperators.RANKING.weak().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2)));
-    Ranking actualResult = RoleOperators.RANKING.weak().of(n, incomingView).make().apply(
+    Ranking actualResult = RoleOperators.RANKING.weak().of(incomingView).make().apply(
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)));
     BinaryRelationsTest.assertBinaryRelation(actualResult, result::contains, (kind, count) -> {
     });
@@ -2982,14 +2980,14 @@ public class RankingOperatorsTest {
     assertEquals(result.toString(), actualResult.toString());
 
     checkConstRoleOperator(
-        RoleOperators.RANKING.weak().of(n, (TransposableNetworkView<?, ?>) incomingView)
+        RoleOperators.RANKING.weak().of((TransposableNetworkView<?, ?>) incomingView)
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2)));
     actualResult = RoleOperators.RANKING.weak()
-        .of(n, (TransposableNetworkView<?, ?>) incomingView).make().apply(
+        .of((TransposableNetworkView<?, ?>) incomingView).make().apply(
             Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)));
     BinaryRelationsTest.assertBinaryRelation(actualResult, result::contains, (kind, count) -> {
     });
@@ -2998,13 +2996,13 @@ public class RankingOperatorsTest {
     assertEquals(result.hashCode(), actualResult.hashCode());
     assertEquals(result.toString(), actualResult.toString());
 
-    checkConstRoleOperator(RoleOperators.RANKING.weak().of(n, swappingOutgoingView(network)).make(),
+    checkConstRoleOperator(RoleOperators.RANKING.weak().of(swappingOutgoingView(network)).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2)));
     actualResult = RoleOperators.RANKING.weak()
-        .of(n, (TransposableNetworkView<?, ?>) incomingView).make().apply(
+        .of((TransposableNetworkView<?, ?>) incomingView).make().apply(
             Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)));
     BinaryRelationsTest.assertBinaryRelation(actualResult, result::contains, (kind, count) -> {
     });
@@ -3014,12 +3012,12 @@ public class RankingOperatorsTest {
     assertEquals(result.toString(), actualResult.toString());
 
     checkConstRoleOperator(
-        RoleOperators.RANKING.weaklyEquitable().loose().of(n, incomingView).make(),
+        RoleOperators.RANKING.weaklyEquitable().loose().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2)));
-    actualResult = RoleOperators.RANKING.weak().of(n, incomingView).make().apply(
+    actualResult = RoleOperators.RANKING.weak().of(incomingView).make().apply(
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)));
     BinaryRelationsTest.assertBinaryRelation(actualResult, result::contains, (kind, count) -> {
     });
@@ -3029,12 +3027,12 @@ public class RankingOperatorsTest {
     assertEquals(result.toString(), actualResult.toString());
 
     checkConstRoleOperator(
-        RoleOperators.RANKING.weaklyEquitable().equitable().loose().of(n, incomingView).make(),
+        RoleOperators.RANKING.weaklyEquitable().equitable().loose().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)),
         result, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2)));
-    actualResult = RoleOperators.RANKING.weak().of(n, incomingView).make().apply(
+    actualResult = RoleOperators.RANKING.weak().of(incomingView).make().apply(
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2)));
     BinaryRelationsTest.assertBinaryRelation(actualResult, result::contains, (kind, count) -> {
     });
@@ -3061,14 +3059,14 @@ public class RankingOperatorsTest {
         { true, true, true, true, true, true, true, true, true, true, true }, //
     });
     checkConstRoleOperator(
-        RoleOperators.RANKING.weak().of(network2.countMonadicIndices(), outgoingView2)
+        RoleOperators.RANKING.weak().of(outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         result2, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 3, 4, 5, 6, 7, 8, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 2, 2, 3, 3, 3, 4, 5)));
-    actualResult = RoleOperators.RANKING.weak().of(network2.countMonadicIndices(), outgoingView2)
+    actualResult = RoleOperators.RANKING.weak().of(outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make()
         .apply(Rankings
             .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)));
@@ -3080,14 +3078,14 @@ public class RankingOperatorsTest {
     assertEquals(result2.toString(), actualResult.toString());
 
     checkConstRoleOperator(RoleOperators.RANKING.weak()
-        .of(network2.countMonadicIndices(), swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2))
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
         result2, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 3, 4, 5, 6, 7, 8, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 2, 2, 3, 3, 3, 4, 5)));
     actualResult = RoleOperators.RANKING.weak()
-        .of(network2.countMonadicIndices(), swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2))
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make()
         .apply(Rankings
             .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)));
@@ -3100,8 +3098,7 @@ public class RankingOperatorsTest {
 
     checkConstRoleOperator(
         RoleOperators.RANKING.weak()
-            .of(network2.countMonadicIndices(),
-                (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight()))
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)),
@@ -3109,8 +3106,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 3, 4, 5, 6, 7, 8, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 2, 2, 3, 3, 3, 4, 5)));
     actualResult = RoleOperators.RANKING.weak()
-        .of(network2.countMonadicIndices(),
-            (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight())).make()
         .apply(Rankings
             .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)));
@@ -3135,7 +3131,7 @@ public class RankingOperatorsTest {
         { true, false, false, true, false, false, false, false, false, false, true }, //
     });
     checkConstRoleOperator(
-        RoleOperators.RANKING.weak().of(network2.countMonadicIndices(), outgoingView2)
+        RoleOperators.RANKING.weak().of(outgoingView2)
             .compPartial((rshipi, rshipj) -> rshipi.getRight() == rshipj.getRight()
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3144,7 +3140,7 @@ public class RankingOperatorsTest {
         result3, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 3, 4, 5, 6, 7, 8, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 2, 2, 3, 3, 3, 4, 5)));
-    actualResult = RoleOperators.RANKING.weak().of(network2.countMonadicIndices(), outgoingView2)
+    actualResult = RoleOperators.RANKING.weak().of(outgoingView2)
         .compPartial((rshipi, rshipj) -> rshipi.getRight() == rshipj.getRight()
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3158,8 +3154,7 @@ public class RankingOperatorsTest {
     assertEquals(result3.toString(), actualResult.toString());
 
     checkConstRoleOperator(RoleOperators.RANKING.weak()
-        .of(network2.countMonadicIndices(),
-            (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
             .compPartial((rshipi, rshipj) -> rshipi.getRight() == rshipj.getRight()
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3169,8 +3164,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 3, 4, 5, 6, 7, 8, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 2, 2, 3, 3, 3, 4, 5)));
     actualResult = RoleOperators.RANKING.weak()
-        .of(network2.countMonadicIndices(),
-            (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> rshipi.getRight() == rshipj.getRight()
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3184,7 +3178,7 @@ public class RankingOperatorsTest {
     assertEquals(result3.toString(), actualResult.toString());
 
     checkConstRoleOperator(RoleOperators.RANKING.weak()
-        .of(network2.countMonadicIndices(), swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2))
             .compPartial((rshipi, rshipj) -> rshipi.getRight() == rshipj.getRight()
                 ? PartialComparator.ComparisonResult.EQUAL
                 : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3194,7 +3188,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 3, 3, 4, 5, 6, 7, 8, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 0, 2, 2, 3, 3, 3, 4, 5)));
     actualResult = RoleOperators.RANKING.weak()
-        .of(network2.countMonadicIndices(), swappingOutgoingView(network2))
+        .of(swappingOutgoingView(network2))
         .compPartial((rshipi, rshipj) -> rshipi.getRight() == rshipj.getRight()
             ? PartialComparator.ComparisonResult.EQUAL
             : PartialComparator.ComparisonResult.INCOMPARABLE)
@@ -3208,7 +3202,7 @@ public class RankingOperatorsTest {
     assertEquals(result3.toString(), actualResult.toString());
 
     assertThrows(UnsupportedOperationException.class, () -> RoleOperators.RANKING.weak()
-        .of(network2.countMonadicIndices(), outgoingView2).compPredicate((rshipi, rshipj) -> true));
+        .of(outgoingView2).compPredicate((rshipi, rshipj) -> true));
   }
 
   @Test
@@ -3217,7 +3211,6 @@ public class RankingOperatorsTest {
 
     final NetworkView<Relationship, Relationship> incomingView = NetworkView
         .fromNetworkRelation(network, Direction.INCOMING);
-    final int n = network.countMonadicIndices();
 
     Ranking result = Rankings.fromMatrixUnsafe(new boolean[][] { //
         { true, true, true, true, true, true, true, false, true, true, true }, //
@@ -3233,12 +3226,12 @@ public class RankingOperatorsTest {
         { true, true, true, true, true, true, true, false, true, true, true }, //
     });
 
-    checkConstRoleOperator(RoleOperators.RANKING.weaklyEquitable().of(n, incomingView).make(),
+    checkConstRoleOperator(RoleOperators.RANKING.weaklyEquitable().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 3)),
         result, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6, 7)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2, 2)));
-    Ranking actualResult = RoleOperators.RANKING.weaklyEquitable().of(n, incomingView).make().apply(
+    Ranking actualResult = RoleOperators.RANKING.weaklyEquitable().of(incomingView).make().apply(
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)));
     BinaryRelationsTest.assertBinaryRelation(actualResult, result::contains, (kind, count) -> {
     });
@@ -3249,13 +3242,13 @@ public class RankingOperatorsTest {
 
     checkConstRoleOperator(
         RoleOperators.RANKING.weaklyEquitable()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 3)),
         result, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6, 7)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2, 2)));
     actualResult = RoleOperators.RANKING.weaklyEquitable()
-        .of(n, (TransposableNetworkView<?, ?>) incomingView).make().apply(Rankings
+        .of((TransposableNetworkView<?, ?>) incomingView).make().apply(Rankings
             .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)));
     BinaryRelationsTest.assertBinaryRelation(actualResult, result::contains, (kind, count) -> {
     });
@@ -3266,13 +3259,13 @@ public class RankingOperatorsTest {
 
     checkConstRoleOperator(
         RoleOperators.RANKING.weaklyEquitable()
-            .of(n, (TransposableNetworkView<?, ?>) swappingOutgoingView(network)).make(),
+            .of((TransposableNetworkView<?, ?>) swappingOutgoingView(network)).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 3)),
         result, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6, 7)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2, 2)));
     actualResult = RoleOperators.RANKING.weaklyEquitable()
-        .of(n, (TransposableNetworkView<?, ?>) incomingView).make().apply(Rankings
+        .of((TransposableNetworkView<?, ?>) incomingView).make().apply(Rankings
             .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2)));
     BinaryRelationsTest.assertBinaryRelation(actualResult, result::contains, (kind, count) -> {
     });
@@ -3296,7 +3289,7 @@ public class RankingOperatorsTest {
     });
 
     checkConstRoleOperator(
-        RoleOperators.RANKING.weaklyEquitable().of(n, incomingView).compWeak((rshipi, rshipj) -> {
+        RoleOperators.RANKING.weaklyEquitable().of(incomingView).compWeak((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -3305,7 +3298,7 @@ public class RankingOperatorsTest {
         result2, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6, 7)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2, 2)));
-    actualResult = RoleOperators.RANKING.weaklyEquitable().of(n, incomingView)
+    actualResult = RoleOperators.RANKING.weaklyEquitable().of(incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
@@ -3320,7 +3313,7 @@ public class RankingOperatorsTest {
     assertEquals(result2.toString(), actualResult.toString());
 
     checkConstRoleOperator(RoleOperators.RANKING.weaklyEquitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
@@ -3331,7 +3324,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6, 7)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2, 2)));
     actualResult = RoleOperators.RANKING.weaklyEquitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
@@ -3346,7 +3339,7 @@ public class RankingOperatorsTest {
     assertEquals(result2.toString(), actualResult.toString());
 
     checkConstRoleOperator(RoleOperators.RANKING.weaklyEquitable()
-        .of(n, swappingOutgoingView(network)).compWeak((rshipi, rshipj) -> {
+        .of(swappingOutgoingView(network)).compWeak((rshipi, rshipj) -> {
           boolean igreat = rshipi.getRight() >= 4;
           boolean jgreat = rshipj.getRight() >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -3355,7 +3348,7 @@ public class RankingOperatorsTest {
         result2, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6, 7)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2, 2)));
-    actualResult = RoleOperators.RANKING.weaklyEquitable().of(n, swappingOutgoingView(network))
+    actualResult = RoleOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = rshipi.getRight() >= 4;
           boolean jgreat = rshipj.getRight() >= 4;
@@ -3383,7 +3376,7 @@ public class RankingOperatorsTest {
         { true, true, true, true, false, false, false, false, false, false, true }, //
     });
 
-    checkConstRoleOperator(RoleOperators.RANKING.weaklyEquitable().of(n, incomingView)
+    checkConstRoleOperator(RoleOperators.RANKING.weaklyEquitable().of(incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
@@ -3394,7 +3387,7 @@ public class RankingOperatorsTest {
         result3, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6, 7)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2, 2)));
-    actualResult = RoleOperators.RANKING.weaklyEquitable().of(n, incomingView)
+    actualResult = RoleOperators.RANKING.weaklyEquitable().of(incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
@@ -3410,7 +3403,7 @@ public class RankingOperatorsTest {
     assertEquals(result3.toString(), actualResult.toString());
 
     checkConstRoleOperator(RoleOperators.RANKING.weaklyEquitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
@@ -3422,7 +3415,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6, 7)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2, 2)));
     actualResult = RoleOperators.RANKING.weaklyEquitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = rshipi.getLeft() >= 4;
           boolean jgreat = rshipj.getLeft() >= 4;
@@ -3438,7 +3431,7 @@ public class RankingOperatorsTest {
     assertEquals(result3.toString(), actualResult.toString());
 
     checkConstRoleOperator(RoleOperators.RANKING.weaklyEquitable()
-        .of(n, swappingOutgoingView(network)).compPartial((rshipi, rshipj) -> {
+        .of(swappingOutgoingView(network)).compPartial((rshipi, rshipj) -> {
           boolean igreat = rshipi.getRight() >= 4;
           boolean jgreat = rshipj.getRight() >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -3448,7 +3441,7 @@ public class RankingOperatorsTest {
         result3, true, true, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 3, 4, 5, 6, 6, 7)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 0, 1, 0, 1, 1, 0, 2, 2)));
-    actualResult = RoleOperators.RANKING.weaklyEquitable().of(n, swappingOutgoingView(network))
+    actualResult = RoleOperators.RANKING.weaklyEquitable().of(swappingOutgoingView(network))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = rshipi.getRight() >= 4;
           boolean jgreat = rshipj.getRight() >= 4;
@@ -3566,9 +3559,6 @@ public class RankingOperatorsTest {
     final NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
 
-    final int n = network.countMonadicIndices();
-    final int n2 = network2.countMonadicIndices();
-
     Ranking result1 = Rankings.fromMatrixUnsafe(new boolean[][] { //
         { true, true, true, true, false, false, false, false, false, false }, //
         { true, true, true, true, false, false, false, false, false, false }, //
@@ -3619,32 +3609,32 @@ public class RankingOperatorsTest {
             true }, //
     });
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(n, incomingView).make(),
+    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1)),
         result1, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().equitable().loose().of(n, incomingView).make(),
+        RoleOperators.RANKING.regular().equitable().loose().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1)),
         result1, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().loose().of(n, incomingView).make(),
+    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().loose().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1)),
         result1, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(n, incomingView).make(),
+    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3)),
         result2, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(n2, outgoingView2).make(),
+    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(outgoingView2).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3)),
         result3, true, false, false, false,
@@ -3654,7 +3644,7 @@ public class RankingOperatorsTest {
             Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().of(n, (TransposableNetworkView<?, ?>) incomingView)
+        RoleOperators.RANKING.regular().of((TransposableNetworkView<?, ?>) incomingView)
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1)),
         result1, true, false, false, false,
@@ -3662,7 +3652,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().of(n, (TransposableNetworkView<?, ?>) incomingView)
+        RoleOperators.RANKING.regular().of((TransposableNetworkView<?, ?>) incomingView)
             .make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3)),
         result2, true, false, false, false,
@@ -3671,7 +3661,7 @@ public class RankingOperatorsTest {
 
     checkNonconstRoleOperator(
         RoleOperators.RANKING.regular()
-            .of(n2, (TransposableNetworkView<?, ?>) outgoingView2).make(),
+            .of((TransposableNetworkView<?, ?>) outgoingView2).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3)),
         result3, true, false, false, false,
@@ -3718,21 +3708,21 @@ public class RankingOperatorsTest {
             true }, //
     });
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().of(n, swappingOutgoingView(network)).make(),
+        RoleOperators.RANKING.regular().of(swappingOutgoingView(network)).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1)),
         result1, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().of(n, swappingOutgoingView(network)).make(),
+        RoleOperators.RANKING.regular().of(swappingOutgoingView(network)).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3)),
         result2, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().of(n2, swappingOutgoingView(network2)).make(),
+        RoleOperators.RANKING.regular().of(swappingOutgoingView(network2)).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3)),
         result3, true, false, false, false,
@@ -3794,7 +3784,7 @@ public class RankingOperatorsTest {
             true }, //
     });
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().of(n, incomingView).compWeak((rshipi, rshipj) -> {
+        RoleOperators.RANKING.regular().of(incomingView).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -3805,7 +3795,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().of(n, incomingView).compWeak((rshipi, rshipj) -> {
+        RoleOperators.RANKING.regular().of(incomingView).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -3816,7 +3806,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().of(n2, outgoingView2).compWeak((rshipi, rshipj) -> {
+        RoleOperators.RANKING.regular().of(outgoingView2).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -3830,7 +3820,7 @@ public class RankingOperatorsTest {
             Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.regular()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -3842,7 +3832,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.regular()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -3854,7 +3844,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.regular()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -3908,7 +3898,7 @@ public class RankingOperatorsTest {
         { false, false, false, false, false, false, true, true, true, true, true, true, true,
             true }, //
     });
-    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(n, swappingOutgoingView(network))
+    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(swappingOutgoingView(network))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -3919,7 +3909,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(n, swappingOutgoingView(network))
+    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(swappingOutgoingView(network))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -3930,7 +3920,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(n2, swappingOutgoingView(network2))
+    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(swappingOutgoingView(network2))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -3988,7 +3978,7 @@ public class RankingOperatorsTest {
             true }, //
     });
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().of(n, incomingView).compPartial((rshipi, rshipj) -> {
+        RoleOperators.RANKING.regular().of(incomingView).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -4000,7 +3990,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().of(n, incomingView).compPartial((rshipi, rshipj) -> {
+        RoleOperators.RANKING.regular().of(incomingView).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -4012,7 +4002,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().of(n2, outgoingView2).compPartial((rshipi, rshipj) -> {
+        RoleOperators.RANKING.regular().of(outgoingView2).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -4027,7 +4017,7 @@ public class RankingOperatorsTest {
             Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.regular()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4040,7 +4030,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.regular()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4053,7 +4043,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.regular()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4111,7 +4101,7 @@ public class RankingOperatorsTest {
         { false, false, false, false, false, false, true, true, true, true, true, true, true,
             true }, //
     });
-    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(n, swappingOutgoingView(network))
+    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(swappingOutgoingView(network))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4123,7 +4113,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(n, swappingOutgoingView(network))
+    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(swappingOutgoingView(network))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4135,7 +4125,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(n2, swappingOutgoingView(network2))
+    checkNonconstRoleOperator(RoleOperators.RANKING.regular().of(swappingOutgoingView(network2))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4151,7 +4141,7 @@ public class RankingOperatorsTest {
             Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 2)));
 
     assertThrows(UnsupportedOperationException.class,
-        () -> RoleOperators.RANKING.regular().of(n, incomingView).compPredicate((i, j) -> true));
+        () -> RoleOperators.RANKING.regular().of(incomingView).compPredicate((i, j) -> true));
   }
 
   @Test
@@ -4164,9 +4154,6 @@ public class RankingOperatorsTest {
         .fromNetworkRelation(network, Direction.INCOMING);
     final NetworkView<Relationship, Relationship> outgoingView2 = NetworkView
         .fromNetworkRelation(network2, Direction.OUTGOING);
-
-    final int n = network.countMonadicIndices();
-    final int n2 = network2.countMonadicIndices();
 
     Ranking result1 = Rankings.fromMatrixUnsafe(new boolean[][] { //
         { true, true, true, true, false, false, false, false, false, false }, //
@@ -4223,33 +4210,33 @@ public class RankingOperatorsTest {
             true }, //
     });
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(n, incomingView).make(),
+    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1)),
         result1, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.equitable().loose().equitable().of(n, incomingView).make(),
+        RoleOperators.RANKING.equitable().loose().equitable().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1)),
         result1, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.regular().equitable().of(n, incomingView).make(),
+        RoleOperators.RANKING.regular().equitable().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1)),
         result1, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(n, incomingView).make(),
+    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3)),
         result2, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(n2, outgoingView2).make(),
+    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(outgoingView2).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3)),
         result3, true, false, false, false,
@@ -4260,7 +4247,7 @@ public class RankingOperatorsTest {
 
     checkNonconstRoleOperator(
         RoleOperators.RANKING.equitable()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1)),
         result1, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
@@ -4268,7 +4255,7 @@ public class RankingOperatorsTest {
 
     checkNonconstRoleOperator(
         RoleOperators.RANKING.equitable()
-            .of(n, (TransposableNetworkView<?, ?>) incomingView).make(),
+            .of((TransposableNetworkView<?, ?>) incomingView).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3)),
         result2, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
@@ -4276,7 +4263,7 @@ public class RankingOperatorsTest {
 
     checkNonconstRoleOperator(
         RoleOperators.RANKING.equitable()
-            .of(n2, (TransposableNetworkView<?, ?>) outgoingView2).make(),
+            .of((TransposableNetworkView<?, ?>) outgoingView2).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3)),
         result3, true, false, false, false,
@@ -4329,21 +4316,21 @@ public class RankingOperatorsTest {
     });
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.equitable().of(n, swappingOutgoingView(network)).make(),
+        RoleOperators.RANKING.equitable().of(swappingOutgoingView(network)).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 1, 1, 1, 1, 1)),
         result1, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.equitable().of(n, swappingOutgoingView(network)).make(),
+        RoleOperators.RANKING.equitable().of(swappingOutgoingView(network)).make(),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 2, 2, 3, 3, 3, 3, 3, 3)),
         result2, true, false, false, false,
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.equitable().of(n2, swappingOutgoingView(network2)).make(),
+        RoleOperators.RANKING.equitable().of(swappingOutgoingView(network2)).make(),
         Rankings.fromEquivalence(
             Mappings.wrapUnmodifiableInt(0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 1, 1, 2, 3)),
         result3, true, false, false, false,
@@ -4407,7 +4394,7 @@ public class RankingOperatorsTest {
             true }, //
     });
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.equitable().of(n, incomingView).compWeak((rshipi, rshipj) -> {
+        RoleOperators.RANKING.equitable().of(incomingView).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -4418,7 +4405,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.equitable().of(n, incomingView).compWeak((rshipi, rshipj) -> {
+        RoleOperators.RANKING.equitable().of(incomingView).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -4429,7 +4416,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.equitable().of(n2, outgoingView2).compWeak((rshipi, rshipj) -> {
+        RoleOperators.RANKING.equitable().of(outgoingView2).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -4443,7 +4430,7 @@ public class RankingOperatorsTest {
             Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4455,7 +4442,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4467,7 +4454,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.equitable()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4523,7 +4510,7 @@ public class RankingOperatorsTest {
         { false, false, false, false, false, false, true, true, true, true, true, true, true,
             true }, //
     });
-    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(n, swappingOutgoingView(network))
+    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(swappingOutgoingView(network))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4534,7 +4521,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(n, swappingOutgoingView(network))
+    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(swappingOutgoingView(network))
         .compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4546,7 +4533,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.equitable()
-        .of(n2, swappingOutgoingView(network2)).compWeak((rshipi, rshipj) -> {
+        .of(swappingOutgoingView(network2)).compWeak((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return Boolean.compare(igreat, jgreat);
@@ -4614,7 +4601,7 @@ public class RankingOperatorsTest {
             true }, //
     });
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.equitable().of(n, incomingView).compPartial((rshipi, rshipj) -> {
+        RoleOperators.RANKING.equitable().of(incomingView).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -4626,7 +4613,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.equitable().of(n, incomingView).compPartial((rshipi, rshipj) -> {
+        RoleOperators.RANKING.equitable().of(incomingView).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -4638,7 +4625,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(
-        RoleOperators.RANKING.equitable().of(n2, outgoingView2).compPartial((rshipi, rshipj) -> {
+        RoleOperators.RANKING.equitable().of(outgoingView2).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -4653,7 +4640,7 @@ public class RankingOperatorsTest {
             Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4666,7 +4653,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) incomingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) incomingView)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4679,7 +4666,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.equitable()
-        .of(n2, (TransposableNetworkView<Relationship, Relationship>) outgoingView2)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView2)
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4748,7 +4735,7 @@ public class RankingOperatorsTest {
         { false, false, false, false, false, false, true, true, true, true, true, true, true,
             true }, //
     });
-    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(n, swappingOutgoingView(network))
+    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(swappingOutgoingView(network))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4760,7 +4747,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3)),
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
-    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(n, swappingOutgoingView(network))
+    checkNonconstRoleOperator(RoleOperators.RANKING.equitable().of(swappingOutgoingView(network))
         .compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
@@ -4773,7 +4760,7 @@ public class RankingOperatorsTest {
         Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2)));
 
     checkNonconstRoleOperator(RoleOperators.RANKING.equitable()
-        .of(n2, swappingOutgoingView(network2)).compPartial((rshipi, rshipj) -> {
+        .of(swappingOutgoingView(network2)).compPartial((rshipi, rshipj) -> {
           boolean igreat = Math.max(rshipi.getLeft(), rshipi.getRight()) >= 4;
           boolean jgreat = Math.max(rshipj.getLeft(), rshipj.getRight()) >= 4;
           return igreat == jgreat ? PartialComparator.ComparisonResult.EQUAL
@@ -4788,7 +4775,7 @@ public class RankingOperatorsTest {
             Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3, 2)));
 
     assertThrows(UnsupportedOperationException.class,
-        () -> RoleOperators.RANKING.equitable().of(n, incomingView).compPredicate((i, j) -> true));
+        () -> RoleOperators.RANKING.equitable().of(incomingView).compPredicate((i, j) -> true));
   }
 
 }

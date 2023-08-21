@@ -218,8 +218,8 @@ public class Equivalences {
     }
   }
 
-  private static <T> void refiningRegularEquivalenceComparatorImpl(final int n,
-      final NetworkView<?, T> positionView, final ConstMapping.OfInt equivalenceRelativeTo,
+  private static <T> void refiningRegularEquivalenceComparatorImpl(final NetworkView<?, T> positionView,
+      final ConstMapping.OfInt equivalenceRelativeTo,
       Comparator<? super T> comparatorExtension, final EquivalenceAlgorithmState state) {
 
     // This color management ensures that the algorithm
@@ -230,6 +230,7 @@ public class Equivalences {
     // order the vertices by their color
     final int[] verticesOrderedByColor = PrimitiveCollections.countingSort(equivalenceRelativeTo)
         .array();
+    final int n = positionView.countNodes();
 
     int maxNumberVerticesForColor = 0;
     for (int begin = 0; begin < n;) {
@@ -506,10 +507,15 @@ public class Equivalences {
       state.getProcessedList().clear();
     }
 
-    refiningRegularEquivalenceComparatorImpl(n,
+    refiningRegularEquivalenceComparatorImpl(
         // only those methods are implemented that are actually needed by the called
         // algorithm
         new NetworkView<T, U>() {
+
+          @Override
+          public int countNodes() {
+            return n;
+          }
 
           @Override
           public Iterable<? extends T> ties(int node) {
