@@ -34,9 +34,9 @@ class RankedGenericRolesFactory
     implements EquitableLooseGenericRoleOperatorBuilderFactory<Ranking> {
 
   @Override
-  public <T> GenericRoleOperatorBuilder<T, Ranking> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
+  public <T> GenericRoleOperatorBuilder<T, Ranking> of(NetworkView<? extends T, ? extends T> positionView) {
     final boolean exact = isExact();
+    final int numNodes = positionView.countNodes();
     return new AbstractGenericNoBiPredicateRoleOperatorBuilder<T, Ranking>() {
 
       @Override
@@ -131,12 +131,12 @@ class RankedGenericRolesFactory
   }
 
   @Override
-  public <T> GenericRoleOperatorBuilder<T, Ranking> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView) {
+  public <T> GenericRoleOperatorBuilder<T, Ranking> of(TransposableNetworkView<? extends T, ? extends T> positionView) {
     if (positionView instanceof NetworkView<?, ?>) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) positionView);
+      return of((NetworkView<? extends T, ? extends T>) positionView);
     }
     final boolean exact = isExact();
+    final int numNodes = positionView.countNodes();
     return new AbstractGenericNoBiPredicateRoleOperatorBuilder<T, Ranking>() {
 
       @Override

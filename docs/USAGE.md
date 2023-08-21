@@ -1,12 +1,12 @@
 # Usage examples
 
-By reference to some examples, this section describes library features and their usage. They mostly reproduce the role analysis examples in [Müller and Brandes (2022)](https://doi.org/10.1016/j.socnet.2021.02.001). The complete example code can also be found [here](examples/Examples.java).
+By reference to some examples, this section describes library features and their usage. They mostly reproduce the role analysis examples in [Müller and Brandes (2022)](https://doi.org/10.1016/j.socnet.2021.02.001). The complete example code can also be found [here](./../examples/Examples.java).
 
 ## Classic role notions
 
 Computing classic role notions using netroles is straightforward.
 
-We illustrate its usage on the network [muellerbrandes_examplegraph](examples/muellerbrandes_examplegraph.graphml).
+We illustrate its usage on the network [muellerbrandes_examplegraph](./../examples/muellerbrandes_examplegraph.graphml).
 
 We first load the network data and an initial partition:
 ```java
@@ -69,7 +69,7 @@ import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 import ch.ethz.sn.visone3.roles.blocks.RoleOperators;
 
 RoleOperator<ConstMapping.OfInt> regularOp = RoleOperators.EQUIVALENCE.regular()
-    .of(network.asUndirectedGraph().countVertices(), networkView)
+    .of(networkView)
     .make();
 ```
 
@@ -119,7 +119,7 @@ The steps above yield role operators that compare neighborhoods with respect to 
 
 A common approach to extend role equivalences to directed networks is to require that the role equivalence must conform to the role equivalence definition in both directions. We could do this by computing the role equivalence in outgoing direction, then the role equivalence in incoming direction, and finally the intersection of these two equivalences. This intersection is then in line with the role notion in both directions (relative to some given equivalence). It is straightforward to specify a bidirectional role notion in this way in the netroles library.
 
-We illustrate this approach on a [network of negative sanction among novices of a monastery](examples/sampson_negativesanction.graphml) that was originally collected in the following doctoral thesis: Sampson (1968). A novitiate in a period of change: An experimental and case study of social relationships.
+We illustrate this approach on a [network of negative sanction among novices of a monastery](./../examples/sampson_negativesanction.graphml) that was originally collected in the following doctoral thesis: Sampson (1968). A novitiate in a period of change: An experimental and case study of social relationships.
 
 We first load the network:
 
@@ -127,7 +127,7 @@ We first load the network:
 int n;
 Network network;
 try (Source<?> source = IoProvider.getService("graphml").newSource( //
-	new File("../../examples/sampson_negativesanction.graphml"))) {
+	new File("examples/sampson_negativesanction.graphml"))) {
   SourceFormat sourceData = source.parse();
 
   network = sourceData.incidence();
@@ -143,9 +143,9 @@ We can now define the role operators for regular equivalence. We first do this i
 
 ```java
 RoleOperator<ConstMapping.OfInt> outgoingRegularOp = RoleOperators.EQUIVALENCE.regular()
-  .of(n, outgoingNetworkView).make();
+  .of(outgoingNetworkView).make();
 RoleOperator<ConstMapping.OfInt> incomingRegularOp = RoleOperators.EQUIVALENCE.regular()
-  .of(n, incomingNetworkView).make();
+  .of(incomingNetworkView).make();
 ```
 
 We then combine these two unidirectional operators to obtain a bidirectional regular operator:
@@ -216,9 +216,9 @@ To do this, we specify ranked versions of the unidirectional and bidirectional r
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
 RoleOperator<Ranking> outgoingRankedOp = RoleOperators.RANKING.regular()
-  .of(n, outgoingNetworkView).make();
+  .of(outgoingNetworkView).make();
 RoleOperator<Ranking> incomingRankedOp = RoleOperators.RANKING.regular()
-  .of(n, incomingNetworkView).make();
+  .of(incomingNetworkView).make();
 RoleOperator<Ranking> bidiRankedOp = Operators.parallel(
   // combine undirectional ranked operators through intersection
   Reducers.RANKING.meet(), 
@@ -312,13 +312,12 @@ Strict application of classic role notions tends to result in trivial outcomes, 
 
 One strategy to deal with this is to use error-tolerant versions of the classic notions, adjusting those to allow for a bit of slack in the pairwise neighborhood comparisons.
 
-Here, we use an error-tolerant variant of equitable equivalence and illustrate it on a [network of political actors in a US county](examples/doreianalbert_countypoliticans.graphml) originally published in [Doreian and Albert (1989)](https://www.ifip.com/Partitioning_Political_Actor.html).
+Here, we use an error-tolerant variant of equitable equivalence and illustrate it on a [network of political actors in a US county](./../examples/doreianalbert_countypoliticans.graphml) originally published in [Doreian and Albert (1989)](https://www.ifip.com/Partitioning_Political_Actor.html).
 
 Again, we first load the network and the initial equivalence:
 
 ```java
 Network network;
-int n;
 NetworkView<?, ?> networkView;
 ConstMapping.OfInt initialEq;
 try (Source<?> source = IoProvider.getService("graphml").newSource(
@@ -326,7 +325,6 @@ try (Source<?> source = IoProvider.getService("graphml").newSource(
   SourceFormat sourceData = source.parse();
 
   network = sourceData.incidence();
-  n = network.asUndirectedGraph().countVertices();
   networkView = NetworkView.fromNetworkRelation(network, Direction.OUTGOING);
   initialEq = (ConstMapping.OfInt) sourceData.monadic().get("initial");
   System.out.println(initialEq);
@@ -341,7 +339,7 @@ This prints:
 If we now follow the role evolution process from this initial equivalence using the classic notion of regular equivalence, we end up in a trivial stable role equivalence:
 ```java
 RoleOperator<ConstMapping.OfInt> regularOp = RoleOperators.EQUIVALENCE.regular()
-    .of(n, networkView)
+    .of(networkView)
     .make();
 ConstMapping.OfInt prevEq;
 ConstMapping.OfInt currEq = initialEq;
@@ -376,12 +374,12 @@ RoleOperator<ConstMapping.OfInt> errortolerantOp = Operators.parallel( //
   Operators.composeRoleOp( //
     Operators.composeOp( //
       Operators.composeOp( // threshold pairwise distances from equitable equivalence by one
-        DistanceOperators.EQUIVALENCE.equitable().of(n, networkView).make(),
+        DistanceOperators.EQUIVALENCE.equitable().of(networkView).make(),
         Converters.thresholdDistances((i, j) -> 1)),
       // symmetrize (at most distance one in both directions)
       RoleOperators.BINARYRELATION.basic().symmetrize()),
     Converters.strongComponentsAsEquivalence()), // close on symmetric comparisons transitively
-  RoleOperators.EQUIVALENCE.weak().of(n, networkView).make()); // and split off isolates
+  RoleOperators.EQUIVALENCE.weak().of(networkView).make()); // and split off isolates
 ```
 
 Starting again from the initial three-way density-based clustering, we follow the role evolution process:
@@ -405,7 +403,7 @@ Which now prints the following interpretable equivalences in accordance with Fig
 
 ## Incorporating node and tie attributes
 
-Node and tie attributes can be naturally incorporated into role equivalences with this library. We illustrate this capability on a [marriage network among Florentine families](examples/padgett_marriages.graphml) originally collected by Padgett ([Breiger and Pattison, 1986](https://doi.org/10.1016/0378-8733(86)90006-7); [Padgett and Ansell, 1994](https://doi.org/10.1086/230190)).
+Node and tie attributes can be naturally incorporated into role equivalences with this library. We illustrate this capability on a [marriage network among Florentine families](./../examples/padgett_marriages.graphml) originally collected by Padgett ([Breiger and Pattison, 1986](https://doi.org/10.1016/0378-8733(86)90006-7); [Padgett and Ansell, 1994](https://doi.org/10.1086/230190)).
 
 Again, we load the undirected network. This network also includes an additional variable on the vertices representing the wealth of the Florentine families.
 
@@ -434,7 +432,7 @@ This prints portions of the wealth attribute associated with the families:
 Building on the notion of regular equivalence, we would like to incorporate family wealth into the comparison: A neighboring family should preferably be substituted by a wealthier family. This substitution restriction be easily added by passing the corresponding comparator to the role operator builder:
 ```java
 RoleOperator<ConstMapping.OfInt> wealthawareOp = RoleOperators.EQUIVALENCE.regular() //
-  .of(n, networkView) // on this network
+  .of(networkView) // on this network
     // substituting neighbor should have larger wealth
   .comp(Comparator.comparingInt(rship -> wealth.getInt(rship.getRight()))) 
   .make();
@@ -464,7 +462,7 @@ RoleOperator<ConstMapping.OfInt> errortolerantOp = Operators.parallel( //
     Operators.composeOp( //
       Operators.composeOp(
         // distance from wealth-aware regular equivalence
-        DistanceOperators.EQUIVALENCE.regular().of(n, networkView)
+        DistanceOperators.EQUIVALENCE.regular().of(networkView)
 		  // substituting neighbor should have larger wealth
           .comp(Comparator.comparingInt(rship -> wealth.getInt(rship.getRight()))).make(),
 		// thresholded by one
@@ -472,7 +470,7 @@ RoleOperator<ConstMapping.OfInt> errortolerantOp = Operators.parallel( //
       // symmetrize (at most distance one in both directions)
       RoleOperators.BINARYRELATION.basic().symmetrize()),
     Converters.strongComponentsAsEquivalence()), // close on symmetric comparisons transitively
-  RoleOperators.EQUIVALENCE.weak().of(n, networkView).make()); // and split off isolates
+  RoleOperators.EQUIVALENCE.weak().of(networkView).make()); // and split off isolates
 ```
 
 We determine the relative role equivalence on the following equivalence:
@@ -554,8 +552,8 @@ This has major implications for this approach: Parallel ties are strictly as val
 
 An alternative strategy is to enforce the same matching over all network relations in pairwise comparisons. This can be achieved by merging the selected network relations into a single network, but where the attributes of the composite ties accurately represent the origin in the individual network relations.
 
-We return to the network data on medieval Florentine families originally collected by Padgett ([Breiger and Pattison, 1986](https://doi.org/10.1016/0378-8733(86)90006-7); [Padgett and Ansell, 1994](https://doi.org/10.1086/230190)). Besides [marriage ties](padgett_marriages),
-network data on the business ties has also been made available.
+We return to the network data on medieval Florentine families originally collected by Padgett ([Breiger and Pattison, 1986](https://doi.org/10.1016/0378-8733(86)90006-7); [Padgett and Ansell, 1994](https://doi.org/10.1086/230190)). Besides [marriage ties](./../examples/padgett_marriages.graphml),
+network data on the [business ties](./../examples/padgett_business.graphml) has also been made available.
 
 We first load both the undirected marriage and business relations among the families:
 
@@ -650,7 +648,7 @@ RoleOperator<ConstMapping.OfInt> compositeOp = Operators.parallel( //
     Operators.composeOp( //
       Operators.composeOp(
         // distance from marriage- and business-ties-aware regular equivalence
-        DistanceOperators.EQUIVALENCE.regular().of(n, networkView)
+        DistanceOperators.EQUIVALENCE.regular().of(networkView)
           // substituting neighbor should have larger wealth
           .comp(Comparator.comparingInt(tie -> wealth.getInt(tie.getRight())))
           // substitution cost describing matching rules for marriage and business ties
@@ -680,7 +678,7 @@ RoleOperator<ConstMapping.OfInt> compositeOp = Operators.parallel( //
       // symmetrize (at most distance two in both directions)
       RoleOperators.BINARYRELATION.basic().symmetrize()),
     Converters.strongComponentsAsEquivalence()), // close on symmetric comparisons transitively
-  RoleOperators.EQUIVALENCE.weak().of(n, networkView).make()); // and split off isolates
+  RoleOperators.EQUIVALENCE.weak().of(networkView).make()); // and split off isolates
 ```
 
 We determine the relative role equivalence on the following equivalence:

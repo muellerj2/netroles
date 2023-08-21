@@ -33,9 +33,9 @@ class EquivalenceWeakRolesFactory
     implements EquitableLooseRoleOperatorBuilderFactory<ConstMapping.OfInt> {
 
   @Override
-  public <T> RoleOperatorBuilder<T, ConstMapping.OfInt> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
+  public <T> RoleOperatorBuilder<T, ConstMapping.OfInt> of(NetworkView<? extends T, ? extends T> positionView) {
     final boolean exact = isExact();
+    final int numNodes = positionView.countNodes();
     return new AbstractNoBiPredicateRoleOperatorBuilder<T, ConstMapping.OfInt>() {
       @Override
       RoleOperator<ConstMapping.OfInt> makeConcrete() {
@@ -97,12 +97,13 @@ class EquivalenceWeakRolesFactory
   }
 
   @Override
-  public <T> RoleOperatorBuilder<T, ConstMapping.OfInt> of(int numNodes,
+  public <T> RoleOperatorBuilder<T, ConstMapping.OfInt> of(
       TransposableNetworkView<? extends T, ? extends T> positionView) {
     if (positionView instanceof NetworkView<?, ?>) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) positionView);
+      return of((NetworkView<? extends T, ? extends T>) positionView);
     }
     final boolean exact = isExact();
+    final int numNodes = positionView.countNodes();
     return new AbstractNoBiPredicateRoleOperatorBuilder<T, ConstMapping.OfInt>() {
       @Override
       RoleOperator<ConstMapping.OfInt> makeConcrete() {

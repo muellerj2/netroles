@@ -36,26 +36,28 @@ class RankedWeakStructuralRolesFactory
     WeakStructuralRoleOperatorBuilderFactory<Ranking> {
 
   @Override
-  public <T> RoleOperatorBuilder<T, Ranking> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
-    return of(numNodes, positionView, null);
+  public <T> RoleOperatorBuilder<T, Ranking> of(NetworkView<? extends T, ? extends T> positionView) {
+    return of(positionView, null);
   }
 
   @Override
-  public <T> RoleOperatorBuilder<T, Ranking> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView) {
-    return of(numNodes, positionView, null);
+  public <T> RoleOperatorBuilder<T, Ranking> of(TransposableNetworkView<? extends T, ? extends T> positionView) {
+    return of(positionView, null);
   }
 
   @Override
-  public <T> RoleOperatorBuilder<T, Ranking> of(int numNodes,
-      NetworkView<? extends T, ? extends T> oneDirection,
+  public <T> RoleOperatorBuilder<T, Ranking> of(NetworkView<? extends T, ? extends T> oneDirection,
       NetworkView<? extends T, ? extends T> otherDirectionNonfinal) {
 
     if (oneDirection == otherDirectionNonfinal) {
       otherDirectionNonfinal = null;
     }
     final NetworkView<? extends T, ? extends T> otherDirection = otherDirectionNonfinal;
+    final int numNodes = oneDirection.countNodes();
+
+    if (otherDirection != null && numNodes != otherDirection.countNodes()) {
+      throw new IllegalArgumentException("mismatched in node numbers between directions");
+    }
 
     return new AbstractNoBiPredicateRoleOperatorBuilder<T, Ranking>() {
 
@@ -171,8 +173,7 @@ class RankedWeakStructuralRolesFactory
   }
 
   @Override
-  public <T> RoleOperatorBuilder<T, Ranking> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> oneDirection,
+  public <T> RoleOperatorBuilder<T, Ranking> of(TransposableNetworkView<? extends T, ? extends T> oneDirection,
       TransposableNetworkView<? extends T, ? extends T> otherDirectionNonfinal) {
     if (otherDirectionNonfinal == oneDirection) {
       otherDirectionNonfinal = null;
@@ -181,8 +182,14 @@ class RankedWeakStructuralRolesFactory
 
     if (oneDirection instanceof NetworkView<?, ?>
         && (otherDirection == null || otherDirection instanceof NetworkView<?, ?>)) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) oneDirection,
+      return of((NetworkView<? extends T, ? extends T>) oneDirection,
           (NetworkView<? extends T, ? extends T>) otherDirection);
+    }
+
+    final int numNodes = oneDirection.countNodes();
+
+    if (otherDirection != null && numNodes != otherDirection.countNodes()) {
+      throw new IllegalArgumentException("mismatched in node numbers between directions");
     }
 
     return new AbstractNoBiPredicateRoleOperatorBuilder<T, Ranking>() {

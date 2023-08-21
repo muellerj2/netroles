@@ -50,9 +50,9 @@ import ch.ethz.sn.visone3.roles.blocks.Operators;
 import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 import ch.ethz.sn.visone3.roles.blocks.RoleOperators;
 import ch.ethz.sn.visone3.roles.impl.algorithms.Equivalences;
+import ch.ethz.sn.visone3.roles.lattice.CoverEnumerators;
 import ch.ethz.sn.visone3.roles.lattice.FixedPointEnumerator.CoverEnumerator;
 import ch.ethz.sn.visone3.roles.lattice.StableRolesEnumeration;
-import ch.ethz.sn.visone3.roles.lattice.CoverEnumerators;
 import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelations;
@@ -90,8 +90,7 @@ public class LatticeTest {
     Iterable<ConstMapping.OfInt> fixedPointsIterable = StableRolesEnumeration.EQUIVALENCE
         .stableRolesUnderRestriction(
             RoleOperators.EQUIVALENCE.regular()
-                .of(net.countMonadicIndices(),
-                    NetworkView.fromNetworkRelation(net, Direction.OUTGOING))
+                .of(NetworkView.fromNetworkRelation(net, Direction.OUTGOING))
                 .make(),
             Converters.singleClassEquivalence(net.countMonadicIndices()).apply(null));
 
@@ -118,8 +117,7 @@ public class LatticeTest {
                     Operators
                         .composeConv(
                             DistanceOperators.EQUIVALENCE.regular().equitable()
-                                .of(net.countMonadicIndices(),
-                                    NetworkView.fromNetworkRelation(net,
+                                .of(NetworkView.fromNetworkRelation(net,
                                         Direction.OUTGOING))
                                 .make(),
                             Converters.thresholdDistances((i, j) -> 1)),

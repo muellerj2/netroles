@@ -37,9 +37,9 @@ class EquivalenceRegularRolesDistanceFactory
     implements VariableDistanceBuilderFactory<ConstMapping.OfInt> {
 
   @Override
-  public <T> DistanceOperatorBuilder<T, ConstMapping.OfInt> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
+  public <T> DistanceOperatorBuilder<T, ConstMapping.OfInt> of(NetworkView<? extends T, ? extends T> positionView) {
     final int p = getPValue();
+    final int numNodes = positionView.countNodes();
     return new AbstractDistanceOperatorBuilder<T, ConstMapping.OfInt>() {
 
       @Override
@@ -244,13 +244,15 @@ class EquivalenceRegularRolesDistanceFactory
   }
 
   @Override
-  public <T> DistanceOperatorBuilder<T, ConstMapping.OfInt> of(int numNodes,
+  public <T> DistanceOperatorBuilder<T, ConstMapping.OfInt> of(
       TransposableNetworkView<? extends T, ? extends T> positionView) {
+
     if (positionView instanceof NetworkView) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) positionView);
+      return of((NetworkView<? extends T, ? extends T>) positionView);
     }
 
     final int p = getPValue();
+    final int numNodes = positionView.countNodes();
     return new AbstractDistanceOperatorBuilder<T, ConstMapping.OfInt>() {
 
       @Override

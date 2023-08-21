@@ -37,9 +37,9 @@ class RankedRegularRolesDistanceFactory
     implements VariableDistanceBuilderFactory<Ranking> {
 
   @Override
-  public <T> DistanceOperatorBuilder<T, Ranking> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
+  public <T> DistanceOperatorBuilder<T, Ranking> of(NetworkView<? extends T, ? extends T> positionView) {
     final int p = getPValue();
+    final int numNodes = positionView.countNodes();
     return new AbstractDistanceOperatorBuilder<T, Ranking>() {
 
       @Override
@@ -243,13 +243,13 @@ class RankedRegularRolesDistanceFactory
   }
 
   @Override
-  public <T> DistanceOperatorBuilder<T, Ranking> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView) {
+  public <T> DistanceOperatorBuilder<T, Ranking> of(TransposableNetworkView<? extends T, ? extends T> positionView) {
     if (positionView instanceof NetworkView) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) positionView);
+      return of((NetworkView<? extends T, ? extends T>) positionView);
     }
 
     final int p = getPValue();
+    final int numNodes = positionView.countNodes();
     return new AbstractDistanceOperatorBuilder<T, Ranking>() {
 
       @Override

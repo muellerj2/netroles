@@ -45,10 +45,9 @@ public interface GenericDistanceBuilderFactory<U>
     VariablePFactoryBase<GenericDistanceBuilderFactory<U>> {
 
   @Override
-  <T> GenericDistanceOperatorBuilder<T, U> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView);
+  <T> GenericDistanceOperatorBuilder<T, U> of(NetworkView<? extends T, ? extends T> positionView);
 
   @Override
-  <T> GenericDistanceOperatorBuilder<T, U> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView);
+  <T> GenericDistanceOperatorBuilder<T, U> of(TransposableNetworkView<? extends T, ? extends T> positionView);
+
 }

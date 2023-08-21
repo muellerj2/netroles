@@ -19,6 +19,16 @@ package ch.ethz.sn.visone3.roles.test.blocks;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Comparator;
+import java.util.Random;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.ToIntBiFunction;
+import java.util.function.ToIntFunction;
+
+import org.junit.jupiter.api.Test;
+
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.Mapping;
 import ch.ethz.sn.visone3.lang.Mappings;
@@ -46,16 +56,6 @@ import ch.ethz.sn.visone3.roles.structures.BinaryRelations;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 import ch.ethz.sn.visone3.roles.structures.Rankings;
 import ch.ethz.sn.visone3.roles.util.PartialComparator;
-
-import org.junit.jupiter.api.Test;
-
-import java.util.Comparator;
-import java.util.Random;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.ToIntBiFunction;
-import java.util.function.ToIntFunction;
 
 public class GenericOperatorsTest {
 
@@ -89,6 +89,11 @@ public class GenericOperatorsTest {
     return new TransposableNetworkView<Relationship, Relationship>() {
 
       private Relation rel = network.asRelation();
+
+      @Override
+      public int countNodes() {
+        return rel.countUnionDomain();
+      }
 
       @Override
       public Iterable<? extends Relationship> ties(int lhsComparison, int rhsComparison, int node) {
@@ -151,13 +156,12 @@ public class GenericOperatorsTest {
     };
 
     Network network = createNetwork3();
-    int n = network.countMonadicIndices();
     NetworkView<Relationship, Relationship> outgoingView = NetworkView
         .fromNetworkRelation(network, Direction.OUTGOING);
     TransposableNetworkView<Relationship, Relationship> swappingView = swappingOutgoingView(
         network);
     RoleOperator<ConstMapping.OfInt> roleOp = RoleOperators.EQUIVALENCE.generic()
-        .of(n, outgoingView).traits(randomTraits).make();
+        .of(outgoingView).traits(randomTraits).make();
     assertEquals(isotone, roleOp.isIsotone());
     assertEquals(constant, roleOp.isConstant());
     assertEquals(nonincreasing, roleOp.isNonincreasing());
@@ -169,10 +173,10 @@ public class GenericOperatorsTest {
         5, 4);
     ConstMapping.OfInt structure2 = Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4,
         5, 4);
-    ConstMapping.OfInt result = RoleOperators.EQUIVALENCE.weak().of(n, outgoingView).make()
+    ConstMapping.OfInt result = RoleOperators.EQUIVALENCE.weak().of(outgoingView).make()
         .apply(input);
 
-    roleOp = RoleOperators.EQUIVALENCE.generic().of(n, outgoingView).traits(new OperatorTraits() {
+    roleOp = RoleOperators.EQUIVALENCE.generic().of(outgoingView).traits(new OperatorTraits() {
 
       @Override
       public boolean isNonincreasing() {
@@ -201,7 +205,7 @@ public class GenericOperatorsTest {
         Equivalences.supremum(input, result));
 
     roleOp = RoleOperators.EQUIVALENCE.generic()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -230,7 +234,7 @@ public class GenericOperatorsTest {
         Equivalences.supremum(structure1, result), Equivalences.infimum(input, result),
         Equivalences.supremum(input, result));
 
-    roleOp = RoleOperators.EQUIVALENCE.generic().of(n, swappingView).traits(new OperatorTraits() {
+    roleOp = RoleOperators.EQUIVALENCE.generic().of(swappingView).traits(new OperatorTraits() {
 
       @Override
       public boolean isNonincreasing() {
@@ -259,7 +263,7 @@ public class GenericOperatorsTest {
         Equivalences.supremum(input, result));
 
     result = RoleOperators.EQUIVALENCE
-        .weak().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+        .weak().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
             .compare(input.getInt(rshipi.getRight()), input.getInt(rshipj.getRight())))
         .make().apply(input);
 
@@ -269,7 +273,7 @@ public class GenericOperatorsTest {
       prev = interior;
       ConstMapping.OfInt curr = interior;
       interior = Equivalences.infimum(RoleOperators.EQUIVALENCE
-          .weak().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .weak().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(curr.getInt(rshipi.getRight()), curr.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
@@ -279,12 +283,12 @@ public class GenericOperatorsTest {
       prev = closure;
       ConstMapping.OfInt curr = closure;
       closure = Equivalences.supremum(RoleOperators.EQUIVALENCE
-          .weak().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .weak().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(curr.getInt(rshipi.getRight()), curr.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
 
-    roleOp = RoleOperators.EQUIVALENCE.generic().of(n, outgoingView).compWeak(in -> {
+    roleOp = RoleOperators.EQUIVALENCE.generic().of(outgoingView).compWeak(in -> {
       return (rshipi, rshipj) -> Integer.compare(in.getInt(rshipi.getRight()),
           in.getInt(rshipj.getRight()));
     }).traits(new OperatorTraits() {
@@ -317,7 +321,7 @@ public class GenericOperatorsTest {
         Equivalences.supremum(structure1, result), interior, closure);
 
     roleOp = RoleOperators.EQUIVALENCE.generic()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compWeak(in -> {
           return (rshipi, rshipj) -> Integer.compare(in.getInt(rshipi.getRight()),
               in.getInt(rshipj.getRight()));
@@ -351,11 +355,11 @@ public class GenericOperatorsTest {
         Equivalences.supremum(structure1, result), interior, closure);
 
     result = RoleOperators.EQUIVALENCE
-        .weak().of(n, swappingView).compWeak((rshipi, rshipj) -> Integer
+        .weak().of(swappingView).compWeak((rshipi, rshipj) -> Integer
             .compare(input.getInt(rshipi.getRight()), input.getInt(rshipj.getRight())))
         .make().apply(input);
 
-    roleOp = RoleOperators.EQUIVALENCE.generic().of(n, swappingView).compWeak(in -> {
+    roleOp = RoleOperators.EQUIVALENCE.generic().of(swappingView).compWeak(in -> {
       return (rshipi, rshipj) -> Integer.compare(in.getInt(rshipi.getRight()),
           in.getInt(rshipj.getRight()));
     }).traits(new OperatorTraits() {
@@ -388,8 +392,8 @@ public class GenericOperatorsTest {
         Equivalences.supremum(structure1, result), interior, closure);
 
     RoleOperator<ConstMapping.OfInt> expected = RoleOperators.EQUIVALENCE.regular()
-        .of(n, outgoingView).make();
-    roleOp = RoleOperators.EQUIVALENCE.generic().of(n, outgoingView).compPartial(in -> {
+        .of(outgoingView).make();
+    roleOp = RoleOperators.EQUIVALENCE.generic().of(outgoingView).compPartial(in -> {
       return (rshipi, rshipj) -> in.getInt(rshipi.getRight()) == in.getInt(rshipj.getRight())
           ? PartialComparator.ComparisonResult.EQUAL
           : PartialComparator.ComparisonResult.INCOMPARABLE;
@@ -425,7 +429,7 @@ public class GenericOperatorsTest {
         expected.closure(input));
 
     roleOp = RoleOperators.EQUIVALENCE.generic()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compPartial(in -> {
           return (rshipi, rshipj) -> in.getInt(rshipi.getRight()) == in.getInt(rshipj.getRight())
               ? PartialComparator.ComparisonResult.EQUAL
@@ -460,11 +464,11 @@ public class GenericOperatorsTest {
         expected.closure(input));
 
     assertThrows(UnsupportedOperationException.class,
-        () -> RoleOperators.EQUIVALENCE.generic().of(n, swappingView).compPredicate(in -> {
+        () -> RoleOperators.EQUIVALENCE.generic().of(swappingView).compPredicate(in -> {
           return (rshipi, rshipj) -> in.getInt(rshipi.getRight()) == in.getInt(rshipj.getRight());
         }));
-    expected = RoleOperators.EQUIVALENCE.regular().of(n, swappingView).make();
-    roleOp = RoleOperators.EQUIVALENCE.generic().of(n, swappingView).compPartial(in -> {
+    expected = RoleOperators.EQUIVALENCE.regular().of(swappingView).make();
+    roleOp = RoleOperators.EQUIVALENCE.generic().of(swappingView).compPartial(in -> {
       return (rshipi, rshipj) -> in.getInt(swappingView.tieTarget(rshipi.getLeft(),
           rshipj.getLeft(), rshipi.getLeft(), rshipi)) == in.getInt(
               swappingView.tieTarget(rshipi.getLeft(), rshipj.getLeft(), rshipj.getLeft(), rshipj))
@@ -533,13 +537,12 @@ public class GenericOperatorsTest {
     };
 
     Network network = createNetwork3();
-    int n = network.countMonadicIndices();
     NetworkView<Relationship, Relationship> outgoingView = NetworkView
         .fromNetworkRelation(network, Direction.OUTGOING);
     TransposableNetworkView<Relationship, Relationship> swappingView = swappingOutgoingView(
         network);
     RoleOperator<ConstMapping.OfInt> roleOp = RoleOperators.EQUIVALENCE.generic().equitable()
-        .of(n, outgoingView).traits(randomTraits).make();
+        .of(outgoingView).traits(randomTraits).make();
     assertEquals(isotone, roleOp.isIsotone());
     assertEquals(constant, roleOp.isConstant());
     assertEquals(nonincreasing, roleOp.isNonincreasing());
@@ -551,10 +554,10 @@ public class GenericOperatorsTest {
         5, 4);
     ConstMapping.OfInt structure2 = Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4,
         5, 4);
-    ConstMapping.OfInt result = RoleOperators.EQUIVALENCE.weak().equitable().of(n, outgoingView)
+    ConstMapping.OfInt result = RoleOperators.EQUIVALENCE.weak().equitable().of(outgoingView)
         .make().apply(input);
 
-    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(n, outgoingView)
+    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -584,7 +587,7 @@ public class GenericOperatorsTest {
         Equivalences.supremum(input, result));
 
     roleOp = RoleOperators.EQUIVALENCE.generic().equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -613,7 +616,7 @@ public class GenericOperatorsTest {
         Equivalences.supremum(structure1, result), Equivalences.infimum(input, result),
         Equivalences.supremum(input, result));
 
-    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(n, swappingView)
+    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(swappingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -643,7 +646,7 @@ public class GenericOperatorsTest {
         Equivalences.supremum(input, result));
 
     result = RoleOperators.EQUIVALENCE
-        .weak().equitable().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+        .weak().equitable().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
             .compare(input.getInt(rshipi.getRight()), input.getInt(rshipj.getRight())))
         .make().apply(input);
 
@@ -653,7 +656,7 @@ public class GenericOperatorsTest {
       prev = interior;
       ConstMapping.OfInt curr = interior;
       interior = Equivalences.infimum(RoleOperators.EQUIVALENCE.weak().equitable()
-          .of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(curr.getInt(rshipi.getRight()), curr.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
@@ -663,12 +666,12 @@ public class GenericOperatorsTest {
       prev = closure;
       ConstMapping.OfInt curr = closure;
       closure = Equivalences.supremum(RoleOperators.EQUIVALENCE.weak().equitable()
-          .of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(curr.getInt(rshipi.getRight()), curr.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
 
-    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(n, outgoingView).compWeak(in -> {
+    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(outgoingView).compWeak(in -> {
       return (rshipi, rshipj) -> Integer.compare(in.getInt(rshipi.getRight()),
           in.getInt(rshipj.getRight()));
     }).traits(new OperatorTraits() {
@@ -701,7 +704,7 @@ public class GenericOperatorsTest {
         Equivalences.supremum(structure1, result), interior, closure);
 
     roleOp = RoleOperators.EQUIVALENCE.generic().equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compWeak(in -> {
           return (rshipi, rshipj) -> Integer.compare(in.getInt(rshipi.getRight()),
               in.getInt(rshipj.getRight()));
@@ -734,7 +737,7 @@ public class GenericOperatorsTest {
         Equivalences.infimum(structure2, result), Equivalences.supremum(structure1, result),
         Equivalences.supremum(structure1, result), interior, closure);
 
-    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(n, swappingView).compWeak(in -> {
+    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(swappingView).compWeak(in -> {
       return (rshipi, rshipj) -> Integer.compare(in.getInt(rshipi.getRight()),
           in.getInt(rshipj.getRight()));
     }).traits(new OperatorTraits() {
@@ -767,8 +770,8 @@ public class GenericOperatorsTest {
         Equivalences.supremum(structure1, result), interior, closure);
 
     RoleOperator<ConstMapping.OfInt> expected = RoleOperators.EQUIVALENCE.regular().equitable()
-        .of(n, outgoingView).make();
-    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(n, outgoingView).compPartial(in -> {
+        .of(outgoingView).make();
+    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(outgoingView).compPartial(in -> {
       return (rshipi, rshipj) -> in.getInt(rshipi.getRight()) == in.getInt(rshipj.getRight())
           ? PartialComparator.ComparisonResult.EQUAL
           : PartialComparator.ComparisonResult.INCOMPARABLE;
@@ -804,7 +807,7 @@ public class GenericOperatorsTest {
         expected.closure(input));
 
     roleOp = RoleOperators.EQUIVALENCE.generic().equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compPartial(in -> {
           return (rshipi, rshipj) -> in.getInt(rshipi.getRight()) == in.getInt(rshipj.getRight())
               ? PartialComparator.ComparisonResult.EQUAL
@@ -839,12 +842,12 @@ public class GenericOperatorsTest {
         expected.closure(input));
 
     assertThrows(UnsupportedOperationException.class, () -> RoleOperators.EQUIVALENCE.generic()
-        .equitable().of(n, swappingView).compPredicate(in -> {
+        .equitable().of(swappingView).compPredicate(in -> {
           return (rshipi, rshipj) -> in.getInt(rshipi.getRight()) == in.getInt(rshipj.getRight());
         }));
 
-    expected = RoleOperators.EQUIVALENCE.regular().equitable().of(n, swappingView).make();
-    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(n, swappingView).compPartial(in -> {
+    expected = RoleOperators.EQUIVALENCE.regular().equitable().of(swappingView).make();
+    roleOp = RoleOperators.EQUIVALENCE.generic().equitable().of(swappingView).compPartial(in -> {
       return (rshipi, rshipj) -> in.getInt(swappingView.tieTarget(rshipi.getLeft(),
           rshipj.getLeft(), rshipi.getLeft(), rshipi)) == in.getInt(
               swappingView.tieTarget(rshipi.getLeft(), rshipj.getLeft(), rshipj.getLeft(), rshipj))
@@ -913,12 +916,11 @@ public class GenericOperatorsTest {
     };
 
     Network network = createNetwork3();
-    int n = network.countMonadicIndices();
     NetworkView<Relationship, Relationship> outgoingView = NetworkView
         .fromNetworkRelation(network, Direction.OUTGOING);
     TransposableNetworkView<Relationship, Relationship> swappingView = swappingOutgoingView(
         network);
-    RoleOperator<Ranking> roleOp = RoleOperators.RANKING.generic().of(n, outgoingView)
+    RoleOperator<Ranking> roleOp = RoleOperators.RANKING.generic().of(outgoingView)
         .traits(randomTraits).make();
     assertEquals(isotone, roleOp.isIsotone());
     assertEquals(constant, roleOp.isConstant());
@@ -931,9 +933,9 @@ public class GenericOperatorsTest {
         .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4, 5, 4));
     Ranking structure2 = Rankings
         .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4, 5, 4));
-    Ranking result = RoleOperators.RANKING.weak().of(n, outgoingView).make().apply(input);
+    Ranking result = RoleOperators.RANKING.weak().of(outgoingView).make().apply(input);
 
-    roleOp = RoleOperators.RANKING.generic().of(n, outgoingView).traits(new OperatorTraits() {
+    roleOp = RoleOperators.RANKING.generic().of(outgoingView).traits(new OperatorTraits() {
 
       @Override
       public boolean isNonincreasing() {
@@ -962,7 +964,7 @@ public class GenericOperatorsTest {
         Rankings.supremum(input, result));
 
     roleOp = RoleOperators.RANKING.generic()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -991,7 +993,7 @@ public class GenericOperatorsTest {
         Rankings.supremum(structure1, result), Rankings.infimum(input, result),
         Rankings.supremum(input, result));
 
-    roleOp = RoleOperators.RANKING.generic().of(n, swappingView).traits(new OperatorTraits() {
+    roleOp = RoleOperators.RANKING.generic().of(swappingView).traits(new OperatorTraits() {
 
       @Override
       public boolean isNonincreasing() {
@@ -1022,7 +1024,7 @@ public class GenericOperatorsTest {
     ConstMapping.OfInt eq = Converters.strongComponentsAsEquivalence()
         .apply(input.asBinaryRelation());
     result = RoleOperators.RANKING
-        .weak().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+        .weak().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
             .compare(eq.getInt(rshipi.getRight()), eq.getInt(rshipj.getRight())))
         .make().apply(input);
 
@@ -1034,7 +1036,7 @@ public class GenericOperatorsTest {
       ConstMapping.OfInt currEq = Converters.strongComponentsAsEquivalence()
           .apply(curr.asBinaryRelation());
       interior = Rankings.infimum(RoleOperators.RANKING
-          .weak().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .weak().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(currEq.getInt(rshipi.getRight()), currEq.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
@@ -1046,12 +1048,12 @@ public class GenericOperatorsTest {
       ConstMapping.OfInt currEq = Converters.strongComponentsAsEquivalence()
           .apply(curr.asBinaryRelation());
       closure = Rankings.supremum(RoleOperators.RANKING
-          .weak().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .weak().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(currEq.getInt(rshipi.getRight()), currEq.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
 
-    roleOp = RoleOperators.RANKING.generic().of(n, outgoingView).compWeak(in -> {
+    roleOp = RoleOperators.RANKING.generic().of(outgoingView).compWeak(in -> {
       ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence()
           .apply(in.asBinaryRelation());
       return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
@@ -1086,7 +1088,7 @@ public class GenericOperatorsTest {
         Rankings.supremum(structure1, result), interior, closure);
 
     roleOp = RoleOperators.RANKING.generic()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compWeak(in -> {
           ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence()
               .apply(in.asBinaryRelation());
@@ -1121,7 +1123,7 @@ public class GenericOperatorsTest {
         Rankings.infimum(structure2, result), Rankings.supremum(structure1, result),
         Rankings.supremum(structure1, result), interior, closure);
 
-    roleOp = RoleOperators.RANKING.generic().of(n, swappingView).compWeak(in -> {
+    roleOp = RoleOperators.RANKING.generic().of(swappingView).compWeak(in -> {
       ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence()
           .apply(in.asBinaryRelation());
       return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
@@ -1155,8 +1157,8 @@ public class GenericOperatorsTest {
         Rankings.infimum(structure2, result), Rankings.supremum(structure1, result),
         Rankings.supremum(structure1, result), interior, closure);
 
-    RoleOperator<Ranking> expected = RoleOperators.RANKING.regular().of(n, outgoingView).make();
-    roleOp = RoleOperators.RANKING.generic().of(n, outgoingView).compPartial(in -> {
+    RoleOperator<Ranking> expected = RoleOperators.RANKING.regular().of(outgoingView).make();
+    roleOp = RoleOperators.RANKING.generic().of(outgoingView).compPartial(in -> {
       return (rshipi, rshipj) -> {
         int val = 0;
         if (in.contains(rshipi.getRight(), rshipj.getRight())) {
@@ -1209,7 +1211,7 @@ public class GenericOperatorsTest {
         Rankings.supremum(structure1, result), expected.interior(input), expected.closure(input));
 
     roleOp = RoleOperators.RANKING.generic()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compPartial(in -> {
           return (rshipi, rshipj) -> {
             int val = 0;
@@ -1261,11 +1263,11 @@ public class GenericOperatorsTest {
         Rankings.supremum(structure1, result), expected.interior(input), expected.closure(input));
 
     assertThrows(UnsupportedOperationException.class,
-        () -> RoleOperators.RANKING.generic().of(n, swappingView).compPredicate(in -> {
+        () -> RoleOperators.RANKING.generic().of(swappingView).compPredicate(in -> {
           return (rshipi, rshipj) -> in.contains(rshipi.getRight(), rshipj.getRight());
         }));
-    expected = RoleOperators.RANKING.regular().of(n, swappingView).make();
-    roleOp = RoleOperators.RANKING.generic().of(n, swappingView).compPartial(in -> {
+    expected = RoleOperators.RANKING.regular().of(swappingView).make();
+    roleOp = RoleOperators.RANKING.generic().of(swappingView).compPartial(in -> {
       return (rshipi, rshipj) -> {
         int val = 0;
         int itarget = swappingView.tieTarget(rshipi.getLeft(), rshipj.getLeft(), rshipi.getLeft(),
@@ -1353,12 +1355,11 @@ public class GenericOperatorsTest {
     };
 
     Network network = createNetwork3();
-    int n = network.countMonadicIndices();
     NetworkView<Relationship, Relationship> outgoingView = NetworkView
         .fromNetworkRelation(network, Direction.OUTGOING);
     TransposableNetworkView<Relationship, Relationship> swappingView = swappingOutgoingView(
         network);
-    RoleOperator<Ranking> roleOp = RoleOperators.RANKING.generic().equitable().of(n, outgoingView)
+    RoleOperator<Ranking> roleOp = RoleOperators.RANKING.generic().equitable().of(outgoingView)
         .traits(randomTraits).make();
     assertEquals(isotone, roleOp.isIsotone());
     assertEquals(constant, roleOp.isConstant());
@@ -1371,10 +1372,10 @@ public class GenericOperatorsTest {
         .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4, 5, 4));
     Ranking structure2 = Rankings
         .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4, 5, 4));
-    Ranking result = RoleOperators.RANKING.weak().equitable().of(n, outgoingView).make()
+    Ranking result = RoleOperators.RANKING.weak().equitable().of(outgoingView).make()
         .apply(input);
 
-    roleOp = RoleOperators.RANKING.generic().equitable().of(n, outgoingView)
+    roleOp = RoleOperators.RANKING.generic().equitable().of(outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -1404,7 +1405,7 @@ public class GenericOperatorsTest {
         Rankings.supremum(input, result));
 
     roleOp = RoleOperators.RANKING.generic().equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -1433,7 +1434,7 @@ public class GenericOperatorsTest {
         Rankings.supremum(structure1, result), Rankings.infimum(input, result),
         Rankings.supremum(input, result));
 
-    roleOp = RoleOperators.RANKING.generic().equitable().of(n, swappingView)
+    roleOp = RoleOperators.RANKING.generic().equitable().of(swappingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -1465,7 +1466,7 @@ public class GenericOperatorsTest {
     ConstMapping.OfInt eq = Converters.strongComponentsAsEquivalence()
         .apply(input.asBinaryRelation());
     result = RoleOperators.RANKING
-        .weak().equitable().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+        .weak().equitable().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
             .compare(eq.getInt(rshipi.getRight()), eq.getInt(rshipj.getRight())))
         .make().apply(input);
 
@@ -1477,7 +1478,7 @@ public class GenericOperatorsTest {
       ConstMapping.OfInt currEq = Converters.strongComponentsAsEquivalence()
           .apply(curr.asBinaryRelation());
       interior = Rankings.infimum(RoleOperators.RANKING
-          .weak().equitable().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .weak().equitable().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(currEq.getInt(rshipi.getRight()), currEq.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
@@ -1489,12 +1490,12 @@ public class GenericOperatorsTest {
       ConstMapping.OfInt currEq = Converters.strongComponentsAsEquivalence()
           .apply(curr.asBinaryRelation());
       closure = Rankings.supremum(RoleOperators.RANKING
-          .weak().equitable().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .weak().equitable().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(currEq.getInt(rshipi.getRight()), currEq.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
 
-    roleOp = RoleOperators.RANKING.generic().equitable().of(n, outgoingView).compWeak(in -> {
+    roleOp = RoleOperators.RANKING.generic().equitable().of(outgoingView).compWeak(in -> {
       ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence()
           .apply(in.asBinaryRelation());
       return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
@@ -1529,7 +1530,7 @@ public class GenericOperatorsTest {
         Rankings.supremum(structure1, result), interior, closure);
 
     roleOp = RoleOperators.RANKING.generic().equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compWeak(in -> {
           ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence()
               .apply(in.asBinaryRelation());
@@ -1564,7 +1565,7 @@ public class GenericOperatorsTest {
         Rankings.infimum(structure2, result), Rankings.supremum(structure1, result),
         Rankings.supremum(structure1, result), interior, closure);
 
-    roleOp = RoleOperators.RANKING.generic().equitable().of(n, swappingView).compWeak(in -> {
+    roleOp = RoleOperators.RANKING.generic().equitable().of(swappingView).compWeak(in -> {
       ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence()
           .apply(in.asBinaryRelation());
       return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
@@ -1598,9 +1599,9 @@ public class GenericOperatorsTest {
         Rankings.infimum(structure2, result), Rankings.supremum(structure1, result),
         Rankings.supremum(structure1, result), interior, closure);
 
-    RoleOperator<Ranking> expected = RoleOperators.RANKING.regular().equitable().of(n, outgoingView)
+    RoleOperator<Ranking> expected = RoleOperators.RANKING.regular().equitable().of(outgoingView)
         .make();
-    roleOp = RoleOperators.RANKING.generic().equitable().of(n, outgoingView).compPartial(in -> {
+    roleOp = RoleOperators.RANKING.generic().equitable().of(outgoingView).compPartial(in -> {
       return (rshipi, rshipj) -> {
         int val = 0;
         if (in.contains(rshipi.getRight(), rshipj.getRight())) {
@@ -1653,7 +1654,7 @@ public class GenericOperatorsTest {
         Rankings.supremum(structure1, result), expected.interior(input), expected.closure(input));
 
     roleOp = RoleOperators.RANKING.generic().equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compPartial(in -> {
           return (rshipi, rshipj) -> {
             int val = 0;
@@ -1705,11 +1706,11 @@ public class GenericOperatorsTest {
         Rankings.supremum(structure1, result), expected.interior(input), expected.closure(input));
 
     assertThrows(UnsupportedOperationException.class,
-        () -> RoleOperators.RANKING.generic().equitable().of(n, swappingView).compPredicate(in -> {
+        () -> RoleOperators.RANKING.generic().equitable().of(swappingView).compPredicate(in -> {
           return (rshipi, rshipj) -> in.contains(rshipi.getRight(), rshipj.getRight());
         }));
-    expected = RoleOperators.RANKING.regular().equitable().of(n, swappingView).make();
-    roleOp = RoleOperators.RANKING.generic().equitable().of(n, swappingView).compPartial(in -> {
+    expected = RoleOperators.RANKING.regular().equitable().of(swappingView).make();
+    roleOp = RoleOperators.RANKING.generic().equitable().of(swappingView).compPartial(in -> {
       return (rshipi, rshipj) -> {
         int val = 0;
         int itarget = swappingView.tieTarget(rshipi.getLeft(), rshipj.getLeft(), rshipi.getLeft(),
@@ -1797,12 +1798,11 @@ public class GenericOperatorsTest {
     };
 
     Network network = createNetwork3();
-    int n = network.countMonadicIndices();
     NetworkView<Relationship, Relationship> outgoingView = NetworkView
         .fromNetworkRelation(network, Direction.OUTGOING);
     TransposableNetworkView<Relationship, Relationship> swappingView = swappingOutgoingView(
         network);
-    RoleOperator<BinaryRelation> roleOp = RoleOperators.BINARYRELATION.generic().of(n, outgoingView)
+    RoleOperator<BinaryRelation> roleOp = RoleOperators.BINARYRELATION.generic().of(outgoingView)
         .traits(randomTraits).make();
     assertEquals(isotone, roleOp.isIsotone());
     assertEquals(constant, roleOp.isConstant());
@@ -1815,10 +1815,10 @@ public class GenericOperatorsTest {
         .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4, 5, 4));
     BinaryRelation structure2 = BinaryRelations
         .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4, 5, 4));
-    BinaryRelation result = RoleOperators.BINARYRELATION.weak().of(n, outgoingView).make()
+    BinaryRelation result = RoleOperators.BINARYRELATION.weak().of(outgoingView).make()
         .apply(input);
 
-    roleOp = RoleOperators.BINARYRELATION.generic().of(n, outgoingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().of(outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -1848,7 +1848,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(input, result));
 
     roleOp = RoleOperators.BINARYRELATION.generic()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -1877,7 +1877,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), BinaryRelations.infimum(input, result),
         BinaryRelations.supremum(input, result));
 
-    roleOp = RoleOperators.BINARYRELATION.generic().of(n, swappingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().of(swappingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -1908,7 +1908,7 @@ public class GenericOperatorsTest {
 
     ConstMapping.OfInt eq = Converters.strongComponentsAsEquivalence().apply(input);
     result = RoleOperators.BINARYRELATION
-        .weak().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+        .weak().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
             .compare(eq.getInt(rshipi.getRight()), eq.getInt(rshipj.getRight())))
         .make().apply(input);
 
@@ -1919,7 +1919,7 @@ public class GenericOperatorsTest {
       BinaryRelation curr = interior;
       ConstMapping.OfInt currEq = Converters.strongComponentsAsEquivalence().apply(curr);
       interior = BinaryRelations.infimum(RoleOperators.BINARYRELATION
-          .weak().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .weak().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(currEq.getInt(rshipi.getRight()), currEq.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
@@ -1930,12 +1930,12 @@ public class GenericOperatorsTest {
       BinaryRelation curr = closure;
       ConstMapping.OfInt currEq = Converters.strongComponentsAsEquivalence().apply(curr);
       closure = BinaryRelations.supremum(RoleOperators.BINARYRELATION
-          .weak().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .weak().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(currEq.getInt(rshipi.getRight()), currEq.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
 
-    roleOp = RoleOperators.BINARYRELATION.generic().of(n, outgoingView).compWeak(in -> {
+    roleOp = RoleOperators.BINARYRELATION.generic().of(outgoingView).compWeak(in -> {
       ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence().apply(in);
       return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
           inEq.getInt(rshipj.getRight()));
@@ -1969,7 +1969,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), interior, closure);
 
     roleOp = RoleOperators.BINARYRELATION.generic()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compWeak(in -> {
           ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence().apply(in);
           return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
@@ -2003,7 +2003,7 @@ public class GenericOperatorsTest {
         BinaryRelations.infimum(structure2, result), BinaryRelations.supremum(structure1, result),
         BinaryRelations.supremum(structure1, result), interior, closure);
 
-    roleOp = RoleOperators.BINARYRELATION.generic().of(n, swappingView).compWeak(in -> {
+    roleOp = RoleOperators.BINARYRELATION.generic().of(swappingView).compWeak(in -> {
       ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence().apply(in);
       return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
           inEq.getInt(rshipj.getRight()));
@@ -2037,8 +2037,8 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), interior, closure);
 
     RoleOperator<BinaryRelation> expected = RoleOperators.BINARYRELATION.regular()
-        .of(n, outgoingView).make();
-    roleOp = RoleOperators.BINARYRELATION.generic().of(n, outgoingView).compPartial(in -> {
+        .of(outgoingView).make();
+    roleOp = RoleOperators.BINARYRELATION.generic().of(outgoingView).compPartial(in -> {
       return (rshipi, rshipj) -> {
         int val = 0;
         if (in.contains(rshipi.getRight(), rshipj.getRight())) {
@@ -2092,7 +2092,7 @@ public class GenericOperatorsTest {
         expected.closure(input));
 
     roleOp = RoleOperators.BINARYRELATION.generic()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compPartial(in -> {
           return (rshipi, rshipj) -> {
             int val = 0;
@@ -2144,7 +2144,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), expected.interior(input),
         expected.closure(input));
 
-    roleOp = RoleOperators.BINARYRELATION.generic().of(n, outgoingView).compPredicate(in -> {
+    roleOp = RoleOperators.BINARYRELATION.generic().of(outgoingView).compPredicate(in -> {
       return (rshipi, rshipj) -> in.contains(rshipi.getRight(), rshipj.getRight());
     }).make();
     OperatorTestUtilities.checkRoleOperator(roleOp, input, result, true, false, false, false,
@@ -2155,7 +2155,7 @@ public class GenericOperatorsTest {
         expected.closure(input));
 
     roleOp = RoleOperators.BINARYRELATION.generic()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compPredicate(in -> {
           return (rshipi, rshipj) -> in.contains(rshipi.getRight(), rshipj.getRight());
         }).make();
@@ -2166,8 +2166,8 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), expected.interior(input),
         expected.closure(input));
 
-    expected = RoleOperators.BINARYRELATION.regular().of(n, swappingView).make();
-    roleOp = RoleOperators.BINARYRELATION.generic().of(n, swappingView).compPartial(in -> {
+    expected = RoleOperators.BINARYRELATION.regular().of(swappingView).make();
+    roleOp = RoleOperators.BINARYRELATION.generic().of(swappingView).compPartial(in -> {
       return (rshipi, rshipj) -> {
         int val = 0;
         int itarget = swappingView.tieTarget(rshipi.getLeft(), rshipj.getLeft(), rshipi.getLeft(),
@@ -2224,7 +2224,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), expected.interior(input),
         expected.closure(input));
 
-    roleOp = RoleOperators.BINARYRELATION.generic().of(n, swappingView).compPredicate(in -> {
+    roleOp = RoleOperators.BINARYRELATION.generic().of(swappingView).compPredicate(in -> {
       return (rshipi, rshipj) -> in.contains(
           swappingView.tieTarget(rshipi.getLeft(), rshipj.getLeft(), rshipi.getLeft(), rshipi),
           swappingView.tieTarget(rshipi.getLeft(), rshipj.getLeft(), rshipj.getLeft(), rshipj));
@@ -2268,13 +2268,12 @@ public class GenericOperatorsTest {
     };
 
     Network network = createNetwork3();
-    int n = network.countMonadicIndices();
     NetworkView<Relationship, Relationship> outgoingView = NetworkView
         .fromNetworkRelation(network, Direction.OUTGOING);
     TransposableNetworkView<Relationship, Relationship> swappingView = swappingOutgoingView(
         network);
     RoleOperator<BinaryRelation> roleOp = RoleOperators.BINARYRELATION.generic().equitable()
-        .of(n, outgoingView).traits(randomTraits).make();
+        .of(outgoingView).traits(randomTraits).make();
     assertEquals(isotone, roleOp.isIsotone());
     assertEquals(constant, roleOp.isConstant());
     assertEquals(nonincreasing, roleOp.isNonincreasing());
@@ -2286,10 +2285,10 @@ public class GenericOperatorsTest {
         .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4, 5, 4));
     BinaryRelation structure2 = BinaryRelations
         .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4, 5, 4));
-    BinaryRelation result = RoleOperators.BINARYRELATION.weak().equitable().of(n, outgoingView)
+    BinaryRelation result = RoleOperators.BINARYRELATION.weak().equitable().of(outgoingView)
         .make().apply(input);
 
-    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(n, outgoingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -2319,7 +2318,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(input, result));
 
     roleOp = RoleOperators.BINARYRELATION.generic().equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -2348,7 +2347,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), BinaryRelations.infimum(input, result),
         BinaryRelations.supremum(input, result));
 
-    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(n, swappingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(swappingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -2379,7 +2378,7 @@ public class GenericOperatorsTest {
 
     ConstMapping.OfInt eq = Converters.strongComponentsAsEquivalence().apply(input);
     result = RoleOperators.BINARYRELATION
-        .weak().equitable().of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+        .weak().equitable().of(outgoingView).compWeak((rshipi, rshipj) -> Integer
             .compare(eq.getInt(rshipi.getRight()), eq.getInt(rshipj.getRight())))
         .make().apply(input);
 
@@ -2390,7 +2389,7 @@ public class GenericOperatorsTest {
       BinaryRelation curr = interior;
       ConstMapping.OfInt currEq = Converters.strongComponentsAsEquivalence().apply(curr);
       interior = BinaryRelations.infimum(RoleOperators.BINARYRELATION.weak().equitable()
-          .of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(currEq.getInt(rshipi.getRight()), currEq.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
@@ -2401,12 +2400,12 @@ public class GenericOperatorsTest {
       BinaryRelation curr = closure;
       ConstMapping.OfInt currEq = Converters.strongComponentsAsEquivalence().apply(curr);
       closure = BinaryRelations.supremum(RoleOperators.BINARYRELATION.weak().equitable()
-          .of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(currEq.getInt(rshipi.getRight()), currEq.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
 
-    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(n, outgoingView).compWeak(in -> {
+    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(outgoingView).compWeak(in -> {
       ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence().apply(in);
       return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
           inEq.getInt(rshipj.getRight()));
@@ -2440,7 +2439,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), interior, closure);
 
     roleOp = RoleOperators.BINARYRELATION.generic().equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compWeak(in -> {
           ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence().apply(in);
           return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
@@ -2474,7 +2473,7 @@ public class GenericOperatorsTest {
         BinaryRelations.infimum(structure2, result), BinaryRelations.supremum(structure1, result),
         BinaryRelations.supremum(structure1, result), interior, closure);
 
-    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(n, swappingView).compWeak(in -> {
+    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(swappingView).compWeak(in -> {
       ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence().apply(in);
       return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
           inEq.getInt(rshipj.getRight()));
@@ -2508,8 +2507,8 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), interior, closure);
 
     RoleOperator<BinaryRelation> expected = RoleOperators.BINARYRELATION.regular().equitable()
-        .of(n, outgoingView).make();
-    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(n, outgoingView)
+        .of(outgoingView).make();
+    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(outgoingView)
         .compPartial(in -> {
           return (rshipi, rshipj) -> {
             int val = 0;
@@ -2564,7 +2563,7 @@ public class GenericOperatorsTest {
         expected.closure(input));
 
     roleOp = RoleOperators.BINARYRELATION.generic().equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compPartial(in -> {
           return (rshipi, rshipj) -> {
             int val = 0;
@@ -2616,7 +2615,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), expected.interior(input),
         expected.closure(input));
 
-    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(n, outgoingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(outgoingView)
         .compPredicate(in -> {
           return (rshipi, rshipj) -> in.contains(rshipi.getRight(), rshipj.getRight());
         }).make();
@@ -2628,7 +2627,7 @@ public class GenericOperatorsTest {
         expected.closure(input));
 
     roleOp = RoleOperators.BINARYRELATION.generic().equitable()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compPredicate(in -> {
           return (rshipi, rshipj) -> in.contains(rshipi.getRight(), rshipj.getRight());
         }).make();
@@ -2639,8 +2638,8 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), expected.interior(input),
         expected.closure(input));
 
-    expected = RoleOperators.BINARYRELATION.regular().equitable().of(n, swappingView).make();
-    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(n, swappingView)
+    expected = RoleOperators.BINARYRELATION.regular().equitable().of(swappingView).make();
+    roleOp = RoleOperators.BINARYRELATION.generic().equitable().of(swappingView)
         .compPartial(in -> {
           return (rshipi, rshipj) -> {
             int val = 0;
@@ -2698,7 +2697,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), expected.interior(input),
         expected.closure(input));
 
-    roleOp = RoleOperators.BINARYRELATION.generic().equitable().equitable().of(n, swappingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().equitable().equitable().of(swappingView)
         .compPredicate(in -> {
           return (rshipi, rshipj) -> in.contains(
               swappingView.tieTarget(rshipi.getLeft(), rshipj.getLeft(), rshipi.getLeft(), rshipi),
@@ -2743,13 +2742,12 @@ public class GenericOperatorsTest {
     };
 
     Network network = createNetwork3();
-    int n = network.countMonadicIndices();
     NetworkView<Relationship, Relationship> outgoingView = NetworkView
         .fromNetworkRelation(network, Direction.OUTGOING);
     TransposableNetworkView<Relationship, Relationship> swappingView = swappingOutgoingView(
         network);
     RoleOperator<BinaryRelation> roleOp = RoleOperators.BINARYRELATION.generic().strictness(2)
-        .of(n, outgoingView).traits(randomTraits).make();
+        .of(outgoingView).traits(randomTraits).make();
     assertEquals(isotone, roleOp.isIsotone());
     assertEquals(constant, roleOp.isConstant());
     assertEquals(nonincreasing, roleOp.isNonincreasing());
@@ -2761,10 +2759,10 @@ public class GenericOperatorsTest {
         .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4, 5, 4));
     BinaryRelation structure2 = BinaryRelations
         .fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 1, 2, 1, 1, 3, 4, 5, 3, 3, 4, 5, 4));
-    BinaryRelation result = RoleOperators.BINARYRELATION.weak().strictness(2).of(n, outgoingView)
+    BinaryRelation result = RoleOperators.BINARYRELATION.weak().strictness(2).of(outgoingView)
         .make().apply(input);
 
-    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(n, outgoingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -2794,7 +2792,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(input, result));
 
     roleOp = RoleOperators.BINARYRELATION.generic().strictness(2)
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -2823,7 +2821,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), BinaryRelations.infimum(input, result),
         BinaryRelations.supremum(input, result));
 
-    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(n, swappingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(swappingView)
         .traits(new OperatorTraits() {
 
           @Override
@@ -2854,7 +2852,7 @@ public class GenericOperatorsTest {
 
     ConstMapping.OfInt eq = Converters.strongComponentsAsEquivalence().apply(input);
     result = RoleOperators.BINARYRELATION
-        .weak().strictness(2).of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+        .weak().strictness(2).of(outgoingView).compWeak((rshipi, rshipj) -> Integer
             .compare(eq.getInt(rshipi.getRight()), eq.getInt(rshipj.getRight())))
         .make().apply(input);
 
@@ -2865,7 +2863,7 @@ public class GenericOperatorsTest {
       BinaryRelation curr = interior;
       ConstMapping.OfInt currEq = Converters.strongComponentsAsEquivalence().apply(curr);
       interior = BinaryRelations.infimum(RoleOperators.BINARYRELATION.weak().strictness(2)
-          .of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(currEq.getInt(rshipi.getRight()), currEq.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
@@ -2876,12 +2874,12 @@ public class GenericOperatorsTest {
       BinaryRelation curr = closure;
       ConstMapping.OfInt currEq = Converters.strongComponentsAsEquivalence().apply(curr);
       closure = BinaryRelations.supremum(RoleOperators.BINARYRELATION.weak().strictness(2)
-          .of(n, outgoingView).compWeak((rshipi, rshipj) -> Integer
+          .of(outgoingView).compWeak((rshipi, rshipj) -> Integer
               .compare(currEq.getInt(rshipi.getRight()), currEq.getInt(rshipj.getRight())))
           .make().apply(input), curr);
     }
 
-    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(n, outgoingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(outgoingView)
         .compWeak(in -> {
           ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence().apply(in);
           return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
@@ -2916,7 +2914,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), interior, closure);
 
     roleOp = RoleOperators.BINARYRELATION.generic().strictness(2)
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compWeak(in -> {
           ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence().apply(in);
           return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
@@ -2950,7 +2948,7 @@ public class GenericOperatorsTest {
         BinaryRelations.infimum(structure2, result), BinaryRelations.supremum(structure1, result),
         BinaryRelations.supremum(structure1, result), interior, closure);
 
-    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(n, swappingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(swappingView)
         .compWeak(in -> {
           ConstMapping.OfInt inEq = Converters.strongComponentsAsEquivalence().apply(in);
           return (rshipi, rshipj) -> Integer.compare(inEq.getInt(rshipi.getRight()),
@@ -2985,8 +2983,8 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), interior, closure);
 
     RoleOperator<BinaryRelation> expected = RoleOperators.BINARYRELATION.regular().strictness(2)
-        .of(n, outgoingView).make();
-    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(n, outgoingView)
+        .of(outgoingView).make();
+    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(outgoingView)
         .compPartial(in -> {
           return (rshipi, rshipj) -> {
             int val = 0;
@@ -3041,7 +3039,7 @@ public class GenericOperatorsTest {
         expected.closure(input));
 
     roleOp = RoleOperators.BINARYRELATION.generic().strictness(2)
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compPartial(in -> {
           return (rshipi, rshipj) -> {
             int val = 0;
@@ -3093,7 +3091,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), expected.interior(input),
         expected.closure(input));
 
-    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(n, outgoingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(outgoingView)
         .compPredicate(in -> {
           return (rshipi, rshipj) -> in.contains(rshipi.getRight(), rshipj.getRight());
         }).make();
@@ -3105,7 +3103,7 @@ public class GenericOperatorsTest {
         expected.closure(input));
 
     roleOp = RoleOperators.BINARYRELATION.generic().strictness(2)
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .compPredicate(in -> {
           return (rshipi, rshipj) -> in.contains(rshipi.getRight(), rshipj.getRight());
         }).make();
@@ -3116,8 +3114,8 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), expected.interior(input),
         expected.closure(input));
 
-    expected = RoleOperators.BINARYRELATION.regular().strictness(2).of(n, swappingView).make();
-    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(n, swappingView)
+    expected = RoleOperators.BINARYRELATION.regular().strictness(2).of(swappingView).make();
+    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(swappingView)
         .compPartial(in -> {
           return (rshipi, rshipj) -> {
             int val = 0;
@@ -3175,7 +3173,7 @@ public class GenericOperatorsTest {
         BinaryRelations.supremum(structure1, result), expected.interior(input),
         expected.closure(input));
 
-    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(n, swappingView)
+    roleOp = RoleOperators.BINARYRELATION.generic().strictness(2).of(swappingView)
         .compPredicate(in -> {
           return (rshipi, rshipj) -> in.contains(
               swappingView.tieTarget(rshipi.getLeft(), rshipj.getLeft(), rshipi.getLeft(), rshipi),
@@ -3223,13 +3221,12 @@ public class GenericOperatorsTest {
     };
 
     Network network = createNetwork3();
-    int n = network.countMonadicIndices();
     NetworkView<Relationship, Relationship> outgoingView = NetworkView
         .fromNetworkRelation(network, Direction.OUTGOING);
     TransposableNetworkView<Relationship, Relationship> swappingView = swappingOutgoingView(
         network);
     Operator<ConstMapping.OfInt, IntDistanceMatrix> roleOp = genericFactory.get()
-        .of(n, outgoingView).traits(randomTraits).make();
+        .of(outgoingView).traits(randomTraits).make();
     assertEquals(isotone, roleOp.isIsotone());
     assertEquals(constant, roleOp.isConstant());
     assertEquals(nonincreasing, roleOp.isNonincreasing());
@@ -3291,30 +3288,30 @@ public class GenericOperatorsTest {
     };
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, outgoingView).traits(constantTraits).make(), input,
-        weakFactory.get().of(n, outgoingView).make().apply(input), true, true,
+        genericFactory.get().of(outgoingView).traits(constantTraits).make(), input,
+        weakFactory.get().of(outgoingView).make().apply(input), true, true,
             false, false, () -> {
             });
 
     OperatorTestUtilities.checkOperator(genericFactory.get()
-        .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+        .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
         .traits(constantTraits).make(), input,
-        weakFactory.get().of(n, outgoingView).make().apply(input), true, true,
+        weakFactory.get().of(outgoingView).make().apply(input), true, true,
         false, false, () -> {
         });
 
     OperatorTestUtilities
-        .checkOperator(genericFactory.get().of(n, swappingView).traits(constantTraits).make(),
-            input, weakFactory.get().of(n, swappingView).make().apply(input), true, true,
+        .checkOperator(genericFactory.get().of(swappingView).traits(constantTraits).make(), input,
+            weakFactory.get().of(swappingView).make().apply(input), true, true,
             false, false, () -> {
             });
 
     OperatorTestUtilities
         .checkOperator(
-            genericFactory.get().of(n, outgoingView).traits(constantTraits).failCost(failureCost)
+            genericFactory.get().of(outgoingView).traits(constantTraits).failCost(failureCost)
                 .make(),
             input,
-            weakFactory.get().of(n, outgoingView).failCost(failureCost.apply(input)).make()
+            weakFactory.get().of(outgoingView).failCost(failureCost.apply(input)).make()
                 .apply(input),
             true, true, false, false,
             () -> {
@@ -3322,45 +3319,45 @@ public class GenericOperatorsTest {
 
     OperatorTestUtilities
         .checkOperator(genericFactory.get()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
             .traits(constantTraits).failCost(failureCost).make(), input,
-            weakFactory.get().of(n, outgoingView)
+            weakFactory.get().of(outgoingView)
             .failCost(failureCost.apply(input)).make().apply(input), true, true, false, false,
             () -> {
             });
 
     OperatorTestUtilities
         .checkOperator(
-            genericFactory.get().of(n, swappingView).traits(constantTraits).failCost(failureCost)
+            genericFactory.get().of(swappingView).traits(constantTraits).failCost(failureCost)
                 .make(),
-            input, weakFactory.get().of(n, swappingView)
+            input, weakFactory.get().of(swappingView)
             .failCost(failureCost.apply(input)).make().apply(input), true, true, false, false,
             () -> {
             });
 
     OperatorTestUtilities
         .checkOperator(
-            genericFactory.get().of(n, outgoingView).traits(constantTraits).substCost(substCost)
+            genericFactory.get().of(outgoingView).traits(constantTraits).substCost(substCost)
                 .make(),
-            input, weakFactory.get().of(n, outgoingView)
+            input, weakFactory.get().of(outgoingView)
             .substCost(substCost.apply(input)).make().apply(input), true, true, false, false,
             () -> {
             });
 
     OperatorTestUtilities
         .checkOperator(genericFactory.get()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
             .traits(constantTraits).substCost(substCost).make(), input,
-            weakFactory.get().of(n, outgoingView)
+            weakFactory.get().of(outgoingView)
             .substCost(substCost.apply(input)).make().apply(input), true, true, false, false,
             () -> {
             });
 
     OperatorTestUtilities
         .checkOperator(
-            genericFactory.get().of(n, swappingView).traits(constantTraits).substCost(substCost)
+            genericFactory.get().of(swappingView).traits(constantTraits).substCost(substCost)
                 .make(),
-            input, weakFactory.get().of(n, swappingView)
+            input, weakFactory.get().of(swappingView)
             .substCost(substCost.apply(input)).make().apply(input), true, true, false, false,
             () -> {
             });
@@ -3369,9 +3366,9 @@ public class GenericOperatorsTest {
         rshipj) -> Integer.compare(rshipi.getRight(), rshipj.getRight());
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, outgoingView).compWeak(comparator).traits(isotoneTraits).make(),
+        genericFactory.get().of(outgoingView).compWeak(comparator).traits(isotoneTraits).make(),
         input,
-        weakFactory.get().of(n, outgoingView).compWeak(comparator.apply(input)).make().apply(input),
+        weakFactory.get().of(outgoingView).compWeak(comparator.apply(input)).make().apply(input),
         true,
         false, false, false,
         () -> {
@@ -3379,27 +3376,27 @@ public class GenericOperatorsTest {
 
     OperatorTestUtilities.checkOperator(
         genericFactory.get()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
             .compWeak(comparator).traits(isotoneTraits).make(),
         input,
-        weakFactory.get().of(n, outgoingView).compWeak(comparator.apply(input)).make().apply(input),
+        weakFactory.get().of(outgoingView).compWeak(comparator.apply(input)).make().apply(input),
         true, false, false, false,
         () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, swappingView).compWeak(comparator).traits(isotoneTraits).make(),
+        genericFactory.get().of(swappingView).compWeak(comparator).traits(isotoneTraits).make(),
         input,
-        weakFactory.get().of(n, swappingView).compWeak(comparator.apply(input)).make().apply(input),
+        weakFactory.get().of(swappingView).compWeak(comparator.apply(input)).make().apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, outgoingView).compWeak(comparator).traits(isotoneTraits)
+        genericFactory.get().of(outgoingView).compWeak(comparator).traits(isotoneTraits)
             .failCost(failureCost)
             .make(),
         input,
-        weakFactory.get().of(n, outgoingView).compWeak(comparator.apply(input))
+        weakFactory.get().of(outgoingView).compWeak(comparator.apply(input))
             .failCost(failureCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
@@ -3407,50 +3404,50 @@ public class GenericOperatorsTest {
 
     OperatorTestUtilities.checkOperator(
         genericFactory.get()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
             .traits(isotoneTraits).failCost(failureCost).compWeak(comparator).make(),
         input,
-        weakFactory.get().of(n, outgoingView).compWeak(comparator.apply(input))
+        weakFactory.get().of(outgoingView).compWeak(comparator.apply(input))
             .failCost(failureCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, swappingView).compWeak(comparator).traits(isotoneTraits)
+        genericFactory.get().of(swappingView).compWeak(comparator).traits(isotoneTraits)
             .failCost(failureCost)
             .make(),
         input,
-        weakFactory.get().of(n, swappingView).compWeak(comparator.apply(input))
+        weakFactory.get().of(swappingView).compWeak(comparator.apply(input))
             .failCost(failureCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, outgoingView).compWeak(comparator).traits(isotoneTraits)
+        genericFactory.get().of(outgoingView).compWeak(comparator).traits(isotoneTraits)
             .substCost(substCost).make(),
         input,
-        weakFactory.get().of(n, outgoingView).compWeak(comparator.apply(input))
+        weakFactory.get().of(outgoingView).compWeak(comparator.apply(input))
             .substCost(substCost.apply(input)).make().apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
         genericFactory.get()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
             .compWeak(comparator).traits(isotoneTraits).substCost(substCost).make(),
         input,
-        weakFactory.get().of(n, outgoingView).compWeak(comparator.apply(input))
+        weakFactory.get().of(outgoingView).compWeak(comparator.apply(input))
             .substCost(substCost.apply(input)).make().apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, swappingView).compWeak(comparator).traits(isotoneTraits)
+        genericFactory.get().of(swappingView).compWeak(comparator).traits(isotoneTraits)
             .substCost(substCost).make(),
         input,
-        weakFactory.get().of(n, swappingView).compWeak(comparator.apply(input))
+        weakFactory.get().of(swappingView).compWeak(comparator.apply(input))
             .substCost(substCost.apply(input)).make().apply(input),
         true, false, false, false, () -> {
         });
@@ -3469,82 +3466,82 @@ public class GenericOperatorsTest {
     };
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, outgoingView).compPartial(partialComparator)
+        genericFactory.get().of(outgoingView).compPartial(partialComparator)
             .traits(isotoneTraits).make(),
-        input, regularFactory.get().of(n, outgoingView).make().apply(input), true, false, false,
+        input, regularFactory.get().of(outgoingView).make().apply(input), true, false, false,
         false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
         genericFactory.get()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
             .compPartial(partialComparator).traits(isotoneTraits).make(),
         input,
-        regularFactory.get().of(n, outgoingView).make().apply(input),
+        regularFactory.get().of(outgoingView).make().apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, swappingView).compPartial(swapPartialComparator)
+        genericFactory.get().of(swappingView).compPartial(swapPartialComparator)
             .traits(isotoneTraits).make(),
         input,
-        regularFactory.get().of(n, swappingView).make().apply(input),
+        regularFactory.get().of(swappingView).make().apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, outgoingView).compPartial(partialComparator)
+        genericFactory.get().of(outgoingView).compPartial(partialComparator)
             .traits(isotoneTraits).failCost(failureCost).make(),
         input,
-        regularFactory.get().of(n, outgoingView).failCost(failureCost.apply(input)).make()
+        regularFactory.get().of(outgoingView).failCost(failureCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
         genericFactory.get()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
             .traits(isotoneTraits).failCost(failureCost).compPartial(partialComparator).make(),
         input,
-        regularFactory.get().of(n, outgoingView).failCost(failureCost.apply(input)).make()
+        regularFactory.get().of(outgoingView).failCost(failureCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, swappingView).compPartial(swapPartialComparator)
+        genericFactory.get().of(swappingView).compPartial(swapPartialComparator)
             .traits(isotoneTraits)
             .failCost(failureCost).make(),
         input,
-        regularFactory.get().of(n, swappingView).failCost(failureCost.apply(input)).make()
+        regularFactory.get().of(swappingView).failCost(failureCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, outgoingView).compPartial(partialComparator)
+        genericFactory.get().of(outgoingView).compPartial(partialComparator)
             .traits(isotoneTraits).substCost(substCost).make(),
         input,
-        regularFactory.get().of(n, outgoingView).substCost(substCost.apply(input)).make()
+        regularFactory.get().of(outgoingView).substCost(substCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
         genericFactory.get()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
             .compPartial(partialComparator).traits(isotoneTraits).substCost(substCost).make(),
         input,
-        regularFactory.get().of(n, outgoingView).substCost(substCost.apply(input)).make()
+        regularFactory.get().of(outgoingView).substCost(substCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, swappingView).compPartial(swapPartialComparator)
+        genericFactory.get().of(swappingView).compPartial(swapPartialComparator)
             .traits(isotoneTraits).substCost(substCost).make(),
         input,
-        regularFactory.get().of(n, swappingView).substCost(substCost.apply(input)).make()
+        regularFactory.get().of(swappingView).substCost(substCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
@@ -3558,73 +3555,73 @@ public class GenericOperatorsTest {
     };
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, outgoingView).compPredicate(predicate)
+        genericFactory.get().of(outgoingView).compPredicate(predicate)
             .traits(isotoneTraits).make(),
-        input, regularFactory.get().of(n, outgoingView).make().apply(input), true, false, false,
+        input, regularFactory.get().of(outgoingView).make().apply(input), true, false, false,
         false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
         genericFactory.get()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
             .compPredicate(predicate).traits(isotoneTraits).make(),
-        input, regularFactory.get().of(n, outgoingView).make().apply(input), true, false, false,
+        input, regularFactory.get().of(outgoingView).make().apply(input), true, false, false,
         false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, swappingView).compPredicate(swapPredicate)
+        genericFactory.get().of(swappingView).compPredicate(swapPredicate)
             .traits(isotoneTraits).make(),
-        input, regularFactory.get().of(n, swappingView).make().apply(input), true, false, false,
+        input, regularFactory.get().of(swappingView).make().apply(input), true, false, false,
         false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, outgoingView).compPredicate(predicate)
+        genericFactory.get().of(outgoingView).compPredicate(predicate)
             .traits(isotoneTraits).failCost(failureCost).make(),
-        input, regularFactory.get().of(n, outgoingView).failCost(failureCost.apply(input)).make()
+        input, regularFactory.get().of(outgoingView).failCost(failureCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
         genericFactory.get()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
             .traits(isotoneTraits).failCost(failureCost).compPredicate(predicate).make(),
-        input, regularFactory.get().of(n, outgoingView).failCost(failureCost.apply(input)).make()
+        input, regularFactory.get().of(outgoingView).failCost(failureCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, swappingView).compPredicate(swapPredicate)
+        genericFactory.get().of(swappingView).compPredicate(swapPredicate)
             .traits(isotoneTraits).failCost(failureCost).make(),
-        input, regularFactory.get().of(n, swappingView).failCost(failureCost.apply(input)).make()
+        input, regularFactory.get().of(swappingView).failCost(failureCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, outgoingView).compPredicate(predicate)
+        genericFactory.get().of(outgoingView).compPredicate(predicate)
             .traits(isotoneTraits).substCost(substCost).make(),
-        input, regularFactory.get().of(n, outgoingView).substCost(substCost.apply(input)).make()
+        input, regularFactory.get().of(outgoingView).substCost(substCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
         genericFactory.get()
-            .of(n, (TransposableNetworkView<Relationship, Relationship>) outgoingView)
+            .of((TransposableNetworkView<Relationship, Relationship>) outgoingView)
             .compPredicate(predicate).traits(isotoneTraits).substCost(substCost).make(),
-        input, regularFactory.get().of(n, outgoingView).substCost(substCost.apply(input)).make()
+        input, regularFactory.get().of(outgoingView).substCost(substCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });
 
     OperatorTestUtilities.checkOperator(
-        genericFactory.get().of(n, swappingView).compPredicate(swapPredicate)
+        genericFactory.get().of(swappingView).compPredicate(swapPredicate)
             .traits(isotoneTraits).substCost(substCost).make(),
-        input, regularFactory.get().of(n, swappingView).substCost(substCost.apply(input)).make()
+        input, regularFactory.get().of(swappingView).substCost(substCost.apply(input)).make()
             .apply(input),
         true, false, false, false, () -> {
         });

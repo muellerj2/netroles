@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
-package examples;
+package ch.ethz.sn.visone3.roles.test.blocks;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +48,7 @@ import ch.ethz.sn.visone3.roles.structures.Rankings;
 import ch.ethz.sn.visone3.roles.util.MultiplexNetworks;
 
 /***
- * Full code of usage examples described in USAGE.md.
+ * Code for usage examples described in USAGE.md.
  */
 public class Examples {
 
@@ -81,7 +81,7 @@ public class Examples {
 
     // create role operator for regular roles
     RoleOperator<ConstMapping.OfInt> regularOp = RoleOperators.EQUIVALENCE.regular()
-        .of(network.asUndirectedGraph().countVertices(), networkView)
+        .of(networkView)
         .make();
 
     // follow the sequence of relative regular equivalence starting from the initial equivalence
@@ -124,9 +124,9 @@ public class Examples {
 
     // create role operators for regular roles
     RoleOperator<ConstMapping.OfInt> outgoingRegularOp = RoleOperators.EQUIVALENCE.regular()
-        .of(n, outgoingNetworkView).make();
+        .of(outgoingNetworkView).make();
     RoleOperator<ConstMapping.OfInt> incomingRegularOp = RoleOperators.EQUIVALENCE.regular()
-        .of(n, incomingNetworkView).make();
+        .of(incomingNetworkView).make();
     RoleOperator<ConstMapping.OfInt> bidiRegularOp = Operators.parallel(
         // we apply the undicrectional operators in parallel
         // and combine them through intersection
@@ -149,9 +149,9 @@ public class Examples {
     System.out.println(bidiRegularOp.interior(initialEq));
 
     RoleOperator<Ranking> outgoingRankedOp = RoleOperators.RANKING.regular() //
-        .of(n, outgoingNetworkView).make();
+        .of(outgoingNetworkView).make();
     RoleOperator<Ranking> incomingRankedOp = RoleOperators.RANKING.regular() //
-        .of(n, incomingNetworkView).make();
+        .of(incomingNetworkView).make();
     RoleOperator<Ranking> bidiRankedOp = Operators.parallel(
         // combine undirectional ranked operators through intersection
         Reducers.RANKING.meet(), //
@@ -179,7 +179,6 @@ public class Examples {
 
     // load network
     Network network;
-    int n;
     NetworkView<?, ?> networkView;
     ConstMapping.OfInt initialEq;
     try (Source<?> source = IoProvider.getService("graphml").newSource( //
@@ -187,7 +186,6 @@ public class Examples {
       SourceFormat sourceData = source.parse();
 
       network = sourceData.incidence();
-      n = network.asUndirectedGraph().countVertices();
       networkView = NetworkView.fromNetworkRelation(network, Direction.OUTGOING);
       initialEq = (ConstMapping.OfInt) sourceData.monadic().get("initial");
       System.out.println(initialEq);
@@ -195,7 +193,7 @@ public class Examples {
 
     // role operator for regular roles
     RoleOperator<ConstMapping.OfInt> regularOp = RoleOperators.EQUIVALENCE.regular()
-        .of(network.asUndirectedGraph().countVertices(), networkView).make();
+        .of(networkView).make();
 
     // follow the sequence of relative role equivalences
     // for the usual regular roles operator
@@ -214,12 +212,12 @@ public class Examples {
         Operators.composeRoleOp( //
             Operators.composeOp( //
                 Operators.composeOp( // threshold pairwise distances from equitable equivalence by one
-                    DistanceOperators.EQUIVALENCE.equitable().of(n, networkView).make(),
+                    DistanceOperators.EQUIVALENCE.equitable().of(networkView).make(),
                     Converters.thresholdDistances((i, j) -> 1)),
                 // symmetrize (at most distance one in both directions)
                 RoleOperators.BINARYRELATION.basic().symmetrize()),
             Converters.strongComponentsAsEquivalence()), // close on symmetric comparisons transitively
-        RoleOperators.EQUIVALENCE.weak().of(n, networkView).make()); // and split off isolates
+        RoleOperators.EQUIVALENCE.weak().of(networkView).make()); // and split off isolates
 
     // follow the sequence of relative role equivalences
     // for the error-tolerant regular roles operator
@@ -259,7 +257,7 @@ public class Examples {
 
     // wealth-aware regular roles without error tolerance
     RoleOperator<ConstMapping.OfInt> wealthawareOp = RoleOperators.EQUIVALENCE.regular() //
-        .of(n, networkView) // on this network
+        .of(networkView) // on this network
         // substituting neighbor should have larger wealth
         .comp(Comparator.comparingInt(rship -> wealth.getInt(rship.getRight()))).make();
 
@@ -273,7 +271,7 @@ public class Examples {
             Operators.composeOp( //
                 Operators.composeOp( //
                     // distance from wealth-aware regular equivalence
-                    DistanceOperators.EQUIVALENCE.regular().of(n, networkView)
+                    DistanceOperators.EQUIVALENCE.regular().of(networkView)
                         // substituting neighbor should have larger wealth
                         .comp(Comparator.comparingInt(rship -> wealth.getInt(rship.getRight()))).make(),
                     // thresholded by one
@@ -281,7 +279,7 @@ public class Examples {
                 // symmetrize (at most distance one in both directions)
                 RoleOperators.BINARYRELATION.basic().symmetrize()),
             Converters.strongComponentsAsEquivalence()), // close on symmetric comparisons transitively
-        RoleOperators.EQUIVALENCE.weak().of(n, networkView).make()); // and split off isolates
+        RoleOperators.EQUIVALENCE.weak().of(networkView).make()); // and split off isolates
 
     // try one equivalence
     ConstMapping.OfInt stableEquivalence = Mappings.wrapUnmodifiableInt(
@@ -309,7 +307,6 @@ public class Examples {
       }
       return false;
     };
-
     // then start the search for fixed points from the single-class equivalence
     for (ConstMapping.OfInt stableUnderRestriction : StableRolesEnumeration.EQUIVALENCE
         .stableRolesUnderRestriction(errortolerantOp, Mappings.repeated(0, n), skipIfNotCoarseningLowerBound)) {
@@ -394,7 +391,7 @@ public class Examples {
             Operators.composeOp( //
                 Operators.composeOp(
                     // distance from wealth-, marriage- and business-ties-aware regular equivalence
-                    DistanceOperators.EQUIVALENCE.regular().of(n, networkView)
+                    DistanceOperators.EQUIVALENCE.regular().of(networkView)
                         // substituting neighbor should have larger wealth
                         .comp(Comparator.comparingInt(tie -> wealth.getInt(tie.getRight())))
                         // substitution cost describing matching rules for marriage and business ties
@@ -424,7 +421,7 @@ public class Examples {
                 // symmetrize (at most distance two in both directions)
                 RoleOperators.BINARYRELATION.basic().symmetrize()),
             Converters.strongComponentsAsEquivalence()), // close on symmetric comparisons transitively
-        RoleOperators.EQUIVALENCE.weak().of(n, networkView).make()); // and split off isolates
+        RoleOperators.EQUIVALENCE.weak().of(networkView).make()); // and split off isolates
 
     ConstMapping.OfInt equivalence = Mappings.wrapUnmodifiableInt(0, 0, 1, 2, 2, 0, 2, 2, 0, 0, 2, 3, 0, 0, 4, 0);
     System.out.println(compositeOp.relative(equivalence));

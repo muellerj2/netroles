@@ -32,8 +32,8 @@ class RankedStrongStructuralRolesFactory
     implements RoleOperatorBuilderFactory<Ranking> {
 
   @Override
-  public <T> RoleOperatorBuilder<T, Ranking> of(int numNodes,
-      NetworkView<? extends T, ? extends T> positionView) {
+  public <T> RoleOperatorBuilder<T, Ranking> of(NetworkView<? extends T, ? extends T> positionView) {
+    final int numNodes = positionView.countNodes();
     return new AbstractNoBiPredicateRoleOperatorBuilder<T, Ranking>() {
 
       @Override
@@ -92,11 +92,11 @@ class RankedStrongStructuralRolesFactory
   }
 
   @Override
-  public <T> RoleOperatorBuilder<T, Ranking> of(int numNodes,
-      TransposableNetworkView<? extends T, ? extends T> positionView) {
+  public <T> RoleOperatorBuilder<T, Ranking> of(TransposableNetworkView<? extends T, ? extends T> positionView) {
     if (positionView instanceof NetworkView<?, ?>) {
-      return of(numNodes, (NetworkView<? extends T, ? extends T>) positionView);
+      return of((NetworkView<? extends T, ? extends T>) positionView);
     }
+    final int numNodes = positionView.countNodes();
     return new AbstractNoBiPredicateRoleOperatorBuilder<T, Ranking>() {
 
       @Override
