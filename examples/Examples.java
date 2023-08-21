@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ch.ethz.sn.visone3.roles.test.blocks;
+package examples;
 
 import java.io.File;
 import java.io.IOException;
