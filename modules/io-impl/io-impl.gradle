@@ -3,6 +3,7 @@ dependencies {
   api project(':io-api')
   implementation project(':lang-api')
 
+  runtimeOnly project(':core-impl')
   runtimeOnly project(':lang-impl')
 
   // io libraries
@@ -13,8 +14,8 @@ dependencies {
   // logging backend
   implementation(libs.slf4j.api)
   
-  testImplementation project(':core-impl')
   testImplementation project(':test-api')
+  testImplementation project(':core-impl')
   testImplementation(libs.junit5.engine)
   
   testRuntimeOnly(libs.junit.launcher)
