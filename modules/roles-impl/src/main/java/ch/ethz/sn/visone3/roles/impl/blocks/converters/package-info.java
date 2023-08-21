@@ -15,7 +15,7 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides basic utility functions and containers, dealing especially with
- * (unboxed) primitive types.
+ * Conversion operators between equivalences, rankings, binary relations and
+ * distances.
  */
-package ch.ethz.sn.visone3.lang;
+package ch.ethz.sn.visone3.roles.impl.blocks.converters;

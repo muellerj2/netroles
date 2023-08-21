@@ -15,7 +15,6 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides basic utility functions and containers, dealing especially with
- * (unboxed) primitive types.
+ * Default implementation of progress reporting feature.
  */
-package ch.ethz.sn.visone3.lang;
+package ch.ethz.sn.visone3.networks.impl;

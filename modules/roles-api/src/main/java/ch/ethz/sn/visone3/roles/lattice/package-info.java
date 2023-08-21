@@ -15,7 +15,7 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides basic utility functions and containers, dealing especially with
- * (unboxed) primitive types.
+ * Algorithms for enumerating stable role structures and other fixed points on
+ * finite lattices (especially of equivalences, rankings and binary relations).
  */
-package ch.ethz.sn.visone3.lang;
+package ch.ethz.sn.visone3.roles.lattice;

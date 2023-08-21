@@ -15,7 +15,19 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides basic utility functions and containers, dealing especially with
- * (unboxed) primitive types.
+ * Classes for reporting operation progress.
+ * 
+ * <p>
+ * Register your own listener on operation progress using:
+ * 
+ * <pre>
+ * {@code
+ * ProgressProvider.getMonitor().addListener(listener);
+ * }
+ * </pre>
+ * 
+ * <p>
+ * If no listener has been registered before the first operation reporting
+ * progress, a default listener printing to standard output might be installed.
  */
-package ch.ethz.sn.visone3.lang;
+package ch.ethz.sn.visone3.progress;
