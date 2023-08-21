@@ -15,7 +15,7 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides basic utility functions and containers, dealing especially with
- * (unboxed) primitive types.
+ * Wrapper interfaces for networks. Also includes a utility method to construct
+ * such a wrapper interface for the library's default network representation.
  */
-package ch.ethz.sn.visone3.lang;
+package ch.ethz.sn.visone3.roles.position;

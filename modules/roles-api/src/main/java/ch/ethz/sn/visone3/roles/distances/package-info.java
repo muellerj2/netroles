@@ -15,7 +15,6 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides basic utility functions and containers, dealing especially with
- * (unboxed) primitive types.
+ * Classes to represent and work with pairwise distance matrices.
  */
-package ch.ethz.sn.visone3.lang;
+package ch.ethz.sn.visone3.roles.distances;

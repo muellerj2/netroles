@@ -24,7 +24,7 @@ import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
 /**
- * Provides some combiners for common representations of role structures.
+ * Provides reduction operations for common representations of role structures.
  *
  */
 public class Reducers {

@@ -15,7 +15,6 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides basic utility functions and containers, dealing especially with
- * (unboxed) primitive types.
+ * Implementation of array-like mappings and lists mainly for primivie types.
  */
-package ch.ethz.sn.visone3.lang;
+package ch.ethz.sn.visone3.lang.impl.mappings;

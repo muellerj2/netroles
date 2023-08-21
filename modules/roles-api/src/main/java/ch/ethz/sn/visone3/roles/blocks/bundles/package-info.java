@@ -15,7 +15,12 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides basic utility functions and containers, dealing especially with
- * (unboxed) primitive types.
+ * Bundles of factories for constructing builders of role and distance operators
+ * for notions of role.
+ * 
+ * <p>
+ * A bundle bundles the factories for distance or role operators for one
+ * specific representation of role structure (equivalence, ranking or binary
+ * relation).
  */
-package ch.ethz.sn.visone3.lang;
+package ch.ethz.sn.visone3.roles.blocks.bundles;

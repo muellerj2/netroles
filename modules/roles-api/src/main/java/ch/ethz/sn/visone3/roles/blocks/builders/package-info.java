@@ -15,7 +15,7 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides basic utility functions and containers, dealing especially with
- * (unboxed) primitive types.
+ * Builder interfaces for constructing role or distance operators of notions of
+ * roles.
  */
-package ch.ethz.sn.visone3.lang;
+package ch.ethz.sn.visone3.roles.blocks.builders;
