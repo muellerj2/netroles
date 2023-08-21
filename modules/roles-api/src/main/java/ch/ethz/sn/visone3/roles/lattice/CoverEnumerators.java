@@ -28,7 +28,7 @@ import ch.ethz.sn.visone3.lang.PrimitiveCollections;
 import ch.ethz.sn.visone3.lang.PrimitiveList;
 import ch.ethz.sn.visone3.roles.blocks.Converters;
 import ch.ethz.sn.visone3.roles.blocks.RoleConverter;
-import ch.ethz.sn.visone3.roles.lattice.LatticeEnumerator.ImmediateChildEnumerator;
+import ch.ethz.sn.visone3.roles.lattice.FixedPointEnumerator.CoverEnumerator;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
@@ -38,9 +38,9 @@ import ch.ethz.sn.visone3.roles.structures.RelationBuilders;
  * Provides implements of enumerators for lower and upper covers on the lattices
  * of binary relations, equivalences and rankings.
  */
-public class LatticeCoverEnumerators {
+public class CoverEnumerators {
 
-  private LatticeCoverEnumerators() {
+  private CoverEnumerators() {
   }
 
   /**
@@ -50,9 +50,9 @@ public class LatticeCoverEnumerators {
    * @param rel the binary relation.
    * @return an enumerator of upper covers of {@code rel}.
    */
-  public static ImmediateChildEnumerator<BinaryRelation, BinaryRelation> upperCoversBinaryRelations(
+  public static CoverEnumerator<BinaryRelation, BinaryRelation> upperCoversBinaryRelations(
       BinaryRelation rel) {
-    return new ImmediateChildEnumerator<BinaryRelation, BinaryRelation>() {
+    return new CoverEnumerator<BinaryRelation, BinaryRelation>() {
 
       BinaryRelation nextRelation = null;
       int pos = 0;
@@ -105,7 +105,7 @@ public class LatticeCoverEnumerators {
       }
 
       @Override
-      public boolean isThereAncestorWhichIsImmediateChildProducedBefore(BinaryRelation val,
+      public boolean isThereAncestorWhichIsCoverProducedBefore(BinaryRelation val,
           BinaryRelation mustBeProducedBefore) {
         final int n = rel.domainSize();
         boolean decisionMade = false;
@@ -141,9 +141,9 @@ public class LatticeCoverEnumerators {
    * @param rel the binary relation.
    * @return an enumerator of lower covers of {@code rel}.
    */
-  public static ImmediateChildEnumerator<BinaryRelation, BinaryRelation> lowerCoversBinaryRelations(
+  public static CoverEnumerator<BinaryRelation, BinaryRelation> lowerCoversBinaryRelations(
       BinaryRelation rel) {
-    return new ImmediateChildEnumerator<BinaryRelation, BinaryRelation>() {
+    return new CoverEnumerator<BinaryRelation, BinaryRelation>() {
 
       BinaryRelation nextRelation = null;
       int pos = 0;
@@ -192,7 +192,7 @@ public class LatticeCoverEnumerators {
       }
 
       @Override
-      public boolean isThereAncestorWhichIsImmediateChildProducedBefore(BinaryRelation val,
+      public boolean isThereAncestorWhichIsCoverProducedBefore(BinaryRelation val,
           BinaryRelation mustBeProducedBefore) {
         final int n = rel.domainSize();
         boolean decisionMade = false;
@@ -228,9 +228,9 @@ public class LatticeCoverEnumerators {
    * @param parent the equivalence.
    * @return an enumerator of upper covers of {@code parent}.
    */
-  public static ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> upperCoversEquivalences(
+  public static CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt> upperCoversEquivalences(
       ConstMapping.OfInt parent) {
-    return new ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt>() {
+    return new CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt>() {
 
       private int[] nextEquivalence = null;
       private int mergeClass1 = 0;
@@ -286,7 +286,7 @@ public class LatticeCoverEnumerators {
       }
 
       @Override
-      public boolean isThereAncestorWhichIsImmediateChildProducedBefore(ConstMapping.OfInt val,
+      public boolean isThereAncestorWhichIsCoverProducedBefore(ConstMapping.OfInt val,
           ConstMapping.OfInt mustBeProducedBefore) {
         final int n = val.size();
         int mergedClass1 = -1;
@@ -338,9 +338,9 @@ public class LatticeCoverEnumerators {
    * @param parent the equivalence.
    * @return an enumerator of lower covers of {@code parent}.
    */
-  public static ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> lowerCoversEquivalences(
+  public static CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt> lowerCoversEquivalences(
       ConstMapping.OfInt parent) {
-    return new ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt>() {
+    return new CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt>() {
 
       private int[] nextEquivalence = null;
       private int splitClass;
@@ -431,7 +431,7 @@ public class LatticeCoverEnumerators {
       }
 
       @Override
-      public boolean isThereAncestorWhichIsImmediateChildProducedBefore(ConstMapping.OfInt val,
+      public boolean isThereAncestorWhichIsCoverProducedBefore(ConstMapping.OfInt val,
           ConstMapping.OfInt mustBeProducedBefore) {
         final int n = val.size();
         final int[] classSizeParent = new int[n];
@@ -515,8 +515,8 @@ public class LatticeCoverEnumerators {
    * @param ranking the ranking.
    * @return an enumerator of upper covers of {@code ranking}.
    */
-  public static ImmediateChildEnumerator<Ranking, Ranking> upperCoversRankings(Ranking ranking) {
-    return new ImmediateChildEnumerator<Ranking, Ranking>() {
+  public static CoverEnumerator<Ranking, Ranking> upperCoversRankings(Ranking ranking) {
+    return new CoverEnumerator<Ranking, Ranking>() {
 
       private ConstMapping.OfInt equivalence;
       private ConstMapping.OfInt classStartOffsets;
@@ -539,7 +539,7 @@ public class LatticeCoverEnumerators {
         // we need to maintain information on whether a new ordering between two indifference
         // classes results in additional transitive links
         // this could be done on the fly during enumeration
-        // however, doing it on the fly during the immediate child test would seriously deter
+        // however, doing it on the fly during the cover test would seriously deter
         // performance
         linkClosesTransitively = new boolean[maxclass * (maxclass + 1)];
         int pos = 0;
@@ -644,7 +644,7 @@ public class LatticeCoverEnumerators {
       }
 
       @Override
-      public boolean isThereAncestorWhichIsImmediateChildProducedBefore(Ranking val,
+      public boolean isThereAncestorWhichIsCoverProducedBefore(Ranking val,
           Ranking mustBeProducedBefore) {
         final int n = ranking.domainSize();
         for (int i = 0; i < n; ++i) {
@@ -684,8 +684,8 @@ public class LatticeCoverEnumerators {
    * @param ranking the ranking.
    * @return an enumerator of lower covers of {@code ranking}.
    */
-  public static ImmediateChildEnumerator<Ranking, Ranking> lowerCoversRankings(Ranking ranking) {
-    return new ImmediateChildEnumerator<Ranking, Ranking>() {
+  public static CoverEnumerator<Ranking, Ranking> lowerCoversRankings(Ranking ranking) {
+    return new CoverEnumerator<Ranking, Ranking>() {
 
       private ConstMapping.OfInt equivalence;
       private ConstMapping.OfInt classStartOffsets;
@@ -877,7 +877,7 @@ public class LatticeCoverEnumerators {
       }
 
       @Override
-      public boolean isThereAncestorWhichIsImmediateChildProducedBefore(Ranking val,
+      public boolean isThereAncestorWhichIsCoverProducedBefore(Ranking val,
           Ranking mustBeProducedBefore) {
         final int n = ranking.domainSize();
         for (int i = 0; i < n; ++i) {
@@ -993,7 +993,7 @@ public class LatticeCoverEnumerators {
         }
 
         // at this point, we know: same indifference class structure in mustBeProducedBefore and the
-        // least immediate child succeeding val and
+        // least cover succeeding val and
         // what remains to test is the ordering between the one added class compared to the parent
         // ranking
         int parentStart = classStartOffsets.getInt(maxParentClassDiffering);
