@@ -200,7 +200,7 @@ This package includes interfaces, factories and basic methods for rankings and b
 
 This package provides algorithms for enumeration of stable role structures and fixed points of monotone functions on other finite lattices.
 * For role operators, use the `StableRolesEnumeration` class to enumerate fixed points. To speed up the enumeration, supply a skip predicate (for the argument and all of its descendants) to avoid enumerating uninteresting role structures.
-* For other increasing or decreasing monotone functions, use the `LatticeEnumerator` class to enumerate fixed points. You also have to supply appropriate enumerators of lower covers of lower or upper covers of lattice elements; for equivalences, rankings and binary relations, such cover enumerators can be obtained from the `LatticeCoverEnumerators` class.
+* For other increasing or decreasing monotone functions, use the `FixedPointEnumerator` class to enumerate fixed points. You also have to supply appropriate enumerators of lower covers of lower or upper covers of lattice elements; for equivalences, rankings and binary relations, such cover enumerators can be obtained from the `CoverEnumerators` class.
 
 
 #### ch.ethz.sn.visone3.algorithms (networks-api module)

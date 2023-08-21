@@ -50,9 +50,9 @@ import ch.ethz.sn.visone3.roles.blocks.Operators;
 import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 import ch.ethz.sn.visone3.roles.blocks.RoleOperators;
 import ch.ethz.sn.visone3.roles.impl.algorithms.Equivalences;
-import ch.ethz.sn.visone3.roles.lattice.LatticeEnumerator.ImmediateChildEnumerator;
+import ch.ethz.sn.visone3.roles.lattice.FixedPointEnumerator.CoverEnumerator;
 import ch.ethz.sn.visone3.roles.lattice.StableRolesEnumeration;
-import ch.ethz.sn.visone3.roles.lattice.LatticeCoverEnumerators;
+import ch.ethz.sn.visone3.roles.lattice.CoverEnumerators;
 import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelations;
@@ -179,7 +179,7 @@ public class LatticeTest {
             .toArray()));
 
     Set<ConstMapping.OfInt> foundPredecessors = new HashSet<>();
-    ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> predEnumerator = LatticeCoverEnumerators
+    CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt> predEnumerator = CoverEnumerators
         .lowerCoversEquivalences(equivalence);
     int count = 0;
     boolean previouslyIteratedAncestor = false;
@@ -208,16 +208,16 @@ public class LatticeTest {
       }
       previouslyIteratedAncestor |= isRefiningCurrentPredecessor;
       boolean hasIteratedAncestor = predEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(refinedEquivalence, predecessor);
+          .isThereAncestorWhichIsCoverProducedBefore(refinedEquivalence, predecessor);
       assertEquals(previouslyIteratedAncestor, hasIteratedAncestor);
       assertFalse(predEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(coarsenedEquivalence, predecessor));
+          .isThereAncestorWhichIsCoverProducedBefore(coarsenedEquivalence, predecessor));
     }
     assertEquals(numClasses * ((1 << (elemsPerClass - 1)) - 1), count);
     assertThrows(NoSuchElementException.class, () -> predEnumerator.next());
 
     Set<ConstMapping.OfInt> foundSuccessors = new HashSet<>();
-    ImmediateChildEnumerator<ConstMapping.OfInt, Mapping.OfInt> succEnumerator = LatticeCoverEnumerators
+    CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt> succEnumerator = CoverEnumerators
         .upperCoversEquivalences(equivalence);
     count = 0;
     previouslyIteratedAncestor = false;
@@ -244,10 +244,10 @@ public class LatticeTest {
       }
       previouslyIteratedAncestor |= isCoarseningCurrentSuccessor;
       boolean hasIteratedAncestor = succEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(coarsenedEquivalence, successor);
+          .isThereAncestorWhichIsCoverProducedBefore(coarsenedEquivalence, successor);
       assertEquals(previouslyIteratedAncestor, hasIteratedAncestor);
       assertFalse(succEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(refinedEquivalence, successor));
+          .isThereAncestorWhichIsCoverProducedBefore(refinedEquivalence, successor));
       ++count;
     }
     assertEquals(numClasses * (numClasses - 1) / 2, count);
@@ -301,7 +301,7 @@ public class LatticeTest {
     BinaryRelation refinedRelation = BinaryRelations.fromMatrix(refinedArray);
 
     Set<BinaryRelation> foundPredecessors = new HashSet<>();
-    ImmediateChildEnumerator<BinaryRelation, BinaryRelation> predEnumerator = LatticeCoverEnumerators
+    CoverEnumerator<BinaryRelation, BinaryRelation> predEnumerator = CoverEnumerators
         .lowerCoversBinaryRelations(binrel);
     int count = 0;
     boolean previouslyIteratedAncestor = false;
@@ -328,16 +328,16 @@ public class LatticeTest {
       }
       previouslyIteratedAncestor |= isRefiningCurrentPredecessor;
       boolean hasIteratedAncestor = predEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(refinedRelation, predecessor);
+          .isThereAncestorWhichIsCoverProducedBefore(refinedRelation, predecessor);
       assertEquals(previouslyIteratedAncestor, hasIteratedAncestor);
       assertFalse(predEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(coarsenedRelation, predecessor));
+          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRelation, predecessor));
     }
     assertEquals(binrel.countRelationPairs(), count);
     assertThrows(NoSuchElementException.class, () -> predEnumerator.next());
 
     Set<BinaryRelation> foundSuccessors = new HashSet<>();
-    ImmediateChildEnumerator<BinaryRelation, BinaryRelation> succEnumerator = LatticeCoverEnumerators
+    CoverEnumerator<BinaryRelation, BinaryRelation> succEnumerator = CoverEnumerators
         .upperCoversBinaryRelations(binrel);
     count = 0;
     previouslyIteratedAncestor = false;
@@ -362,9 +362,9 @@ public class LatticeTest {
       }
       previouslyIteratedAncestor |= isCoarseningCurrentSuccessor;
       boolean hasIteratedAncestor = succEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(coarsenedRelation, successor);
+          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRelation, successor);
       assertEquals(previouslyIteratedAncestor, hasIteratedAncestor);
-      assertFalse(succEnumerator.isThereAncestorWhichIsImmediateChildProducedBefore(refinedRelation,
+      assertFalse(succEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRelation,
           successor));
       ++count;
     }
@@ -549,7 +549,7 @@ public class LatticeTest {
     Ranking refinedRanking2 = rankingFromOrderedPartition(refinedEquivalence, refinedArray2);
 
     Set<Ranking> foundPredecessors = new HashSet<>();
-    ImmediateChildEnumerator<Ranking, Ranking> predEnumerator = LatticeCoverEnumerators
+    CoverEnumerator<Ranking, Ranking> predEnumerator = CoverEnumerators
         .lowerCoversRankings(ranking);
     int count = 0;
     boolean previouslyIteratedAncestor1 = false;
@@ -578,7 +578,7 @@ public class LatticeTest {
       }
       previouslyIteratedAncestor1 |= isRefiningCurrentPredecessor;
       boolean hasIteratedAncestor = predEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(refinedRanking1, predecessor);
+          .isThereAncestorWhichIsCoverProducedBefore(refinedRanking1, predecessor);
       assertEquals(previouslyIteratedAncestor1, hasIteratedAncestor);
 
       isRefiningCurrentPredecessor = true;
@@ -592,19 +592,19 @@ public class LatticeTest {
       }
       previouslyIteratedAncestor2 |= isRefiningCurrentPredecessor;
       hasIteratedAncestor = predEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(refinedRanking2, predecessor);
+          .isThereAncestorWhichIsCoverProducedBefore(refinedRanking2, predecessor);
       assertEquals(previouslyIteratedAncestor2, hasIteratedAncestor);
 
       assertFalse(predEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(coarsenedRanking1, predecessor));
+          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking1, predecessor));
       assertFalse(predEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(coarsenedRanking2, predecessor));
+          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking2, predecessor));
     }
     assertEquals(numClasses * ((1 << elemsPerClass) - 2) + nontransitivePairs, count);
     assertThrows(NoSuchElementException.class, () -> predEnumerator.next());
 
     Set<Ranking> foundSuccessors = new HashSet<>();
-    ImmediateChildEnumerator<Ranking, Ranking> succEnumerator = LatticeCoverEnumerators
+    CoverEnumerator<Ranking, Ranking> succEnumerator = CoverEnumerators
         .upperCoversRankings(ranking);
     count = 0;
     previouslyIteratedAncestor1 = false;
@@ -634,7 +634,7 @@ public class LatticeTest {
       }
       previouslyIteratedAncestor1 |= isCoarseningCurrentSuccessor;
       boolean hasIteratedAncestor = succEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(coarsenedRanking1, successor);
+          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking1, successor);
       assertEquals(previouslyIteratedAncestor1, hasIteratedAncestor);
 
       isCoarseningCurrentSuccessor = true;
@@ -648,11 +648,11 @@ public class LatticeTest {
       }
       previouslyIteratedAncestor2 |= isCoarseningCurrentSuccessor;
       hasIteratedAncestor = succEnumerator
-          .isThereAncestorWhichIsImmediateChildProducedBefore(coarsenedRanking2, successor);
+          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking2, successor);
       assertEquals(previouslyIteratedAncestor2, hasIteratedAncestor);
-      assertFalse(succEnumerator.isThereAncestorWhichIsImmediateChildProducedBefore(refinedRanking1,
+      assertFalse(succEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRanking1,
           successor));
-      assertFalse(succEnumerator.isThereAncestorWhichIsImmediateChildProducedBefore(refinedRanking2,
+      assertFalse(succEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRanking2,
           successor));
       ++count;
     }

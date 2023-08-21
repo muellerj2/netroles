@@ -113,15 +113,15 @@ public class StableRolesEnumeration {
     @Override
     public Iterable<BinaryRelation> stableRolesUnderExtension(RoleOperator<BinaryRelation> roleOp,
         BinaryRelation initial, Predicate<BinaryRelation> skipElement) {
-      return LatticeEnumerator.enumerateLattice(roleOp::closure, () -> initial,
-          LatticeCoverEnumerators::upperCoversBinaryRelations, skipElement);
+      return FixedPointEnumerator.enumerateLattice(roleOp::closure, () -> initial,
+          CoverEnumerators::upperCoversBinaryRelations, skipElement);
     }
 
     @Override
     public Iterable<BinaryRelation> stableRolesUnderRestriction(RoleOperator<BinaryRelation> roleOp,
         BinaryRelation initial, Predicate<BinaryRelation> skipElement) {
-      return LatticeEnumerator.enumerateLattice(roleOp::interior, () -> initial,
-          LatticeCoverEnumerators::lowerCoversBinaryRelations, skipElement);
+      return FixedPointEnumerator.enumerateLattice(roleOp::interior, () -> initial,
+          CoverEnumerators::lowerCoversBinaryRelations, skipElement);
     }
 
   };
@@ -134,15 +134,15 @@ public class StableRolesEnumeration {
     @Override
     public Iterable<Ranking> stableRolesUnderExtension(RoleOperator<Ranking> roleOp,
         Ranking initial, Predicate<Ranking> skipElement) {
-      return LatticeEnumerator.enumerateLattice(roleOp::closure, () -> initial,
-          LatticeCoverEnumerators::upperCoversRankings, skipElement);
+      return FixedPointEnumerator.enumerateLattice(roleOp::closure, () -> initial,
+          CoverEnumerators::upperCoversRankings, skipElement);
     }
 
     @Override
     public Iterable<Ranking> stableRolesUnderRestriction(RoleOperator<Ranking> roleOp,
         Ranking initial, Predicate<Ranking> skipElement) {
-      return LatticeEnumerator.enumerateLattice(roleOp::interior, () -> initial,
-          LatticeCoverEnumerators::lowerCoversRankings, skipElement);
+      return FixedPointEnumerator.enumerateLattice(roleOp::interior, () -> initial,
+          CoverEnumerators::lowerCoversRankings, skipElement);
     }
   };
 
@@ -155,15 +155,15 @@ public class StableRolesEnumeration {
     @Override
     public Iterable<OfInt> stableRolesUnderExtension(RoleOperator<ConstMapping.OfInt> roleOp,
         ConstMapping.OfInt initial, Predicate<ConstMapping.OfInt> skipElement) {
-      return LatticeEnumerator.enumerateLattice(roleOp::closure, () -> initial,
-          LatticeCoverEnumerators::upperCoversEquivalences, skipElement);
+      return FixedPointEnumerator.enumerateLattice(roleOp::closure, () -> initial,
+          CoverEnumerators::upperCoversEquivalences, skipElement);
     }
 
     @Override
     public Iterable<OfInt> stableRolesUnderRestriction(RoleOperator<ConstMapping.OfInt> roleOp,
         ConstMapping.OfInt initial, Predicate<ConstMapping.OfInt> skipElement) {
-      return LatticeEnumerator.enumerateLattice(roleOp::interior, () -> initial,
-          LatticeCoverEnumerators::lowerCoversEquivalences, skipElement);
+      return FixedPointEnumerator.enumerateLattice(roleOp::interior, () -> initial,
+          CoverEnumerators::lowerCoversEquivalences, skipElement);
     }
   };
 }

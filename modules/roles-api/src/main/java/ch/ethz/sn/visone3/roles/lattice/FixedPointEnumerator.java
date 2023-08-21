@@ -55,37 +55,34 @@ import java.util.function.UnaryOperator;
  * complements. Journal of Economic Theory 135(1):514-532.
  * doi:10.1016/j.jet.2006.06.001
  */
-public class LatticeEnumerator {
+public class FixedPointEnumerator {
 
-  private LatticeEnumerator() {
+  private FixedPointEnumerator() {
 
   }
 
   /**
-   * Enhanced enumerator for immediate children of a lattice element (i.e., lower
-   * or upper covers). Besides enumeration of such covers, it also allows to check
-   * for any descendant of the element whether it is a descendant of an immediate
-   * child that has been enumerated earlier.
+   * Enhanced enumerator for (lower or upper) covers of a lattice element. Besides
+   * enumeration of such covers, it also allows to check for any descendant of the
+   * element whether it is a descendant of a cover of the lattice element that has
+   * been enumerated earlier.
    * 
-   * @param <U> immediate child type needed for checking.
-   * @param <T> immediate child type produced by iteration (subtype of the type
-   *            for checking).
+   * @param <U> cover type needed for checking.
+   * @param <T> cover type produced by iteration (subtype of the type for
+   *            checking).
    */
-  public interface ImmediateChildEnumerator<U, T extends U> extends Iterator<T> {
+  public interface CoverEnumerator<U, T extends U> extends Iterator<T> {
 
     /**
-     * Checks if the lattice element {@code val} is the descendant of an immediate
-     * child that is produced by the enumeration before
-     * {@code mustBeProducedBefore}.
+     * Checks if the lattice element {@code val} is the descendant of a cover that
+     * is produced by the enumeration before {@code mustBeProducedBefore}.
      * 
-     * @param val                  a descendant of the parent of enumerated
-     *                             immediate children.
-     * @param mustBeProducedBefore an immediate child of the parent.
-     * @return true if {@code val} is a descendant of an immediate child of the
-     *         parent which is produced by this enumeration before
-     *         {@code mustBeProducedBefore}.
+     * @param val                  a descendant of the parent of enumerated covers.
+     * @param mustBeProducedBefore a cover of the parent.
+     * @return true if {@code val} is a descendant of a cover of the parent which is
+     *         produced by this enumeration before {@code mustBeProducedBefore}.
      */
-    public boolean isThereAncestorWhichIsImmediateChildProducedBefore(U val,
+    public boolean isThereAncestorWhichIsCoverProducedBefore(U val,
         U mustBeProducedBefore);
   }
 
@@ -97,10 +94,9 @@ public class LatticeEnumerator {
    * @param monotoneFunction  non-increasing or non-decreasing monotone function.
    * @param initial           the initial lattice element to start the search for
    *                          fixed points among its descendants from.
-   * @param enumeratorFactory factory used to construct enumerators for immediate
-   *                          children (lower covers if function is
-   *                          non-increasing, upper covers if non-decreasing) of
-   *                          lattice elements.
+   * @param enumeratorFactory factory used to construct enumerators for covers
+   *                          (lower covers if function is non-increasing, upper
+   *                          covers if non-decreasing) of lattice elements.
    * @param skipElement       predicate that says whether this element and its
    *                          descendants should be skipped during the fixed point
    *                          search.
@@ -111,7 +107,7 @@ public class LatticeEnumerator {
    *         predicate.
    */
   public static <T> Iterable<T> enumerateLattice(UnaryOperator<T> monotoneFunction,
-      Supplier<T> initial, Function<T, ImmediateChildEnumerator<T, ? extends T>> enumeratorFactory,
+      Supplier<T> initial, Function<T, CoverEnumerator<T, ? extends T>> enumeratorFactory,
       Predicate<T> skipElement) {
     return () -> new Iterator<T>() {
 
@@ -119,8 +115,8 @@ public class LatticeEnumerator {
       private T nextValue = null;
 
       List<T> activePath = new ArrayList<>();
-      List<ImmediateChildEnumerator<T, ? extends T>> activePathEnumerators = new ArrayList<>();
-      List<ImmediateChildEnumerator<T, ? extends T>> processedEnumeratorList = new ArrayList<>();
+      List<CoverEnumerator<T, ? extends T>> activePathEnumerators = new ArrayList<>();
+      List<CoverEnumerator<T, ? extends T>> processedEnumeratorList = new ArrayList<>();
       List<T> processedBeforeList = new ArrayList<>();
       List<T> processingChildrenList = new ArrayList<>();
 
@@ -145,9 +141,9 @@ public class LatticeEnumerator {
       private boolean isNewlyDiscoveredFixedPoint(T fixedPoint) {
         int length = processedEnumeratorList.size();
         for (int i = 0; i < length; ++i) {
-          ImmediateChildEnumerator<T, ? extends T> enumerator = processedEnumeratorList.get(i);
+          CoverEnumerator<T, ? extends T> enumerator = processedEnumeratorList.get(i);
           T processedBefore = processedBeforeList.get(i);
-          if (enumerator.isThereAncestorWhichIsImmediateChildProducedBefore(fixedPoint,
+          if (enumerator.isThereAncestorWhichIsCoverProducedBefore(fixedPoint,
               processedBefore)) {
             return false;
           }
@@ -178,10 +174,10 @@ public class LatticeEnumerator {
           if (Thread.currentThread().isInterrupted()) {
             return;
           }
-          ImmediateChildEnumerator<T, ? extends T> immediateChildEnumerator = activePathEnumerators
+          CoverEnumerator<T, ? extends T> coverEnumerator = activePathEnumerators
               .get(activePathEnumerators.size() - 1);
-          while (immediateChildEnumerator.hasNext()) {
-            T child = immediateChildEnumerator.next();
+          while (coverEnumerator.hasNext()) {
+            T child = coverEnumerator.next();
             T nearestFixedPoint = monotoneFunction.apply(child);
             processingChildrenList.set(processingChildrenList.size() - 1, child);
             boolean skip = false;
@@ -193,11 +189,11 @@ public class LatticeEnumerator {
             }
             if (skip) {
               if (!processedEnumeratorList.isEmpty() && processedEnumeratorList
-                  .get(processedEnumeratorList.size() - 1) == immediateChildEnumerator) {
+                  .get(processedEnumeratorList.size() - 1) == coverEnumerator) {
                 processedBeforeList.set(processedBeforeList.size() - 1,
                     processingChildrenList.get(processingChildrenList.size() - 1));
               } else {
-                processedEnumeratorList.add(immediateChildEnumerator);
+                processedEnumeratorList.add(coverEnumerator);
                 processedBeforeList
                     .add(processingChildrenList.get(processingChildrenList.size() - 1));
               }
@@ -206,7 +202,7 @@ public class LatticeEnumerator {
               return;
             }
           }
-          // done processing immediate children of currently active fixed point
+          // done processing covers of currently active fixed point
           // so bracktrack
           if (!processedEnumeratorList.isEmpty() && processedEnumeratorList
               .get(processedEnumeratorList.size() - 1) == activePathEnumerators
@@ -219,7 +215,7 @@ public class LatticeEnumerator {
           processingChildrenList.remove(processingChildrenList.size() - 1);
           // correctly update the processed lattice regions
           if (!processingChildrenList.isEmpty()) {
-            ImmediateChildEnumerator<T, ? extends T> previousEnumerator = activePathEnumerators
+            CoverEnumerator<T, ? extends T> previousEnumerator = activePathEnumerators
                 .get(activePathEnumerators.size() - 1);
             if (!processedEnumeratorList.isEmpty() && processedEnumeratorList
                 .get(processedEnumeratorList.size() - 1) == previousEnumerator) {
