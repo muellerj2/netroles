@@ -62,7 +62,7 @@ ConstMapping.OfInt otherEq = Mappings.wrapUnmodifiableInt(0, 0, 1, 1, 0, 0, 1, 1
 
 Netroles typically expects integer arrays representing equivalences to be normalized, which means that in the array, the value at index 0 is 0 and the value at index i can be at most one more than any prior value in the array.
 
-Next, we construct a role operator that represents the classic role notion of regular equivalence and related definitions like perfect and ecological colorings on the loaded network:
+Next, we construct a role operator that represents the classic role notion of regular equivalence [(White and Reitz, 1983)](https://doi.org/10.1016/0378-8733(83)90025-4) and related definitions like perfect and ecological colorings on the loaded network:
 
 ```java
 import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
@@ -93,7 +93,7 @@ which prints:
 {size=9,[0,0,1,2,3,4,0,5,5]}
 ```
 
-This is the process depicted in Figure 4 of Müller and Brandes (2022), and the last of these equivalences is a perfect, and thus also a regular, equivalence. 
+This is the process depicted in Figure 4 of Müller and Brandes (2022), and the last of these equivalences is a perfect [(Borgatti and Everett, 1994)](https://doi.org/10.1016/0378-8733(94)90010-8) and thus also regular equivalence. 
 
 Even more easily, we can compute the regular interior of the initial equivalence, as follows:
 ```java
@@ -105,6 +105,8 @@ Here, this prints the singleton equivalence:
 ```
 {size=9,[0,1,2,3,4,5,6,7,8]}
 ```
+
+Generally, established role equivalences are the fixed points (``stable role equivalences'') of the three methods `relative()`, `restrict()` and `extend()` of the corresponding `RoleOperator`, while `interior()` and `closure()` yield the greatest stable role equivalence of `restrict()` refining the input equivalence and the least stable role equivalence of `extend()` coarsening the input, respectively. The [table at the end of the section "Theoretical Background" here](./DESIGN.md#theoretical-background) relates established role equivalences to the fixed points of these methods.
 
 Other kinds of role equivalences are supported similarly by replacing the call to regular() in the construction of the role operator:
 * equitable() represents equitable or exact equivalences [(Everett and Borgatti, 1996)](https://doi.org/10.1016/0378-8733(95)00286-3).
@@ -300,6 +302,11 @@ This is because the novices at the highest level of the hierarchy are considered
 > &#9432; ***Note***
 >
 > Rankings and binary relations are represented by the `Ranking` and `BinaryRelation` interfaces. Factories for rankings and binary relations as well as common operations on them are provided by the `Rankings` and `BinaryRelations` classes. Moreover, the `RelationBuilders` class provides builder objects to construct rankings and binary relations. 
+
+
+> &#9432; ***Note***
+>
+> Two well-known concepts of behavioral equivalence in Theoretical Computer Science are obtained by relaxing regular roles to binary relations: The stable role structures of `restrict()` for operator `RoleOperators.BINARYRELATION.regular()` are known as simulations, while the stable role structures for the symmetrized version of the operator are called bisimulations.
 
 
 > &#9432; ***Note***
