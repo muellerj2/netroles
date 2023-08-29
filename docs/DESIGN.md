@@ -31,6 +31,16 @@ In the case of role restriction and role extension, all processes end at a stabl
 * The *interior* of an equivalence is the limit of the process under role restriction started at this equivalence. This is the coarsest stable role equivalence w.r.t. role restriction that refines the given equivalence.
 * The *closure* of an equivalence is the limit of the process under role extension started at this equivalence. This is the finest stable role equivalence w.r.t. role extension that coarsens the given equivalence.
 
+These five operations map to the methods of the `RoleOperator<T>` interface as follows:
+
+| operation        | `RoleOperator<T>` method |
+| ---------------- | ------------------------ |
+| relative roles   | `relative()`             |
+| role restriction | `restrict()`             |
+| role extension   | `extend()`               |
+| interior         | `interior()`             |
+| closure          | `closure()`              |
+
 The established notions of role equivalence correspond to the stable role equivalences with respect to relative role equivalence, role restriction and role extension. The following table summarizes this relation of stable role equivalences to established notions of role according to the used matching criteria in pairwise comparisons (see [Müller and Brandes, 2022](https://doi.org/10.1016/j.socnet.2021.02.00)). It demonstrates that established role equivalences differ in (a) the employed matching criteria for pairwise neighborhood comparisons and (b) which of the three operations relative role equivalence, role restriction and role extension they are stable under. However, it also generalizes: By choosing suitable matching criteria, nuanced notion of roles more appropriate for the study at hand could be specified. For example, more aspects of network data could be incorporated into role analysis, for example by choosing matching criteria that take into account attributes on vertices and edges.
 
 
@@ -38,10 +48,10 @@ The established notions of role equivalence correspond to the stable role equiva
 | -------------------- | ------------------------- | ---------------- | -------------- |
 | no restrictions      | weak role equivalence <br/> [(Winship and Mandel, 1983)](https://doi.org/10.2307/270911) | refinements of weak role equivalence | coarsenings of weak role equivalence |
 | each edge can be a match at most once | weak equitable equivalence / degree equality | refinements of weak equitable equivalence | coarsenings of weak equitable equivalence |
-| same neighbors       | strong structural equivalence <br/> [(Lorrain and White, 1971)](https://doi.org/10.1080/0022250X.1971.9989788)| | refinements of strong structural equivalence | coarsenings of strong structural equivalence |
+| same neighbors       | strong structural equivalence <br/> [(Lorrain and White, 1971)](https://doi.org/10.1080/0022250X.1971.9989788)| refinements of strong structural equivalence | coarsenings of strong structural equivalence |
 | tie to $j$ incident of $i$ matched with tie to $i$ incident to $j$, both $i$ and $j$ or neither have loops, otherwise same neighbors | weak structural equivalence <br/>[(Everett et al., 1990)](https://doi.org/10.1080/0022250X.1990.9990067) | refinements of weak structural equivalence | coarsenings of weak structural equivalence |
 | equivalent neighbors | perfect equivalence <br/> [(Borgatti and Everett, 1994)](https://doi.org/10.1016/0378-8733(94)90010-8) | regular equivalence <br/> [(White and Reitz, 1983)](https://doi.org/10.1016/0378-8733(83)90025-4) | ecological equivalence <br/> [(Borgatti and Everett, 1992)](https://doi.org/10.1016/0378-8733(92)90006-S) | 
-| equivalent neighbors, each edge can be a match at most once | equitable perfect equivalence <br/> [(Everett and Borgatti, 1996)](https://doi.org/10.1016/0378-8733(95)00286-3) | equitable regular equivalence <br/> [(Everett and Borgatti, 1996)](https://doi.org/10.1016/0378-8733(95)00286-3) | equitable ecological equivalence <br/> [(Everett and Borgatti, 1996)](https://doi.org/10.1016/0378-8733(95)00286-3) ||
+| equivalent neighbors, each edge can be a match at most once | equitable perfect equivalence <br/> [(Everett and Borgatti, 1996)](https://doi.org/10.1016/0378-8733(95)00286-3) | equitable regular equivalence <br/> [(Everett and Borgatti, 1996)](https://doi.org/10.1016/0378-8733(95)00286-3) | equitable ecological equivalence <br/> [(Everett and Borgatti, 1996)](https://doi.org/10.1016/0378-8733(95)00286-3) |
 | according to graph automorphisms | automorphic equivalence <br/> ([Everett, 1985](https://doi.org/10.1016/0378-8733(85)90013-9); [Winship, 1974/1988](https://doi.org/10.1016/0378-8733(88)90013-5)) | refinements of automorphic equivalence | coarsenings of automorphic equivalence |
 
 
