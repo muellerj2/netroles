@@ -86,9 +86,9 @@ The relative roles operation takes a role structure and producing a role structu
 >   // (which is the meet of the equivalence lattice)
 >   Reducers.EQUIVALENCE.meet(), 
 >   RoleOperators.EQUIVALENCE.regular()
->     .of(n, outgoingNetworkView).make(), // regular roles operator in outgoing direction only
+>     .of(outgoingNetworkView).make(), // regular roles operator in outgoing direction only
 >   RoleOperators.EQUIVALENCE.equitable()
->     .of(n, incomingNetworkView).make(), // equitable roles operator in incoming direction only
+>     .of(incomingNetworkView).make(), // equitable roles operator in incoming direction only
 > );
 > ```
 >
@@ -115,7 +115,7 @@ The relative roles operation takes a role structure and producing a role structu
 >   Operators.composeRoleOp( //
 >     Operators.composeOp( //
 >       Operators.composeOp( // threshold pairwise distances from equitable equivalence by one
->         DistanceOperators.EQUIVALENCE.equitable().of(n, networkView).make(),
+>         DistanceOperators.EQUIVALENCE.equitable().of(networkView).make(),
 >         Converters.thresholdDistances((i, j) -> 1)),
 >       // symmetrize (at most distance one in both directions)
 >       RoleOperators.BINARYRELATION.basic().symmetrize()),
