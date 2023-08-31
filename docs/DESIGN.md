@@ -223,7 +223,7 @@ This package includes utility classes, mainly for handling multiple network rela
 
 #### ch.ethz.sn.visone3.progress* (networks-api module)
 
-This package collects reports on progress by some algorithms. If you do not add a listener before the first algorithm reports on its progress, the default implementation will install a listener printing the progress information to standard output. To collect the progress information or silence the default progress printer, install a listener with the `ProgressMonitor` accessible through the `ProgressProvider` singleton. 
+This package collects reports on progress by some algorithms. If you do not add a listener before the first algorithm reports on its progress, the default implementation will install a listener that sends the progress information to the logging framework. To collect the progress information or avoid sending it to the logging framework, install a listener with the `ProgressMonitor` accessible through the `ProgressProvider` singleton at startup. 
 
 #### ch.ethz.sn.visone3.roles.builders/bundles/factories (roles-api module)
 
