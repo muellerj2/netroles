@@ -22,7 +22,7 @@ wrapper {
 
 allprojects {
   group 'io.github.muellerj2'
-  version '0.2'
+  version '0.3-SNAPSHOT'
   
   apply plugin: 'com.github.hierynomus.license'
   
