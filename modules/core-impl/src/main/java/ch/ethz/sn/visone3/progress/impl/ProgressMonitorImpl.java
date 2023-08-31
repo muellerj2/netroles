@@ -17,18 +17,18 @@
 
 package ch.ethz.sn.visone3.progress.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.ethz.sn.visone3.networks.impl.Format;
 import ch.ethz.sn.visone3.progress.ProgressEvent;
 import ch.ethz.sn.visone3.progress.ProgressListener;
 import ch.ethz.sn.visone3.progress.ProgressMonitor;
 import ch.ethz.sn.visone3.progress.ProgressSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Default {@link ProgressMonitor} implementation.
@@ -48,11 +48,12 @@ public final class ProgressMonitorImpl implements ProgressMonitor {
    * Default listener. Spawned if nothing else is registered.
    */
   private final ProgressListener def = event -> {
-    System.out.print(mem());
+    final StringBuilder sb = new StringBuilder();
+    sb.append(mem());
     for (ProgressSource s : event.getSources()) {
-      System.out.print(" " + source(event.getTimestamp(), s));
+      sb.append(" " + source(event.getTimestamp(), s));
     }
-    System.out.println();
+    LOG.info(sb.toString());
   };
 
   private String mem() {
