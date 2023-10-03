@@ -20,6 +20,9 @@ package ch.ethz.sn.visone3.progress.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +39,12 @@ import ch.ethz.sn.visone3.progress.ProgressSource;
 public final class ProgressMonitorImpl implements ProgressMonitor {
   private static final Logger LOG = LoggerFactory.getLogger(ProgressMonitorImpl.class);
   private static final long MIN_INTERVAL = 1_000; // ms
-  private final Object lock = new Object();
-  private final List<ProgressSource> sources = new ArrayList<>();
-  private final List<ProgressListener> listeners = new ArrayList<>();
+  private final Set<ProgressSource> sources = ConcurrentHashMap.newKeySet();
+  private final List<ProgressListener> listeners = new CopyOnWriteArrayList<>();
   // number of missed event due to time restriction
-  private int hits;
+  private volatile int hits;
   // timestamp since last message
-  private long tsLastUpdate;
+  private volatile long tsLastUpdate;
 
   /**
    * Default listener. Spawned if nothing else is registered.
@@ -96,49 +98,39 @@ public final class ProgressMonitorImpl implements ProgressMonitor {
   @Override
   public ProgressSource newSource() {
     final ProgressSource source = new ProgressSourceImpl(this);
-    synchronized (lock) {
-      if (listeners.isEmpty()) {
-        LOG.warn("adding default listener");
-        addListener(def);
-      }
-      sources.add(source);
+    if (listeners.isEmpty()) {
+      LOG.warn("adding default listener");
+      addListener(def);
     }
+    sources.add(source);
     return source;
   }
 
   @Override
   public List<ProgressSource> getSources() {
-    return Collections.unmodifiableList(sources);
+    return Collections.unmodifiableList(new ArrayList<>(sources));
   }
 
   void delete(final ProgressSource source) {
-    synchronized (lock) {
-      sources.remove(source);
-    }
+    sources.remove(source);
   }
 
   @Override
   public void addListener(final ProgressListener listener) {
-    synchronized (lock) {
-      listeners.add(listener);
-    }
+    listeners.add(listener);
   }
 
   @Override
   public void removeListener(final ProgressListener listener) {
-    synchronized (lock) {
-      listeners.remove(listener);
-    }
+    listeners.remove(listener);
   }
 
   void fire(final ProgressSource src) {
     final long timeStamp = System.currentTimeMillis();
     if (timeStamp - tsLastUpdate >= MIN_INTERVAL || src.getLast() == src.getExpected()) {
       final ProgressEvent ev = new ProgressEventImpl(timeStamp, this, src);
-      synchronized (lock) {
-        for (final ProgressListener l : listeners) {
-          l.onProgress(ev);
-        }
+      for (final ProgressListener l : listeners) {
+        l.onProgress(ev);
       }
       tsLastUpdate = timeStamp;
       hits = 0;
