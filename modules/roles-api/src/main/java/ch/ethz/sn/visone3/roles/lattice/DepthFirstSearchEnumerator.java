@@ -28,8 +28,8 @@ import java.util.function.UnaryOperator;
 
 /**
  * This class implements an algorithm to search a lattice for fixed points of a
- * non-increasing or non-decreasing monotone function. By non-increasing, we
- * mean that {@code f(x) &lt;= x} for all x, and by non-decreasing, we man
+ * decreasing or increasing monotone function. By decreasing, we mean that
+ * {@code f(x) &lt;= x} for all x, and by increasing, we man
  * {@code f(x) &gt;= x} for all x.
  * 
  * <p>
@@ -40,14 +40,46 @@ import java.util.function.UnaryOperator;
  * point than brute force.
  * 
  * <p>
- * For a description of the algorithm, see
+ * The algorithm searches for fixed points by performing a depth-first search on
+ * the underlying lattice. It requires the following ingredients:
+ * <ul>
+ * <li>an increasing or decreasing monotone function which always outputs a
+ * fixed point after a single invocation,</li>
+ * <li>an initial lattice element to start the search from,</li>
+ * <li>an enumerator of lower covers (if the monotone function is decreasing) or
+ * upper covers (if increasing), as well as</li>
+ * <li>a predicate that says whether a lattice element is the descendant of a
+ * cover of another lattice element which has been enumerated before.
+ * </ul>
+ * 
+ * <p>
+ * Essentially, fixed points are then found by the following (recursive)
+ * algorithm for monotone function f (omitting all necessary bookkeeping):
+ * 
+ * <pre>
+ * function search(fixpoint)
+ *   output fixpoint;
+ *   for all covers c of fixpoint do
+ *     newfixpoint = f(c)
+ *     if newfixpoint has not been searched before then
+ *       search(newfixpoint);
+ *     end
+ *   end for
+ * end function
+ * 
+ * // initial call to start enumeration
+ * search(initial)
+ * </pre>
+ * 
+ * <p>
+ * For a detailed description of the algorithm, see
  * 
  * <p>
  * Julian Müller (2023). Enumerating Tarski fixed points of binary relations.
  * arXiv:2308.07923.
  * 
  * <p>
- * This algorithm is an optimized and improved version of the algorithm
+ * This algorithm is an improved version of the breadth-first search algorithm
  * described in:
  * 
  * <p>
@@ -55,9 +87,9 @@ import java.util.function.UnaryOperator;
  * complements. Journal of Economic Theory 135(1):514-532.
  * doi:10.1016/j.jet.2006.06.001
  */
-public class FixedPointEnumerator {
+public class DepthFirstSearchEnumerator {
 
-  private FixedPointEnumerator() {
+  private DepthFirstSearchEnumerator() {
 
   }
 
@@ -89,6 +121,15 @@ public class FixedPointEnumerator {
   /**
    * Constructs an iterable to enumerate the fixed point lattice of a
    * non-increasing or non-decreasing monotone function.
+   * 
+   * <p>
+   * The iterator might interrupt its search for the next fixed point if the
+   * thread is interrupted. In this case, the iterator's {@code hasNext()} method
+   * returns false (and {@code next()} throws an exception if a prior call to
+   * {@code hasNext()} after the previous call do {@code next()} has not returned
+   * true). The thread's interrupted flag is not reset by the fixed point search
+   * algorithm. To recover, you may clear the thread's interrupted flag and call
+   * {@code hasNext()} again.
    * 
    * @param <T>               the type of lattice elements.
    * @param monotoneFunction  non-increasing or non-decreasing monotone function.

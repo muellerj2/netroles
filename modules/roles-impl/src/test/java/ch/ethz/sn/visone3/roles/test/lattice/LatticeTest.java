@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,8 @@ import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 import ch.ethz.sn.visone3.roles.blocks.RoleOperators;
 import ch.ethz.sn.visone3.roles.impl.algorithms.Equivalences;
 import ch.ethz.sn.visone3.roles.lattice.CoverEnumerators;
-import ch.ethz.sn.visone3.roles.lattice.FixedPointEnumerator.CoverEnumerator;
+import ch.ethz.sn.visone3.roles.lattice.DepthFirstSearchEnumerator.CoverEnumerator;
+import ch.ethz.sn.visone3.roles.lattice.ProjectionEnumerators;
 import ch.ethz.sn.visone3.roles.lattice.StableRolesEnumeration;
 import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
@@ -62,7 +64,8 @@ import ch.ethz.sn.visone3.roles.structures.RelationBuilders;
 
 public class LatticeTest {
 
-  // Political actors network from Doreian and Albert - Partitioning Political Actor Networks: Some
+  // Political actors network from Doreian and Albert - Partitioning Political
+  // Actor Networks: Some
   // Quantitative Tools for Analyzing Qualitative Networks
 
   private static final Integer z = null;
@@ -83,16 +86,23 @@ public class LatticeTest {
       { z, z, 1, z, z, 1, z, z, z, z, z, z, z, z }, //
   };
 
+  private static final Integer[][] cycleNetwork = { //
+      { z }, //
+      { 1, z }, //
+      { z, 1, z }, //
+      { z, z, 1, z }, //
+      { z, z, z, 1, z }, //
+      { z, z, z, z, 1, z }, //
+      { 1, z, z, z, z, 1, z }, //
+  };
+
   @Test
   public void testRegularEquivalencePoliticalActors() throws IOException {
     Network net = MatrixSource.fromAdjacency(politicalActorsNetwork, false).getNetwork();
 
-    Iterable<ConstMapping.OfInt> fixedPointsIterable = StableRolesEnumeration.EQUIVALENCE
-        .stableRolesUnderRestriction(
-            RoleOperators.EQUIVALENCE.regular()
-                .of(NetworkView.fromNetworkRelation(net, Direction.OUTGOING))
-                .make(),
-            Converters.singleClassEquivalence(net.countMonadicIndices()).apply(null));
+    Iterable<ConstMapping.OfInt> fixedPointsIterable = StableRolesEnumeration.EQUIVALENCE.stableRolesUnderRestriction(
+        RoleOperators.EQUIVALENCE.regular().of(NetworkView.fromNetworkRelation(net, Direction.OUTGOING)).make(),
+        Converters.singleClassEquivalence(net.countMonadicIndices()).apply(null));
 
     int count = 0;
     Iterator<ConstMapping.OfInt> iterator = fixedPointsIterable.iterator();
@@ -110,23 +120,15 @@ public class LatticeTest {
   public void testErrorTolerantExactEquivalencePoliticalActors() throws IOException {
     Network net = MatrixSource.fromAdjacency(politicalActorsNetwork, false).getNetwork();
 
-    RoleOperator<ConstMapping.OfInt> roleOp = Operators
-        .composeRoleOp(
-            Operators
-                .composeConv(
-                    Operators
-                        .composeConv(
-                            DistanceOperators.EQUIVALENCE.regular().equitable()
-                                .of(NetworkView.fromNetworkRelation(net,
-                                        Direction.OUTGOING))
-                                .make(),
-                            Converters.thresholdDistances((i, j) -> 1)),
-                    RoleOperators.BINARYRELATION.basic().symmetrize()),
-            Converters.weakComponentsAsEquivalence());
+    RoleOperator<ConstMapping.OfInt> roleOp = Operators.composeRoleOp(
+        Operators.composeConv(Operators.composeConv(
+            DistanceOperators.EQUIVALENCE.regular().equitable()
+                .of(NetworkView.fromNetworkRelation(net, Direction.OUTGOING)).make(),
+            Converters.thresholdDistances((i, j) -> 1)), RoleOperators.BINARYRELATION.basic().symmetrize()),
+        Converters.weakComponentsAsEquivalence());
 
     Iterable<ConstMapping.OfInt> fixedPointsIterable = StableRolesEnumeration.EQUIVALENCE
-        .stableRolesUnderRestriction(roleOp,
-            Converters.singleClassEquivalence(net.countMonadicIndices()).apply(null));
+        .stableRolesUnderRestriction(roleOp, Converters.singleClassEquivalence(net.countMonadicIndices()).apply(null));
 
     int count = 0;
     int countRealFixedPoints = 0;
@@ -151,12 +153,11 @@ public class LatticeTest {
     for (int i = 0; i < elemsPerClass; ++i) {
       stream = IntStream.concat(stream, IntStream.range(0, numClasses));
     }
-    ConstMapping.OfInt equivalence = Equivalences
-        .normalizePartition(Mappings.wrapUnmodifiableInt(stream.boxed()
-            .collect(Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> {
-              Collections.shuffle(list);
-              return list.stream();
-            })).mapToInt(x -> x).toArray()));
+    ConstMapping.OfInt equivalence = Equivalences.normalizePartition(Mappings.wrapUnmodifiableInt(
+        stream.boxed().collect(Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> {
+          Collections.shuffle(list);
+          return list.stream();
+        })).mapToInt(x -> x).toArray()));
     Random rand = new Random();
     int eqclazz1tosplit = 3 + rand.nextInt(numClasses - 4);
     int eqclazz2tosplittemp = 3 + rand.nextInt(numClasses - 5);
@@ -169,12 +170,9 @@ public class LatticeTest {
         refinedEq[i] = numClasses + 3 + rand.nextInt(3);
       }
     }
-    ConstMapping.OfInt refinedEquivalence = Equivalences
-        .normalizePartition(Mappings.wrapUnmodifiableInt(refinedEq));
-    ConstMapping.OfInt coarsenedEquivalence = Equivalences
-        .normalizePartition(Mappings.wrapUnmodifiableInt(equivalence.intStream()
-            .map(x -> x == eqclazz1tosplit || x == eqclazz2tosplit ? eqclazz1tosplit : x)
-            .toArray()));
+    ConstMapping.OfInt refinedEquivalence = Equivalences.normalizePartition(Mappings.wrapUnmodifiableInt(refinedEq));
+    ConstMapping.OfInt coarsenedEquivalence = Equivalences.normalizePartition(Mappings.wrapUnmodifiableInt(equivalence
+        .intStream().map(x -> x == eqclazz1tosplit || x == eqclazz2tosplit ? eqclazz1tosplit : x).toArray()));
 
     Set<ConstMapping.OfInt> foundPredecessors = new HashSet<>();
     CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt> predEnumerator = CoverEnumerators
@@ -189,8 +187,7 @@ public class LatticeTest {
       assertTrue(foundPredecessors.add(predecessor));
       for (int i = 0; i < equivalence.size(); ++i) {
         for (int j = 0; j < equivalence.size(); ++j) {
-          assertTrue(predecessor.getInt(i) != predecessor.getInt(j)
-              || equivalence.getInt(i) == equivalence.getInt(j));
+          assertTrue(predecessor.getInt(i) != predecessor.getInt(j) || equivalence.getInt(i) == equivalence.getInt(j));
         }
       }
       ++count;
@@ -205,11 +202,10 @@ public class LatticeTest {
         }
       }
       previouslyIteratedAncestor |= isRefiningCurrentPredecessor;
-      boolean hasIteratedAncestor = predEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(refinedEquivalence, predecessor);
+      boolean hasIteratedAncestor = predEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedEquivalence,
+          predecessor);
       assertEquals(previouslyIteratedAncestor, hasIteratedAncestor);
-      assertFalse(predEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(coarsenedEquivalence, predecessor));
+      assertFalse(predEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedEquivalence, predecessor));
     }
     assertEquals(numClasses * ((1 << (elemsPerClass - 1)) - 1), count);
     assertThrows(NoSuchElementException.class, () -> predEnumerator.next());
@@ -226,8 +222,7 @@ public class LatticeTest {
       assertTrue(foundSuccessors.add(successor));
       for (int i = 0; i < equivalence.size(); ++i) {
         for (int j = 0; j < equivalence.size(); ++j) {
-          assertTrue(successor.getInt(i) == successor.getInt(j)
-              || equivalence.getInt(i) != equivalence.getInt(j));
+          assertTrue(successor.getInt(i) == successor.getInt(j) || equivalence.getInt(i) != equivalence.getInt(j));
         }
       }
       boolean isCoarseningCurrentSuccessor = true;
@@ -241,11 +236,10 @@ public class LatticeTest {
         }
       }
       previouslyIteratedAncestor |= isCoarseningCurrentSuccessor;
-      boolean hasIteratedAncestor = succEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(coarsenedEquivalence, successor);
+      boolean hasIteratedAncestor = succEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedEquivalence,
+          successor);
       assertEquals(previouslyIteratedAncestor, hasIteratedAncestor);
-      assertFalse(succEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(refinedEquivalence, successor));
+      assertFalse(succEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedEquivalence, successor));
       ++count;
     }
     assertEquals(numClasses * (numClasses - 1) / 2, count);
@@ -269,11 +263,9 @@ public class LatticeTest {
         }
       }
       binrel = BinaryRelations.fromMatrix(relArray);
-    } while (binrel.countRelationPairs() <= size * size / 5
-        && binrel.countRelationPairs() >= 4 * size * size / 5);
+    } while (binrel.countRelationPairs() <= size * size / 5 && binrel.countRelationPairs() >= 4 * size * size / 5);
 
-    boolean[][] coarsenedArray = Stream.of(relArray).map(x -> Arrays.copyOf(x, x.length))
-        .toArray(boolean[][]::new);
+    boolean[][] coarsenedArray = Stream.of(relArray).map(x -> Arrays.copyOf(x, x.length)).toArray(boolean[][]::new);
     int numAdditions = 0;
     do {
       int i = rand.nextInt(size);
@@ -285,8 +277,7 @@ public class LatticeTest {
     } while (numAdditions < 5);
     BinaryRelation coarsenedRelation = BinaryRelations.fromMatrix(coarsenedArray);
 
-    boolean[][] refinedArray = Stream.of(relArray).map(x -> Arrays.copyOf(x, x.length))
-        .toArray(boolean[][]::new);
+    boolean[][] refinedArray = Stream.of(relArray).map(x -> Arrays.copyOf(x, x.length)).toArray(boolean[][]::new);
     numAdditions = 0;
     do {
       int i = rand.nextInt(size);
@@ -325,11 +316,10 @@ public class LatticeTest {
         }
       }
       previouslyIteratedAncestor |= isRefiningCurrentPredecessor;
-      boolean hasIteratedAncestor = predEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(refinedRelation, predecessor);
+      boolean hasIteratedAncestor = predEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRelation,
+          predecessor);
       assertEquals(previouslyIteratedAncestor, hasIteratedAncestor);
-      assertFalse(predEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRelation, predecessor));
+      assertFalse(predEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedRelation, predecessor));
     }
     assertEquals(binrel.countRelationPairs(), count);
     assertThrows(NoSuchElementException.class, () -> predEnumerator.next());
@@ -359,25 +349,21 @@ public class LatticeTest {
         }
       }
       previouslyIteratedAncestor |= isCoarseningCurrentSuccessor;
-      boolean hasIteratedAncestor = succEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRelation, successor);
+      boolean hasIteratedAncestor = succEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedRelation,
+          successor);
       assertEquals(previouslyIteratedAncestor, hasIteratedAncestor);
-      assertFalse(succEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRelation,
-          successor));
+      assertFalse(succEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRelation, successor));
       ++count;
     }
     assertEquals(size * size - binrel.countRelationPairs(), count);
     assertThrows(NoSuchElementException.class, () -> succEnumerator.next());
   }
 
-  private static Ranking rankingFromOrderedPartition(ConstMapping.OfInt partition,
-      boolean[][] ordering) {
-    RelationBuilder<? extends Ranking> builder = RelationBuilders
-        .denseSafeRankingBuilder(partition.size());
+  private static Ranking rankingFromOrderedPartition(ConstMapping.OfInt partition, boolean[][] ordering) {
+    RelationBuilder<? extends Ranking> builder = RelationBuilders.denseSafeRankingBuilder(partition.size());
     for (int i = 0; i < partition.size(); ++i) {
       for (int j = 0; j < partition.size(); ++j) {
-        if (partition.getInt(i) == partition.getInt(j)
-            || ordering[partition.getInt(i)][partition.getInt(j)]) {
+        if (partition.getInt(i) == partition.getInt(j) || ordering[partition.getInt(i)][partition.getInt(j)]) {
           builder.add(i, j);
         }
       }
@@ -394,12 +380,11 @@ public class LatticeTest {
     for (int i = 0; i < elemsPerClass; ++i) {
       stream = IntStream.concat(stream, IntStream.range(0, numClasses));
     }
-    ConstMapping.OfInt equivalence = Equivalences
-        .normalizePartition(Mappings.wrapUnmodifiableInt(stream.boxed()
-            .collect(Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> {
-              Collections.shuffle(list);
-              return list.stream();
-            })).mapToInt(x -> x).toArray()));
+    ConstMapping.OfInt equivalence = Equivalences.normalizePartition(Mappings.wrapUnmodifiableInt(
+        stream.boxed().collect(Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> {
+          Collections.shuffle(list);
+          return list.stream();
+        })).mapToInt(x -> x).toArray()));
 
     boolean[][] relArray = new boolean[numClasses][numClasses];
     Random rand = new Random();
@@ -443,8 +428,7 @@ public class LatticeTest {
 
           boolean transitivelyImplying = false;
           for (int k = 0; k < numClasses; ++k) {
-            if (i != k && j != k
-                && ((!relArray[i][k] && relArray[j][k]) || (!relArray[k][j] && relArray[k][i]))) {
+            if (i != k && j != k && ((!relArray[i][k] && relArray[j][k]) || (!relArray[k][j] && relArray[k][i]))) {
               transitivelyImplying = true;
               break;
             }
@@ -458,8 +442,7 @@ public class LatticeTest {
 
     Ranking ranking = rankingFromOrderedPartition(equivalence, relArray);
 
-    boolean[][] coarsenedArray = Stream.of(relArray).map(x -> Arrays.copyOf(x, x.length))
-        .toArray(boolean[][]::new);
+    boolean[][] coarsenedArray = Stream.of(relArray).map(x -> Arrays.copyOf(x, x.length)).toArray(boolean[][]::new);
 
     numAdditions = 0;
     do {
@@ -487,9 +470,8 @@ public class LatticeTest {
     int mergeClass1 = rand.nextInt(numClasses);
     int temp = rand.nextInt(numClasses - 1);
     int mergeClass2 = temp + (mergeClass1 <= temp ? 1 : 0);
-    ConstMapping.OfInt coarsenedEq = Equivalences
-        .normalizePartition(Mappings.wrapUnmodifiableInt(equivalence.intStream()
-            .map(x -> x == mergeClass1 || x == mergeClass2 ? mergeClass1 : x).toArray()));
+    ConstMapping.OfInt coarsenedEq = Equivalences.normalizePartition(Mappings.wrapUnmodifiableInt(
+        equivalence.intStream().map(x -> x == mergeClass1 || x == mergeClass2 ? mergeClass1 : x).toArray()));
     int largerMergedClass = Math.max(mergeClass1, mergeClass2);
     int smallerMergedClass = Math.min(mergeClass1, mergeClass2);
     boolean[][] coarsenedArray2 = new boolean[numClasses - 1][numClasses - 1];
@@ -502,8 +484,7 @@ public class LatticeTest {
     }
     Ranking coarsenedRanking2 = rankingFromOrderedPartition(coarsenedEq, coarsenedArray2);
 
-    boolean[][] refinedArray = Stream.of(relArray).map(x -> Arrays.copyOf(x, x.length))
-        .toArray(boolean[][]::new);
+    boolean[][] refinedArray = Stream.of(relArray).map(x -> Arrays.copyOf(x, x.length)).toArray(boolean[][]::new);
     numAdditions = 0;
     loop: do {
       int i = rand.nextInt(numClasses);
@@ -530,8 +511,7 @@ public class LatticeTest {
         refinedEq[i] = numClasses + rand.nextInt(3);
       }
     }
-    ConstMapping.OfInt refinedEquivalence = Equivalences
-        .normalizePartition(Mappings.wrapUnmodifiableInt(refinedEq));
+    ConstMapping.OfInt refinedEquivalence = Equivalences.normalizePartition(Mappings.wrapUnmodifiableInt(refinedEq));
     for (int i = 0; i < refinedEquivalence.size(); ++i) {
       int originalClassi = equivalence.getInt(i);
       int refinedClassi = refinedEquivalence.getInt(i);
@@ -547,8 +527,7 @@ public class LatticeTest {
     Ranking refinedRanking2 = rankingFromOrderedPartition(refinedEquivalence, refinedArray2);
 
     Set<Ranking> foundPredecessors = new HashSet<>();
-    CoverEnumerator<Ranking, Ranking> predEnumerator = CoverEnumerators
-        .lowerCoversRankings(ranking);
+    CoverEnumerator<Ranking, Ranking> predEnumerator = CoverEnumerators.lowerCoversRankings(ranking);
     int count = 0;
     boolean previouslyIteratedAncestor1 = false;
     boolean previouslyIteratedAncestor2 = false;
@@ -556,7 +535,8 @@ public class LatticeTest {
     while (predEnumerator.hasNext()) {
       Ranking predecessor = predEnumerator.next();
       assertEquals(ranking.domainSize(), predecessor.domainSize());
-      // assertEquals(ranking.countRelationPairs() - 1, predecessor.countRelationPairs());
+      // assertEquals(ranking.countRelationPairs() - 1,
+      // predecessor.countRelationPairs());
 
       assertTrue(foundPredecessors.add(predecessor));
       for (int i = 0; i < ranking.domainSize(); ++i) {
@@ -575,8 +555,8 @@ public class LatticeTest {
         }
       }
       previouslyIteratedAncestor1 |= isRefiningCurrentPredecessor;
-      boolean hasIteratedAncestor = predEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(refinedRanking1, predecessor);
+      boolean hasIteratedAncestor = predEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRanking1,
+          predecessor);
       assertEquals(previouslyIteratedAncestor1, hasIteratedAncestor);
 
       isRefiningCurrentPredecessor = true;
@@ -589,27 +569,24 @@ public class LatticeTest {
         }
       }
       previouslyIteratedAncestor2 |= isRefiningCurrentPredecessor;
-      hasIteratedAncestor = predEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(refinedRanking2, predecessor);
+      hasIteratedAncestor = predEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRanking2, predecessor);
       assertEquals(previouslyIteratedAncestor2, hasIteratedAncestor);
 
-      assertFalse(predEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking1, predecessor));
-      assertFalse(predEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking2, predecessor));
+      assertFalse(predEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking1, predecessor));
+      assertFalse(predEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking2, predecessor));
     }
     assertEquals(numClasses * ((1 << elemsPerClass) - 2) + nontransitivePairs, count);
     assertThrows(NoSuchElementException.class, () -> predEnumerator.next());
 
     Set<Ranking> foundSuccessors = new HashSet<>();
-    CoverEnumerator<Ranking, Ranking> succEnumerator = CoverEnumerators
-        .upperCoversRankings(ranking);
+    CoverEnumerator<Ranking, Ranking> succEnumerator = CoverEnumerators.upperCoversRankings(ranking);
     count = 0;
     previouslyIteratedAncestor1 = false;
     previouslyIteratedAncestor2 = false;
     while (succEnumerator.hasNext()) {
       Ranking successor = succEnumerator.next();
-      // assertEquals(binrel.countRelationPairs() + 1, successor.countRelationPairs());
+      // assertEquals(binrel.countRelationPairs() + 1,
+      // successor.countRelationPairs());
       assertEquals(ranking.domainSize(), successor.domainSize());
       assertTrue(foundSuccessors.add(successor));
       for (int i = 0; i < ranking.domainSize(); ++i) {
@@ -631,8 +608,8 @@ public class LatticeTest {
         val = val + 1;
       }
       previouslyIteratedAncestor1 |= isCoarseningCurrentSuccessor;
-      boolean hasIteratedAncestor = succEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking1, successor);
+      boolean hasIteratedAncestor = succEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking1,
+          successor);
       assertEquals(previouslyIteratedAncestor1, hasIteratedAncestor);
 
       isCoarseningCurrentSuccessor = true;
@@ -645,16 +622,274 @@ public class LatticeTest {
         }
       }
       previouslyIteratedAncestor2 |= isCoarseningCurrentSuccessor;
-      hasIteratedAncestor = succEnumerator
-          .isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking2, successor);
+      hasIteratedAncestor = succEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking2, successor);
       assertEquals(previouslyIteratedAncestor2, hasIteratedAncestor);
-      assertFalse(succEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRanking1,
-          successor));
-      assertFalse(succEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRanking2,
-          successor));
+      assertFalse(succEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRanking1, successor));
+      assertFalse(succEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRanking2, successor));
       ++count;
     }
     assertEquals(nontransitivelyImplyingUnsetPairs, count);
     assertThrows(NoSuchElementException.class, () -> succEnumerator.next());
+  }
+
+  @Test
+  public void testBinaryRelationProjections() {
+    assertTrue(ProjectionEnumerators
+        .projectionEquals(ProjectionEnumerators.projectRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+            { true, false, false, true }, //
+            { false, true, true, false }, //
+            { false, false, true, true }, //
+            { true, false, true, false } }), 5), new boolean[] { true, false, false, true, false }, 5));
+    assertFalse(ProjectionEnumerators
+        .projectionEquals(ProjectionEnumerators.projectRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+            { true, false, false, true }, //
+            { false, true, true, false }, //
+            { false, false, true, true }, //
+            { true, false, true, false } }), 5), new boolean[] { true, false, true, true, false }, 5));
+    assertTrue(ProjectionEnumerators
+        .projectionEquals(ProjectionEnumerators.projectRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+            { true, false, false, true }, //
+            { false, true, true, false }, //
+            { false, false, true, true }, //
+            { true, false, true, false } }), 6), new boolean[] { true, false, false, true, false, false }, 5));
+    assertTrue(ProjectionEnumerators
+        .projectionEquals(ProjectionEnumerators.projectRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+            { true, false, false, true }, //
+            { false, true, true, false }, //
+            { false, false, true, true }, //
+            { true, false, true, false } }), 13), new boolean[] { true, false, false, true, false, false }, 5));
+
+    assertThrows(IllegalArgumentException.class,
+        () -> ProjectionEnumerators.projectRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+            { true, false, false, true }, //
+            { false, true, true, false }, //
+            { false, false, true, true }, //
+            { true, false, true, false } }), 17));
+
+    assertEquals(Collections.singletonList(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, false, true }, //
+        { true, false, false, false }, //
+        { false, false, false, false }, //
+        { false, false, false, false }, //
+    })), StreamSupport
+        .stream(ProjectionEnumerators.extremalExtensionBinaryRelations(new boolean[] { true, false, false, true, true,
+            true, true, false, true, false, true, true, true, false, false, false }, 5, 16, false).spliterator(), false)
+        .collect(Collectors.toList()));
+    assertEquals(Collections.singletonList(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, false, true }, //
+        { false, true, true, true }, //
+        { true, true, true, true }, //
+        { true, true, true, true }, //
+    })), StreamSupport
+        .stream(
+            ProjectionEnumerators.extremalExtensionBinaryRelations(new boolean[] { true, false, false, true, false,
+                true, true, false, true, false, true, true, true, false, false, false }, 5, 16, true).spliterator(),
+            false)
+        .collect(Collectors.toList()));
+    assertThrows(NoSuchElementException.class, () -> {
+      Iterator<BinaryRelation> it = ProjectionEnumerators.extremalExtensionBinaryRelations(new boolean[] { true, false,
+          false, true, true, true, true, false, true, false, true, true, true, false, false, false }, 5, 16, false)
+          .iterator();
+      it.next();
+      it.next();
+    });
+    assertThrows(IllegalArgumentException.class,
+        () -> ProjectionEnumerators.projectionToBinaryRelation(new boolean[16], 5));
+    assertThrows(IndexOutOfBoundsException.class,
+        () -> ProjectionEnumerators.projectionToBinaryRelation(new boolean[5], 16));
+
+    Set<ArrayList<Boolean>> result = new HashSet<>();
+    for (boolean[] extension : ProjectionEnumerators
+        .generateExtensionsBinaryRelations(new boolean[] { false, true, false, false, true, false, false }, 4)) {
+      ArrayList<Boolean> list = new ArrayList<>();
+      for (int i = 0; i < 5; ++i) {
+        list.add(extension[i]);
+      }
+      result.add(list);
+    }
+    assertEquals(
+        Stream.of(Arrays.asList(false, true, false, false, true), Arrays.asList(false, true, false, false, false))
+            .collect(Collectors.toSet()),
+        result);
+
+    assertThrows(NoSuchElementException.class, () -> {
+      Iterator<boolean[]> it = ProjectionEnumerators
+          .generateExtensionsBinaryRelations(new boolean[] { false, true, false, false, true, false, false }, 4)
+          .iterator();
+      it.next();
+      it.next();
+      it.next();
+    });
+
+    assertTrue(ProjectionEnumerators.someExtensionPrecedesRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, true, true, true }, //
+        { true, true, true, true }, //
+        { true, true, true, true }, //
+    }), new boolean[] { true, false, true, false, true }, 5));
+    assertTrue(ProjectionEnumerators.someExtensionPrecedesRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, true, true, true }, //
+        { true, true, true, true }, //
+        { true, true, true, true }, //
+    }), new boolean[] { true, false, true, false, false }, 5));
+    assertFalse(ProjectionEnumerators.someExtensionPrecedesRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, true, true, true }, //
+        { true, true, true, true }, //
+        { true, true, true, true }, //
+    }), new boolean[] { true, true, true, false, true }, 5));
+    assertTrue(ProjectionEnumerators.someExtensionPrecedesRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { false, true, true, true }, //
+        { true, true, true, true }, //
+        { true, true, true, true }, //
+    }), new boolean[] { true, false, true, false, false }, 5));
+    assertTrue(ProjectionEnumerators.someExtensionPrecedesRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { false, true, true, true }, //
+        { true, true, false, true }, //
+        { true, true, true, true }, //
+    }), new boolean[] { true, false, true, false, false }, 5));
+    assertTrue(ProjectionEnumerators.someExtensionPrecedesRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { false, false, false, false }, //
+        { false, false, false, false }, //
+        { false, false, false, false }, //
+    }), new boolean[] { true, false, true, false, false }, 5));
+
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, false, false, false }, //
+        { false, false, false, false }, //
+        { false, false, false, false }, //
+    }), new boolean[] { true, false, true, false, true }, 5));
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, false, false, false }, //
+        { false, false, false, false }, //
+        { false, false, false, false }, //
+    }), new boolean[] { true, true, true, false, true }, 5));
+    assertFalse(ProjectionEnumerators.someExtensionSucceedsRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, false, false, false }, //
+        { false, false, false, false }, //
+        { false, false, false, false }, //
+    }), new boolean[] { true, false, true, false, false }, 5));
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { false, false, false, false }, //
+        { false, false, false, false }, //
+        { false, false, false, false }, //
+    }), new boolean[] { true, false, true, false, true }, 5));
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { false, true, true, true }, //
+        { true, true, false, true }, //
+        { true, true, true, true }, //
+    }), new boolean[] { true, false, true, false, true }, 5));
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsRelation(BinaryRelations.fromMatrix(new boolean[][] { //
+        { true, false, true, false }, //
+        { false, true, true, true }, //
+        { true, true, true, true }, //
+        { true, true, true, true }, //
+    }), new boolean[] { true, false, true, false, true }, 5));
+  }
+
+  @Test
+  public void testEquivalenceProjections() {
+    assertTrue(ProjectionEnumerators.projectionEquals(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2),
+        ProjectionEnumerators.projectEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 1, 3, 2, 3, 4), 7),
+        7));
+    assertTrue(ProjectionEnumerators.projectionEquals(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2),
+        ProjectionEnumerators.projectEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2, 3, 2, 3, 4), 7),
+        7));
+    assertFalse(ProjectionEnumerators.projectionEquals(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 1, 2),
+        ProjectionEnumerators.projectEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 1, 3, 2, 3, 4), 7),
+        7));
+
+    assertEquals(Collections.singleton(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 4, 5, 6, 7, 8)),
+        StreamSupport.stream(ProjectionEnumerators
+            .minimalExtensionEquivalences(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 1, 3, 2, 3, 4), 7, 13)
+            .spliterator(), false).collect(Collectors.toSet()));
+
+    assertEquals(Stream
+        .of(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 0), Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 1),
+            Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2), Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3))
+        .collect(Collectors.toSet()),
+        StreamSupport.stream(ProjectionEnumerators
+            .generateExtensionsEquivalences(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 1, 3, 2, 3, 4), 7)
+            .spliterator(), false).collect(Collectors.toSet()));
+
+    assertThrows(NoSuchElementException.class, () -> {
+      Iterator<ConstMapping.OfInt> it = ProjectionEnumerators
+          .generateExtensionsEquivalences(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 1, 3, 2, 3, 4), 7)
+          .iterator();
+      for (int i = 0; i < 5; ++i) {
+        it.next();
+      }
+    });
+
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsEquivalence(
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 4, 5, 6, 7, 8),
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2, 1, 0, 2, 3, 2), 7));
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsEquivalence(
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 4, 5, 6, 7, 8),
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2), 7));
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsEquivalence(
+        Mappings.wrapUnmodifiableInt(0, 1, 2, 0, 1, 3, 3, 4, 5, 6, 7, 8, 9),
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2, 1, 0, 2, 3, 2), 7));
+    assertFalse(ProjectionEnumerators.someExtensionSucceedsEquivalence(
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 0, 2, 3, 4, 5, 6, 7, 8),
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2, 1, 0, 2, 3, 2), 7));
+    assertFalse(ProjectionEnumerators.someExtensionSucceedsEquivalence(
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 1, 1, 2, 3, 4, 5, 6, 7),
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2, 1, 0, 2, 3, 2), 7));
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsEquivalence(
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 4, 5, 6, 5, 7),
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2), 7));
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsEquivalence(
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 4, 5, 1, 6, 7),
+        Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2), 7));
+  }
+
+  @Test
+  public void testEconomicalEquivalencePoliticalActors() throws IOException {
+    Network net = MatrixSource.fromAdjacency(politicalActorsNetwork, false).getNetwork();
+
+    Iterable<ConstMapping.OfInt> fixedPointsIterable = StableRolesEnumeration.EQUIVALENCE.stableRolesUnderExtension(
+        RoleOperators.EQUIVALENCE.regular().of(NetworkView.fromNetworkRelation(net, Direction.OUTGOING)).make(),
+        Converters.singleClassEquivalence(net.countMonadicIndices()).apply(null));
+
+    int count = 0;
+    Iterator<ConstMapping.OfInt> iterator = fixedPointsIterable.iterator();
+    while (iterator.hasNext()) {
+      ConstMapping.OfInt fixedPoint = iterator.next();
+      assertNotNull(fixedPoint);
+      ++count;
+    }
+    assertEquals(1, count);
+    assertThrows(NoSuchElementException.class, () -> iterator.next());
+  }
+
+  @Test
+  public void testEconomicalEquivalenceCycleNetwork() throws IOException {
+    Network net = MatrixSource.fromAdjacency(cycleNetwork, false).getNetwork();
+
+    RoleOperator<ConstMapping.OfInt> roleOp = RoleOperators.EQUIVALENCE.regular()
+        .of(NetworkView.fromNetworkRelation(net, Direction.OUTGOING)).make();
+    Iterable<ConstMapping.OfInt> fixedPointsIterable = StableRolesEnumeration.EQUIVALENCE
+        .stableRolesUnderExtension(roleOp, Mappings.intRange(0, net.countMonadicIndices()));
+
+    int count = 0;
+    Iterator<ConstMapping.OfInt> iterator = fixedPointsIterable.iterator();
+    while (iterator.hasNext()) {
+      ConstMapping.OfInt fixedPoint = iterator.next();
+      assertNotNull(fixedPoint);
+      assertEquals(fixedPoint, roleOp.extend(fixedPoint));
+      ++count;
+    }
+    assertEquals(142, count);
+    assertThrows(NoSuchElementException.class, () -> iterator.next());
   }
 }

@@ -28,7 +28,7 @@ import ch.ethz.sn.visone3.lang.PrimitiveCollections;
 import ch.ethz.sn.visone3.lang.PrimitiveList;
 import ch.ethz.sn.visone3.roles.blocks.Converters;
 import ch.ethz.sn.visone3.roles.blocks.RoleConverter;
-import ch.ethz.sn.visone3.roles.lattice.FixedPointEnumerator.CoverEnumerator;
+import ch.ethz.sn.visone3.roles.lattice.DepthFirstSearchEnumerator.CoverEnumerator;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
