@@ -208,7 +208,12 @@ public class ProjectionEnumerators {
    * @return true if the projections are equal, false otherwise.
    */
   public static boolean projectionEquals(boolean[] proj1, boolean[] proj2, int numDimensions) {
-    return Arrays.equals(proj1, 0, numDimensions, proj2, 0, numDimensions);
+    for (int i = 0; i < numDimensions; ++i) {
+      if (proj1[i] != proj2[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
