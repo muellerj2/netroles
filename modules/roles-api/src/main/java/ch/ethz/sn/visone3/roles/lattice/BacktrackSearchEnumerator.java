@@ -48,7 +48,7 @@ import java.util.function.Supplier;
  * 
  * <pre>
  * function search(projection, nextdim, maxdim)
- *   if nextdim > maxdim then
+ *   if nextdim &gt; maxdim then
  *     if f(projection) == projection then
  *       output projection;
  *     end if
@@ -174,6 +174,10 @@ public class BacktrackSearchEnumerator {
    *                               function is decreasing) or minimal (if monotone
    *                               function is increasing) extensions of the
    *                               projection to full lattice elements.
+   * @param toFullSolution         function with arguments {@code (proj, projdim)}
+   *                               that produces a full lattice element from a
+   *                               projection representation (of full dimension
+   *                               count)
    * @param projector              function with arguments {@code (elem, projdim)}
    *                               that projects a full lattice element to
    *                               {@code projdim} dimensions.
@@ -190,8 +194,7 @@ public class BacktrackSearchEnumerator {
   public static <T, U> Iterable<T> enumerateLattice(Function<T, T> monotoneFunction, Supplier<U> initialProjection,
       int dimensions, ObjIntFunction<U, Iterable<U>> partialExtender,
       ObjIntFunction<U, Iterable<T>> maxExtensionEnumerator, ObjIntFunction<U, T> toFullSolution,
-      ObjIntFunction<T, U> projector, BiObjIntPredicate<U> projectionEqComparator,
-      ObjIntPredicate<U> skipProjection) {
+      ObjIntFunction<T, U> projector, BiObjIntPredicate<U> projectionEqComparator, ObjIntPredicate<U> skipProjection) {
     return () -> new Iterator<T>() {
 
       private T nextValue = null;
@@ -245,8 +248,7 @@ public class BacktrackSearchEnumerator {
           projectionPath.add(init);
           first = false;
         }
-        loop:
-        while (nextValue == null && !projectionPath.isEmpty()) {
+        loop: while (nextValue == null && !projectionPath.isEmpty()) {
           int nextDimension = projectionPath.size();
           int currentDimension = nextDimension - 1;
           if (currentDimension >= dimensions) {

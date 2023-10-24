@@ -276,21 +276,21 @@ public class ProjectionEnumerators {
    * Produces the minimal full equivalence extension of a projection according to
    * the refinement ordering.
    * 
-   * @param projection           the projection.
-   * @param numDimProjection     the number of dimensions in the projection.
-   * @param numDimBinaryRelation the number of dimensions of the equivalence
-   *                             (number of elements in the base set).
+   * @param projection        the projection.
+   * @param numDimProjection  the number of dimensions in the projection.
+   * @param numDimEquivalence the number of dimensions of the equivalence (number
+   *                          of elements in the base set).
    * @return an iterable producing the only minimal extension.
    */
   public static Iterable<ConstMapping.OfInt> minimalExtensionEquivalences(ConstMapping.OfInt projection,
-      int numPartialDimensions, int numActualDimensions) {
+      int numDimProjection, int numDimEquivalence) {
     int max = 0;
-    int[] value = projection.intStream().limit(numPartialDimensions).toArray();
+    int[] value = projection.intStream().limit(numDimProjection).toArray();
     for (int val : value) {
       max = Math.max(max, val);
     }
-    value = Arrays.copyOf(value, numActualDimensions);
-    for (int i = numPartialDimensions; i < numActualDimensions; ++i) {
+    value = Arrays.copyOf(value, numDimEquivalence);
+    for (int i = numDimProjection; i < numDimEquivalence; ++i) {
       value[i] = ++max;
     }
     return Collections.singletonList(Mappings.wrapUnmodifiableInt(value));
