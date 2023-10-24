@@ -67,7 +67,7 @@ import java.util.function.UnaryOperator;
  *   end for
  * end function
  * 
- * // start by calling: 
+ * // initial call to start enumeration
  * search(initial)
  * </pre>
  * 
