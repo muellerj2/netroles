@@ -21,13 +21,14 @@ import java.util.function.Predicate;
 
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.ConstMapping.OfInt;
+import ch.ethz.sn.visone3.lang.Mappings;
 import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
 /**
- * Provides enumerators on stable role structures with respect to role extension and
- * restriction.
+ * Provides enumerators on stable role structures with respect to role extension
+ * and restriction.
  *
  */
 public class StableRolesEnumeration {
@@ -64,14 +65,13 @@ public class StableRolesEnumeration {
      * @param initial     the role structure to start the search from; any
      *                    enumerated stable role structures are coarsenings of this
      *                    one.
-     * @param skipElement predicate that says whether this element and all
-     *                    succeeding lattice elements should be skipped during the
-     *                    enumeration.
+     * @param skipElement predicate that says whether this element should be skipped
+     *                    during the enumeration; not that all succeeding lattice
+     *                    elements might be skipped as well.
      * @return an iterable that allows to enumerate the stable role structures under
      *         role extension.
      */
-    Iterable<T> stableRolesUnderExtension(RoleOperator<T> roleOp, T initial,
-        Predicate<T> skipElement);
+    Iterable<T> stableRolesUnderExtension(RoleOperator<T> roleOp, T initial, Predicate<T> skipElement);
 
     /**
      * Enumerates stable role structures under role restriction.
@@ -95,13 +95,13 @@ public class StableRolesEnumeration {
      * @param initial     the role structure to start the search from; any
      *                    enumerated stable role structures are refinements of this
      *                    one.
-     * @param skipElement predicate that says whether this element and all preceding
-     *                    lattice elements should be skipped during the enumeration.
+     * @param skipElement predicate that says whether this element should be skipped
+     *                    during the enumeration; not that all preceding lattice
+     *                    elements might be skipped as well.
      * @return an iterable that allows to enumerate the stable role structures under
      *         role restriction.
      */
-    Iterable<T> stableRolesUnderRestriction(RoleOperator<T> roleOp, T initial,
-        Predicate<T> skipElement);
+    Iterable<T> stableRolesUnderRestriction(RoleOperator<T> roleOp, T initial, Predicate<T> skipElement);
   }
 
   /**
@@ -113,15 +113,44 @@ public class StableRolesEnumeration {
     @Override
     public Iterable<BinaryRelation> stableRolesUnderExtension(RoleOperator<BinaryRelation> roleOp,
         BinaryRelation initial, Predicate<BinaryRelation> skipElement) {
-      return FixedPointEnumerator.enumerateLattice(roleOp::closure, () -> initial,
-          CoverEnumerators::upperCoversBinaryRelations, skipElement);
+
+      int domainSize = initial.domainSize();
+      int dimensions = domainSize * domainSize;
+      return BacktrackSearchEnumerator.enumerateLattice(roleOp::closure, () -> new boolean[dimensions], dimensions,
+          ProjectionEnumerators::generateExtensionsBinaryRelations,
+          (proj, projdim) -> ProjectionEnumerators.extremalExtensionBinaryRelations(proj, projdim, dimensions, false),
+          ProjectionEnumerators::projectionToBinaryRelation, ProjectionEnumerators::projectRelation,
+          ProjectionEnumerators::projectionEquals, (proj, projdim) -> {
+            if (initial != null && !ProjectionEnumerators.someExtensionSucceedsRelation(initial, proj, projdim)) {
+              return true;
+            }
+            if (skipElement != null && projdim == dimensions
+                && skipElement.test(ProjectionEnumerators.projectionToBinaryRelation(proj, dimensions))) {
+              return true;
+            }
+            return false;
+          });
     }
 
     @Override
     public Iterable<BinaryRelation> stableRolesUnderRestriction(RoleOperator<BinaryRelation> roleOp,
         BinaryRelation initial, Predicate<BinaryRelation> skipElement) {
-      return FixedPointEnumerator.enumerateLattice(roleOp::interior, () -> initial,
-          CoverEnumerators::lowerCoversBinaryRelations, skipElement);
+      int domainSize = initial.domainSize();
+      int dimensions = domainSize * domainSize;
+      return BacktrackSearchEnumerator.enumerateLattice(roleOp::interior, () -> new boolean[dimensions], dimensions,
+          ProjectionEnumerators::generateExtensionsBinaryRelations,
+          (proj, projdim) -> ProjectionEnumerators.extremalExtensionBinaryRelations(proj, projdim, dimensions, true),
+          ProjectionEnumerators::projectionToBinaryRelation, ProjectionEnumerators::projectRelation,
+          ProjectionEnumerators::projectionEquals, (proj, projdim) -> {
+            if (initial != null && !ProjectionEnumerators.someExtensionPrecedesRelation(initial, proj, projdim)) {
+              return true;
+            }
+            if (skipElement != null && projdim == dimensions
+                && skipElement.test(ProjectionEnumerators.projectionToBinaryRelation(proj, dimensions))) {
+              return true;
+            }
+            return false;
+          });
     }
 
   };
@@ -132,16 +161,16 @@ public class StableRolesEnumeration {
   public static final Factory<Ranking> RANKING = new Factory<Ranking>() {
 
     @Override
-    public Iterable<Ranking> stableRolesUnderExtension(RoleOperator<Ranking> roleOp,
-        Ranking initial, Predicate<Ranking> skipElement) {
-      return FixedPointEnumerator.enumerateLattice(roleOp::closure, () -> initial,
+    public Iterable<Ranking> stableRolesUnderExtension(RoleOperator<Ranking> roleOp, Ranking initial,
+        Predicate<Ranking> skipElement) {
+      return DepthFirstSearchEnumerator.enumerateLattice(roleOp::closure, () -> initial,
           CoverEnumerators::upperCoversRankings, skipElement);
     }
 
     @Override
-    public Iterable<Ranking> stableRolesUnderRestriction(RoleOperator<Ranking> roleOp,
-        Ranking initial, Predicate<Ranking> skipElement) {
-      return FixedPointEnumerator.enumerateLattice(roleOp::interior, () -> initial,
+    public Iterable<Ranking> stableRolesUnderRestriction(RoleOperator<Ranking> roleOp, Ranking initial,
+        Predicate<Ranking> skipElement) {
+      return DepthFirstSearchEnumerator.enumerateLattice(roleOp::interior, () -> initial,
           CoverEnumerators::lowerCoversRankings, skipElement);
     }
   };
@@ -155,14 +184,31 @@ public class StableRolesEnumeration {
     @Override
     public Iterable<OfInt> stableRolesUnderExtension(RoleOperator<ConstMapping.OfInt> roleOp,
         ConstMapping.OfInt initial, Predicate<ConstMapping.OfInt> skipElement) {
-      return FixedPointEnumerator.enumerateLattice(roleOp::closure, () -> initial,
-          CoverEnumerators::upperCoversEquivalences, skipElement);
+      int count = initial.size();
+      return BacktrackSearchEnumerator.enumerateLattice(roleOp::closure, () -> Mappings.repeated(0, 0), count,
+          ProjectionEnumerators::generateExtensionsEquivalences,
+          (proj, projdim) -> ProjectionEnumerators.minimalExtensionEquivalences(proj, projdim, count),
+          (proj, projdim) -> {
+            if (projdim != count || proj.size() != count) {
+              throw new IllegalStateException();
+            }
+            return proj;
+          }, ProjectionEnumerators::projectEquivalence, ProjectionEnumerators::projectionEquals,
+          initial.equals(Mappings.intRange(0, count)) && skipElement == null ? null : (proj, pardim) -> {
+            if (initial != null && !ProjectionEnumerators.someExtensionSucceedsEquivalence(initial, proj, pardim)) {
+              return true;
+            }
+            if (skipElement != null && pardim == count && skipElement.test(proj)) {
+              return true;
+            }
+            return false;
+          });
     }
 
     @Override
     public Iterable<OfInt> stableRolesUnderRestriction(RoleOperator<ConstMapping.OfInt> roleOp,
         ConstMapping.OfInt initial, Predicate<ConstMapping.OfInt> skipElement) {
-      return FixedPointEnumerator.enumerateLattice(roleOp::interior, () -> initial,
+      return DepthFirstSearchEnumerator.enumerateLattice(roleOp::interior, () -> initial,
           CoverEnumerators::lowerCoversEquivalences, skipElement);
     }
   };
