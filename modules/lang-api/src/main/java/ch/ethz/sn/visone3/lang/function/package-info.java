@@ -15,21 +15,8 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.ethz.sn.visone3.lang;
-
 /**
- * Represents a operation of three arguments on integers.
+ * Provides additional functional interfaces in the style of
+ * {@link java.util.function}.
  */
-@FunctionalInterface
-public interface IntTernaryOperator {
-
-  /**
-   * Applies this operator to the given operands.
-   *
-   * @param first  the first operand
-   * @param second the second operand
-   * @param third  the third operand
-   * @return the operator result
-   */
-  int applyAsInt(int first, int second, int third);
-}
+package ch.ethz.sn.visone3.lang.function;

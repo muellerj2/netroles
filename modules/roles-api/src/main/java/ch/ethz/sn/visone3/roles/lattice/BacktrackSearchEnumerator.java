@@ -23,6 +23,10 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import ch.ethz.sn.visone3.lang.function.BiObjIntPredicate;
+import ch.ethz.sn.visone3.lang.function.ObjIntFunction;
+import ch.ethz.sn.visone3.lang.function.ObjIntPredicate;
+
 /**
  * This enumeration algorithm searches fixed points of a monotone function on a
  * specific underlying lattice by exploiting that the elements of a lattice can
@@ -87,60 +91,6 @@ public class BacktrackSearchEnumerator {
 
   private BacktrackSearchEnumerator() {
 
-  }
-
-  /**
-   * Represents a function that accepts an object and an integer and produces a
-   * result.
-   * 
-   * @param <T> the type of the first argument.
-   * @param <R> the type of the result.
-   */
-  @FunctionalInterface
-  public interface ObjIntFunction<T, R> {
-    /**
-     * Applies a function to the given arguments.
-     * 
-     * @param arg1 the first argument.
-     * @param arg2 the second argument.
-     * @return the result of the function.
-     */
-    public R apply(T arg1, int arg2);
-  }
-
-  /**
-   * Represents a predicate that accepts an object and an integer.
-   * 
-   * @param <T> the type of the first argument.
-   */
-  @FunctionalInterface
-  public interface ObjIntPredicate<T> {
-    /**
-     * Evaluates the predicate on the given arguments.
-     * 
-     * @param arg1 the first argument.
-     * @param arg2 the second argument.
-     * @return true if the arguments match the predicate, false otherwise.
-     */
-    public boolean test(T arg1, int arg2);
-  }
-
-  /**
-   * Represents a predicate that accepts two object arguments and an integer.
-   * 
-   * @param <T> the type of the first and second argument.
-   */
-  @FunctionalInterface
-  public interface BiObjIntPredicate<T> {
-    /**
-     * Evaluates the predicate on the given arguments.
-     * 
-     * @param arg1 the first argument.
-     * @param arg2 the second argument.
-     * @param arg3 the third argument.
-     * @return true if the arguments match the predicate, false otherwise.
-     */
-    public boolean test(T arg1, T arg2, int arg3);
   }
 
   /**
