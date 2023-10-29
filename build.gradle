@@ -70,8 +70,11 @@ subprojects {
   
   javadoc {
     failOnError true
-    options.tags = [ "implNote" ]
-    options.addBooleanOption('Xwerror', true)
+	options {
+	  tags = [ "implNote" ]
+	  links 'https://docs.oracle.com/javase/8/docs/api/'
+	  addBooleanOption('Xwerror', true)
+	}
   }
   
   javadocJar {
