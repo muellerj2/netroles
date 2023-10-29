@@ -1,0 +1,114 @@
+# Builds release binaries for a tag and adds the Javadoc to a repository branch
+# Can be triggered manually (supplying the tag name) or 
+
+name: Create Binaries and Javadoc from Git Tag
+
+on:
+  push:
+    tags: "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Git tag
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  assemble_binaries:
+    runs-on: ubuntu-latest
+
+    outputs:
+      tag: ${{steps.tagversion.outputs.tag}}
+      version: ${{steps.tagversion.outputs.version}}
+    steps:
+    - name: Process tag name for workflow dispatch
+      run: |
+        TAG=${{github.event.inputs.tag}}
+        echo "TAG=$TAG" >> "$GITHUB_ENV"
+      if: github.event_name == 'workflow_dispatch'
+    - name: Process tag name for tag push
+      run: echo "TAG=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+      if: github.event_name == 'push'
+    - name: Extract version from tag name
+      id: tagversion
+      run: |
+        echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+        echo "VERSION=${TAG#v}" >> "$GITHUB_ENV"
+        echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+    - uses: actions/checkout@v4
+      with:
+        ref: "refs/tags/${{env.TAG}}"
+    - name: Validate Gradle Wrapper
+      uses: gradle/wrapper-validation-action@v1
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        java-version: '8'
+        distribution: 'temurin'
+    - name: Create publication artifacts using Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: publish
+    - name: Gather release binaries
+      run: |
+        shopt -s globstar
+        mkdir build/release-binaries
+        cp build/repository/**/*.jar build/release-binaries
+        cp build/repository/**/*.pom build/release-binaries
+        shopt -u globstar
+    - name: Upload release binaries
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-binaries
+        path: build/release-binaries
+        retention-days: 7
+    - name: Gather Javadoc
+      run: |
+        mkdir build/javadoc
+        for f in build/release-binaries/*-javadoc.jar; do
+          name=${f##*/}
+          module=${name%-${VERSION}-javadoc.jar}
+          mkdir build/javadoc/${module}
+          unzip -d build/javadoc/${module} $f
+        done
+    - name: Upload Javadoc artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-javadoc
+        path: build/javadoc
+
+  # commit_javadoc_to_branch:
+    # runs-on: ubuntu-latest
+    # needs:
+      # - assemble_binaries
+    # permissions:
+      # contents: write
+    # steps:
+    # - name: Checkout javadoc branch
+      # uses: actions/checkout@v4
+      # with:
+        # ref: 'refs/heads/javadoc'
+        # path: repository
+    # - name: Download Javadoc
+      # uses: actions/download-artifact@v3
+      # with:
+        # name: release-javadoc
+        # path: javadoc
+    # - name: Copy Javadoc to git branch directories
+      # run: |
+        # mkdir -p "repository/javadoc/${{needs.assemble_binaries.outputs.version}}"
+        # mkdir -p repository/javadoc/latest
+        # rsync -qav --checksum --progress javadoc/. "repository/javadoc/${{needs.assemble_binaries.outputs.version}}" --delete
+        # rsync -qav --checksum --progress javadoc/. repository/javadoc/latest --delete --exclude ".git" --exclude ".github" --exclude ".ssh"
+    # - name: Commit and push Javadoc
+      # run: |
+        # cd repository
+        # git config user.name "$GITHUB_ACTOR"
+        # git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+        # git add --all .
+        # git commit -m "Add Javadoc for version ${{needs.assemble_binaries.outputs.version}}"
+        # git push
+        # cd ..
