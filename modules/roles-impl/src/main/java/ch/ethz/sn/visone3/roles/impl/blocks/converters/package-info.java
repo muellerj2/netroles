@@ -16,6 +16,7 @@
  */
 /**
  * Conversion operators between equivalences, rankings, binary relations and
- * distances.
+ * distances. This package provides the actual implementation of the
+ * {@link ch.ethz.sn.visone3.roles.blocks.Converters} class.
  */
 package ch.ethz.sn.visone3.roles.impl.blocks.converters;

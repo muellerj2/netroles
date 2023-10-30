@@ -15,6 +15,9 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Implements basic algorithms for networks.
+ * Implements basic algorithms for networks. The algorithms are made available
+ * in the API using the {@link ch.ethz.sn.visone3.algorithms.AlgoProvider} class
+ * by registering a corresponding
+ * {@linkplain ch.ethz.sn.visone3.algorithms.AlgoService}.
  */
 package ch.ethz.sn.visone3.algorithms.impl;

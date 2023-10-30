@@ -15,6 +15,9 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Default implementation of progress reporting feature.
+ * Network implementations. The implementations are made available in the API
+ * using the {@link ch.ethz.sn.visone3.networks.NetworkProvider} class by
+ * registering a corresponding
+ * {@linkplain ch.ethz.sn.visone3.networks.NetworkService}.
  */
 package ch.ethz.sn.visone3.networks.impl;

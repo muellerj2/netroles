@@ -15,6 +15,8 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Implementation of some containers for primitive data types.
+ * Implementation of some containers for primitive data types. The containers
+ * can be obtained in the API using methods of
+ * {@link ch.ethz.sn.visone3.lang.PrimitiveContainers}.
  */
 package ch.ethz.sn.visone3.lang.impl.containers;

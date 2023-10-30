@@ -15,6 +15,8 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Composed operators obtained from two or more other operators.
+ * Composed operators obtained from two or more other interior operators. This
+ * package provides the actual implementation of the
+ * {@link ch.ethz.sn.visone3.roles.blocks.Operators} class.
  */
 package ch.ethz.sn.visone3.roles.impl.blocks.basic;

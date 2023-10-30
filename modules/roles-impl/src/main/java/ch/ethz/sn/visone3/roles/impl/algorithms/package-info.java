@@ -16,6 +16,12 @@
  */
 /**
  * Algorithms for computing role structures and distances, mainly for
- * established role notions.
+ * established role notions. This package is the algorithmic basis of standard
+ * role and distance operators that can be constructed using the API in the
+ * {@link ch.ethz.sn.visone3.roles.blocks.RoleOperators} and
+ * {@link ch.ethz.sn.visone3.roles.blocks.DistanceOperators} classes. The actual
+ * implementing role operator and distance operator classes are defined in
+ * packages {@link ch.ethz.sn.visone3.roles.impl.blocks.factories} and
+ * {@link ch.ethz.sn.visone3.roles.impl.blocks.factories.dist}.
  */
 package ch.ethz.sn.visone3.roles.impl.algorithms;

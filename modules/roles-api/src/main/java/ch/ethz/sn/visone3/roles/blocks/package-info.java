@@ -54,8 +54,8 @@
  * 
  * <pre>
  * Network network = ...;
- * NetworkView<?, ?> outgoingView = NetworkView.fromNetworkRelation(network, Direction.OUTGOING);
- * NetworkView<?, ?> incomingView = NetworkView.fromNetworkRelation(network, Direction.INCOMING);
+ * NetworkView&lt;?, ?&gt; outgoingView = NetworkView.fromNetworkRelation(network, Direction.OUTGOING);
+ * NetworkView&lt;?, ?&gt; incomingView = NetworkView.fromNetworkRelation(network, Direction.INCOMING);
  * // outgoing direction only 
  * RoleOperator&lt;ConstMapping.OfInt&gt; outgoingRegularOp = RoleOperators.EQUIVALENCE.regular()
  *   .of(outgoingView).make();
@@ -89,14 +89,14 @@
  * 
  * <pre>
  * Network network = ...;
- * NetworkView<?, ?> outgoingView = NetworkView.fromNetworkRelation(network, Direction.OUTGOING);
+ * NetworkView&lt;?, ?&gt; outgoingView = NetworkView.fromNetworkRelation(network, Direction.OUTGOING);
  * RoleOperator&lt;ConstMapping.OfInt&gt; errortolerantOp = Operators.parallel( //
  *     Reducers.EQUIVALENCE.meet(), //
  *     Operators.composeRoleOp( //
  *         Operators.composeOp( //
  *             Operators.composeOp( // threshold pairwise distances from equitable equivalence by one
  *                 DistanceOperators.EQUIVALENCE.equitable().of(outgoingView).make(),
- *                 Converters.thresholdDistances((i, j) -> 1)),
+ *                 Converters.thresholdDistances((i, j) -&gt; 1)),
  *             // symmetrize (at most distance one in both directions)
  *             RoleOperators.BINARYRELATION.basic().symmetrize()),
  *         Converters.strongComponentsAsEquivalence()), // close on symmetric comparisons transitively
