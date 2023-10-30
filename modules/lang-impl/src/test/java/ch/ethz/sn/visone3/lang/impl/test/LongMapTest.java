@@ -24,16 +24,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ch.ethz.sn.visone3.lang.LongMap;
-import ch.ethz.sn.visone3.lang.LongSet;
-import ch.ethz.sn.visone3.lang.PrimitiveContainers;
+import java.time.Duration;
+import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
-import java.util.Random;
+import ch.ethz.sn.visone3.lang.LongMap;
+import ch.ethz.sn.visone3.lang.LongSet;
+import ch.ethz.sn.visone3.lang.PrimitiveContainers;
 
 public class LongMapTest {
   private static final Logger LOG = LoggerFactory.getLogger(LongMapTest.class);
@@ -110,7 +110,7 @@ public class LongMapTest {
       if (l >= 10) {
         l += 10;
       }
-      LOG.info("::: put({}, {})", l, i);
+      LOG.trace("::: put({}, {})", l, i);
       int oldSize = hash.size();
       Integer oldValue = hash.put(l, i);
       // StringBuilder sb = new StringBuilder();
@@ -147,7 +147,7 @@ public class LongMapTest {
       if (l >= 10) {
         l += 10;
       }
-      LOG.info("::: put({}, {})", l, i);
+      LOG.trace("::: put({}, {})", l, i);
       int oldSize = hash.size();
       Integer oldValue = hash.put(l, i);
       // StringBuilder sb = new StringBuilder();
