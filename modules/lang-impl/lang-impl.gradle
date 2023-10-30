@@ -1,3 +1,5 @@
+archivesBaseName='netroles-lang-engine'
+
 dependencies {
   api project(':lang-api')
 
@@ -8,6 +10,10 @@ dependencies {
   
   testRuntimeOnly(libs.junit.launcher)
   testRuntimeOnly(libs.bundles.log4j2)
+}
+
+javadoc {
+  title = "netroles Lang Engine " + version
 }
 
 publishing {

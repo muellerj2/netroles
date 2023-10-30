@@ -1,3 +1,5 @@
+archivesBaseName='netroles-engine'
+
 dependencies {
   api project(':roles-api')
   api project(':core-api')
@@ -17,6 +19,9 @@ dependencies {
   testRuntimeOnly(libs.bundles.log4j2)
 }
 
+javadoc {
+  title = "netroles Engine " + version
+}
 
 
 publishing {

@@ -1,3 +1,5 @@
+archivesBaseName='netroles-io-engine'
+
 dependencies {
   implementation project(':core-api')
   api project(':io-api')
@@ -20,6 +22,10 @@ dependencies {
   
   testRuntimeOnly(libs.junit.launcher)
   testRuntimeOnly(libs.bundles.log4j2)
+}
+
+javadoc {
+  title = "netroles IO Engine " + version
 }
 
 publishing {

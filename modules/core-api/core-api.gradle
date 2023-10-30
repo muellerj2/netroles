@@ -1,7 +1,13 @@
+archivesBaseName='netroles-networks-api'
+
 dependencies {
   api project(':lang-api')
   // logging backend
   implementation(libs.slf4j.api)
+}
+
+javadoc {
+  title = "netroles Networks API " + version
 }
 
 publishing {
