@@ -1,3 +1,5 @@
+archivesBaseName='netroles-networks-engine'
+
 dependencies {
   api project(':core-api')
   implementation project(':lang-api')
@@ -15,6 +17,10 @@ dependencies {
   testRuntimeOnly project(':datasets')
   testRuntimeOnly(libs.junit.launcher)
   testRuntimeOnly(libs.bundles.log4j2)
+}
+
+javadoc {
+  title = "netroles Networks Engine " + version
 }
 
 publishing {
