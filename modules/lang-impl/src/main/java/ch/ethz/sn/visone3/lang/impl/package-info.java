@@ -15,6 +15,7 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Implementation of main SPI interface.
+ * Implementation of main SPI interface defined by
+ * {@link ch.ethz.sn.visone3.lang.spi.LangService}.
  */
 package ch.ethz.sn.visone3.lang.impl;

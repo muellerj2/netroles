@@ -18,29 +18,37 @@
 package ch.ethz.sn.visone3.roles.blocks;
 
 /**
- * This interface describes the fundamental operations supported by all commonly used notions of
- * roles: relative role ({@link #relative(Object)}), role restriction ({@link #restrict(Object)}),
- * role extension ({@link #extend(Object)}) as well as role interior ({@link #interior(Object)}) and
- * closure ({@link #closure(Object)}).
+ * This interface describes the fundamental operations supported by all commonly
+ * used notions of roles: relative role ({@link #relative(Object)}), role
+ * restriction ({@link #restrict(Object)}), role extension
+ * ({@link #extend(Object)}) as well as role interior
+ * ({@link #interior(Object)}) and closure ({@link #closure(Object)}).
  * 
  * <p>
- * For more details on the nature and properties of these operations, particularly when relative
- * role is isotone, see the papers
+ * For more details on the nature and properties of these operations,
+ * particularly when relative role is isotone, see the papers
  * 
  * <p>
- * Julian Müller, Ulrik Brandes (2019). The evolution of roles. ASONAM '19, August 27-30, 2019,
- * Vancouver, BC, Canada, pp. 406-413, ACM.
+ * Julian Müller, Ulrik Brandes (2019). The evolution of roles. ASONAM '19,
+ * August 27-30, 2019, Vancouver, BC, Canada, pp. 406-413, ACM.
  * 
  * <p>
- * Julian Müller, Ulrik Brandes (2022). The evolution of roles. Social Networks 68:195-208, 2022.
+ * Julian Müller, Ulrik Brandes (2022). The evolution of roles. Social Networks
+ * 68:195-208, 2022.
  * 
+ * <p>
+ * In addition, the DESIGN.md document, provided in the /doc directory that is
+ * included with this library's complete source code in the
+ * <a href="https://muellerj2.github.com/netroles">GitHub repository</a>, also
+ * describes the meaning of these methods for common notions of role in more
+ * detail.
  *
- * @param <T>
- *          A type encoding underlying representation of role structure between nodes in the
- *          network; usually denotes an equivalence
- *          ({@link ch.ethz.sn.visone3.lang.ConstMapping.OfInt}), a ranking
- *          ({@link ch.ethz.sn.visone3.roles.structures.Ranking}) or an arbitrary binary relation
- *          ({@link ch.ethz.sn.visone3.roles.structures.BinaryRelation})
+ * @param <T> A type encoding underlying representation of role structure
+ *            between nodes in the network; usually denotes an equivalence
+ *            ({@link ch.ethz.sn.visone3.lang.ConstMapping.OfInt}), a ranking
+ *            ({@link ch.ethz.sn.visone3.roles.structures.Ranking}) or an
+ *            arbitrary binary relation
+ *            ({@link ch.ethz.sn.visone3.roles.structures.BinaryRelation})
  */
 public interface RoleOperator<T> extends RoleConverter<T, T> {
 

@@ -28,6 +28,18 @@
  * 
  * <p>
  * If no listener has been registered before the first operation reporting
- * progress, a default listener printing to standard output might be installed.
+ * progress, a default listener printing to the standard logger might be
+ * installed.
+ * 
+ * <p>
+ * Operations reporting their own progress typically perform the following
+ * sequence of operations:
+ * 
+ * <pre>
+ * try (ProgressSource progressSource = ProgressProvider.getMonitor().newSource()) {
+ *   // repeatedly update progress by calling
+ *   progressSource.updateProgress(currentprogress, totalprogress, message);
+ * }
+ * </pre>
  */
 package ch.ethz.sn.visone3.progress;

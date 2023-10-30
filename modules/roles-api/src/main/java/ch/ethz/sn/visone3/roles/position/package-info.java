@@ -17,5 +17,9 @@
 /**
  * Wrapper interfaces for networks. Also includes a utility method to construct
  * such a wrapper interface for the library's default network representation.
+ * 
+ * <p>
+ * These wrapper interfaces can be implemented to make this library work
+ * directly on network representations offered by other libraries.
  */
 package ch.ethz.sn.visone3.roles.position;

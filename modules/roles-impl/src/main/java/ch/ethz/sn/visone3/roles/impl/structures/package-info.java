@@ -15,6 +15,8 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Data structures and basic operations for binary relations and rankings.
+ * Implementations of data structures and basic operations for binary relations
+ * and rankings. Construction and basic operations are made available in the
+ * {@link ch.ethz.sn.visone3.roles.structures} package.
  */
 package ch.ethz.sn.visone3.roles.impl.structures;

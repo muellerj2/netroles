@@ -15,6 +15,18 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Classes to represent and work with rankings and binary relations.
+ * This package provides classes to represent and work with rankings and binary
+ * relations.
+ * 
+ * <p>
+ * Rankings and binary relations can be constructed using the builders provided
+ * by the {@link ch.ethz.sn.visone3.roles.structures.RelationBuilders} class, as
+ * well as using methods provided in
+ * {@link ch.ethz.sn.visone3.roles.structures.Rankings} and
+ * {@link ch.ethz.sn.visone3.roles.structures.BinaryRelations}.
+ * {@link ch.ethz.sn.visone3.roles.structures.Relations},
+ * {@link ch.ethz.sn.visone3.roles.structures.BinaryRelations} and
+ * {@link ch.ethz.sn.visone3.roles.structures.Rankings} also provide methods for
+ * working with binary relations and rankings.
  */
 package ch.ethz.sn.visone3.roles.structures;

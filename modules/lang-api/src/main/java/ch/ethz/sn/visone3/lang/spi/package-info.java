@@ -17,5 +17,10 @@
 /**
  * Interfaces and classes for service-provider interface to separate the API
  * from the actual implementation.
+ * 
+ * <p>
+ * This package is of particular interest to developers that wish to develop an
+ * alternative implementation of the API, but usually matters little to users of
+ * the library.
  */
 package ch.ethz.sn.visone3.lang.spi;

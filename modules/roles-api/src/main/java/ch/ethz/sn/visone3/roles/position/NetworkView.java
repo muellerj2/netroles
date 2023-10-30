@@ -27,10 +27,10 @@ import ch.ethz.sn.visone3.networks.Relationship;
  * expressed by some kind of ties, in it.
  * 
  * <p>
- * This interface can be implemented to allow the roles library to work directly
- * on network data structures offered by other libraries, without having to
- * convert the network data into the library's standard network data format
- * defined by {@link Network}.
+ * This interface can be implemented to allow this library to work directly on
+ * network data structures offered by other libraries, without having to convert
+ * the network data into the library's standard network data format defined by
+ * {@link Network}.
  * 
  * @param <T> type of (forward) ties from the nodes.
  * @param <U> type of backward ties pointing to the nodes.

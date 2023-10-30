@@ -15,6 +15,12 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Implementations of factories for distance operators.
+ * Implementations of factories for distance operators. This package provides
+ * the actual implementation of the role operator definition pipeline offered in
+ * the {@link ch.ethz.sn.visone3.roles.blocks.DistanceOperators} class. The
+ * algorithms in the {@link ch.ethz.sn.visone3.roles.impl.algorithms} class are
+ * also wrapped by suitable distance operator classes (which in turn are mostly
+ * specified as anonymous classes in the corresponding factory implementation
+ * classes).
  */
 package ch.ethz.sn.visone3.roles.impl.blocks.factories.dist;

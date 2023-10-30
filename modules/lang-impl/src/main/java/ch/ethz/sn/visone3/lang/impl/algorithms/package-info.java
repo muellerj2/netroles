@@ -15,6 +15,8 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Implementation of basic algorithms on primitive arrays and containers.
+ * Implementation of basic algorithms on primitive arrays and containers. The
+ * algorithms are offered in the API in
+ * {@link ch.ethz.sn.visone3.lang.PrimitiveCollections}.
  */
 package ch.ethz.sn.visone3.lang.impl.algorithms;

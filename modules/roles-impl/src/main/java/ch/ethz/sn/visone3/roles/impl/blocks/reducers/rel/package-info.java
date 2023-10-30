@@ -15,6 +15,7 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Reduction operations for binary relations.
+ * Reduction operations for binary relations. The operators are made available
+ * in the {@link ch.ethz.sn.visone3.roles.blocks.Reducers} class.
  */
 package ch.ethz.sn.visone3.roles.impl.blocks.reducers.rel;

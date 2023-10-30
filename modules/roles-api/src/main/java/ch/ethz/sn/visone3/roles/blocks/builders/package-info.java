@@ -16,6 +16,9 @@
  */
 /**
  * Builder interfaces for constructing role or distance operators of notions of
- * roles.
+ * roles. The interfaces are used to define the API for specifying role and
+ * distance operators offered by
+ * {@link ch.ethz.sn.visone3.roles.blocks.RoleOperators} and
+ * {@link ch.ethz.sn.visone3.roles.blocks.DistanceOperators}.
  */
 package ch.ethz.sn.visone3.roles.blocks.builders;
