@@ -210,7 +210,7 @@ public class LongMapTest {
       if (l >= 10) {
         l += 10;
       }
-      LOG.info("::: put({}, {})", l, i);
+      LOG.trace("::: put({}, {})", l, i);
       int oldSize = tree.size();
       Integer oldValue = tree.put(l, i);
       // StringBuilder sb = new StringBuilder();
@@ -246,7 +246,7 @@ public class LongMapTest {
       if (l >= 10) {
         l += 10;
       }
-      LOG.info("::: put({}, {})", l, i);
+      LOG.trace("::: put({}, {})", l, i);
       int oldSize = tree.size();
       Integer oldValue = tree.put(l, i);
       // StringBuilder sb = new StringBuilder();
