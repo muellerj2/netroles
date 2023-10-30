@@ -29,7 +29,7 @@
  * 
  * <pre>
  * SourceFormat ioResult;
- * try (Source<?> source = IoProvider.getService(format).newSource(streamOrFile)) {
+ * try (Source&lt;?&gt; source = IoProvider.getService(format).newSource(streamOrFile)) {
  *   // configure source by calling suitable methods
  *   // e.g., define the type and value range of a link attribute
  *   // (if it is not already specified in the input)
