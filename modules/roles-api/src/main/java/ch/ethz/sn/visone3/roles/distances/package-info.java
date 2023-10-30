@@ -15,6 +15,8 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Classes to represent and work with pairwise distance matrices.
+ * This packages defines pairwise distance matrices and provides methods to
+ * construct and work with them. Such methods are provided in
+ * {@link ch.ethz.sn.visone3.roles.distances.DistanceMatrices}.
  */
 package ch.ethz.sn.visone3.roles.distances;

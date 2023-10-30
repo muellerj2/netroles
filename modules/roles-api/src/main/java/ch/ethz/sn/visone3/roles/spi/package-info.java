@@ -16,5 +16,10 @@
  */
 /**
  * Classes for service-provider interface or API/Implementation separation.
+ * 
+ * <p>
+ * This package is of particular interest to developers that wish to develop an
+ * alternative implementation of the API, but usually matters little to users of
+ * the library.
  */
 package ch.ethz.sn.visone3.roles.spi;

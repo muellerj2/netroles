@@ -15,7 +15,10 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Factory interfaces to produce builders for role or distance operators of
- * notions of roles.
+ * This package defines factory interfaces to produce builders for role or
+ * distance operators of notions of roles. The interfaces are used to specify
+ * the API for specifying role and distance operators offered by
+ * {@link ch.ethz.sn.visone3.roles.blocks.RoleOperators} and
+ * {@link ch.ethz.sn.visone3.roles.blocks.DistanceOperators}.
  */
 package ch.ethz.sn.visone3.roles.blocks.factories;

@@ -15,6 +15,10 @@
  * along with netroles.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Basic algorithms for networks.
+ * Provides basic algorithms for networks, such as methods for network traversal
+ * or connectedness.
+ * 
+ * <p>
+ * Users can access the algorithms using the {@link AlgoProvider} class.
  */
 package ch.ethz.sn.visone3.algorithms;

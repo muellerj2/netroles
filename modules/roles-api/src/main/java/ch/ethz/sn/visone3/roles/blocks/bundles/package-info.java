@@ -21,6 +21,9 @@
  * <p>
  * A bundle bundles the factories for distance or role operators for one
  * specific representation of role structure (equivalence, ranking or binary
- * relation).
+ * relation). These bundles are used in defining the API for specifying role and
+ * distance operators offered by
+ * {@link ch.ethz.sn.visone3.roles.blocks.RoleOperators} and
+ * {@link ch.ethz.sn.visone3.roles.blocks.DistanceOperators}.
  */
 package ch.ethz.sn.visone3.roles.blocks.bundles;

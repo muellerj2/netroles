@@ -25,16 +25,30 @@ import java.util.function.Function;
 
 /**
  * Specifies which and how parts of a data container are read.
+ * 
+ * <p>
+ * Depending on the underlying data format, the reading operation requires and
+ * supports more or less kinds of configuration. Using this interface, the
+ * following details can be specified:
+ * <ul>
+ * <li>the kind of network, as well as the variables defining the start and end
+ * points of dyads, using {@link #dyad(DyadType, String, String, Range)},</li>
+ * <li>the variable defining the nodes using {@link #monad(String, Range)},</li>
+ * <li>a pre-defined assignment of nodes and affiliations to ids using
+ * {@link #mergeNodes(ConstMapping)} and
+ * {@link #mergeAffiliations(ConstMapping)},</li>
+ * <li>the type and value range of node and link attributes using
+ * {@link #noderange(String, Range)} and {@link #linkrange(String, Range)},  as well as</li>
+ * <li>additional details supported by the data format by calling {@link #hint(Object, Object)}.</li>
+ * </ul>
  *
- * @param <H>
- *          Hint type.
+ * @param <H> Hint type.
  */
 public interface Source<H> extends AutoCloseable {
   /**
    * Typed conversion function.
    *
-   * @param <T>
-   *          data type.
+   * @param <T> data type.
    */
   interface Range<T> extends Function<String, T> {
 
@@ -68,14 +82,10 @@ public interface Source<H> extends AutoCloseable {
     /**
      * Constructs a new typed converter from string to the specified value type.
      * 
-     * @param <T>
-     *          the type of the produced value.
-     * @param clazz
-     *          the class object for the value type.
-     * @param defaultValue
-     *          the default value of the value type.
-     * @param conv
-     *          the actual conversion function.
+     * @param <T>          the type of the produced value.
+     * @param clazz        the class object for the value type.
+     * @param defaultValue the default value of the value type.
+     * @param conv         the actual conversion function.
      * @return the typed converter.
      */
     static <T> Range<T> of(final Class<T> clazz, T defaultValue, final Function<String, T> conv) {
@@ -107,33 +117,31 @@ public interface Source<H> extends AutoCloseable {
   boolean isAutoconfig();
 
   /**
-   * Sets the mapping from node indices to node ids that is used when reading from the source.
+   * Sets the mapping from node indices to node ids that is used when reading from
+   * the source.
    * 
-   * @param ids
-   *          mapping from node indices to node ids
+   * @param ids mapping from node indices to node ids
    */
   default void mergeNodes(final ConstMapping<String> ids) {
     throw new UnsupportedOperationException("merging nodes not supported");
   }
 
   /**
-   * Sets the mapping from affiliation indices to affiliation ids that is used when reading from the
-   * source.
+   * Sets the mapping from affiliation indices to affiliation ids that is used
+   * when reading from the source.
    * 
-   * @param ids
-   *          mapping from affiliation indices to affiliation ids
+   * @param ids mapping from affiliation indices to affiliation ids
    */
   default void mergeAffiliations(final ConstMapping<String> ids) {
     throw new UnsupportedOperationException("merging affiliations not supported");
   }
 
   /**
-   * Sets the node id attribute and the associated typed converter for monadic sources.
+   * Sets the node id attribute and the associated typed converter for monadic
+   * sources.
    * 
-   * @param varName
-   *          the variable name.
-   * @param range
-   *          the typed converter.
+   * @param varName the variable name.
+   * @param range   the typed converter.
    */
   default void monad(final String varName, final Range<?> range) {
     throw new UnsupportedOperationException("reading monadic variables not supported");
@@ -142,27 +150,20 @@ public interface Source<H> extends AutoCloseable {
   /**
    * Specifies the two incidence keys for dyadic sources.
    *
-   * @param type
-   *          Type of dyads.
-   * @param sourceVarName
-   *          source key.
-   * @param targetVarName
-   *          target key.
-   * @param range
-   *          Type of node id.
+   * @param type          Type of dyads.
+   * @param sourceVarName source key.
+   * @param targetVarName target key.
+   * @param range         Type of node id.
    */
-  default void dyad(final DyadType type, final String sourceVarName, final String targetVarName,
-      final Range<?> range) {
+  default void dyad(final DyadType type, final String sourceVarName, final String targetVarName, final Range<?> range) {
     throw new UnsupportedOperationException("reading networks not supported");
   }
 
   /**
    * Sets the typed converter to use for reading a dyadic variable.
    * 
-   * @param varName
-   *          the variable name
-   * @param range
-   *          the typed converter
+   * @param varName the variable name
+   * @param range   the typed converter
    */
   default void linkrange(final String varName, final Range<?> range) {
     throw new UnsupportedOperationException("reading link weights not supported");
@@ -171,10 +172,8 @@ public interface Source<H> extends AutoCloseable {
   /**
    * Sets the typed converter to use for reading a monadic variable.
    * 
-   * @param varName
-   *          the variable name
-   * @param range
-   *          the typed converter
+   * @param varName the variable name
+   * @param range   the typed converter
    */
   default void noderange(final String varName, final Range<?> range) {
     throw new UnsupportedOperationException("reading node weights not supported");
@@ -183,17 +182,15 @@ public interface Source<H> extends AutoCloseable {
   /**
    * Passes a (source-specific) hint to the source.
    * 
-   * @param key
-   *          the source-specific key of the hint
-   * @param value
-   *          the value of the hint
+   * @param key   the source-specific key of the hint
+   * @param value the value of the hint
    */
   default void hint(final H key, final Object value) {
   }
 
   /**
-   * Processes the source and builds incidence and attributes. Actual IO might happen earlier to
-   * perform the auto configuration.
+   * Processes the source and builds incidence and attributes. Actual IO might
+   * happen earlier to perform the auto configuration.
    * 
    * @return the result of the parse.
    * @throws IOException forwards exceptions of underlying IO.
@@ -203,8 +200,7 @@ public interface Source<H> extends AutoCloseable {
   /**
    * Closes the source.
    * 
-   * @throws IOException
-   *           Forwards exceptions of underlying IO.
+   * @throws IOException Forwards exceptions of underlying IO.
    * @implNote Overrides the thrown exception type.
    */
   @Override

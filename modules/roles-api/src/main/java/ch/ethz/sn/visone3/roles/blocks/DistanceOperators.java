@@ -26,8 +26,38 @@ import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
 /**
- * Provides methods to produce operators calculating pairwise distances of network nodes for the
- * specified role notions.
+ * Provides methods to produce operators calculating pairwise distances of
+ * network nodes from a given role structure for commonly used role notions.
+ * 
+ * <p>
+ * {@link #BASIC} provides access for constructing distance operators that
+ * represent basic operations transforming distance matrices, independent of a
+ * particular definition of role or network structure. {@link #BINARYRELATION},
+ * {@link #RANKING} and {@link #EQUIVALENCE} provide factories to operators that
+ * derive distances based on a provided binary relation, ranking or equivalence,
+ * respectively. These operators compute distances according to a common notion
+ * of role and and network structure.
+ * 
+ * For example, the following code defines a operator computing the distance of
+ * pairwise comparisons from perfect regular equivalence in outgoing direction.
+ * These pairwise comparisons are performed by matching incident relationships
+ * (or edges). According to the operator definition, the matching must also obey
+ * a particular weak ordering among relationships/edges or neighbors (always
+ * matching one relationship/edge with a greater equal one), and admissible
+ * matchings are assigned a user-defined cost. The pairwise distances then
+ * describe the minimum cost achievable under the chosen role notion given the
+ * specified weak ordering and matching costs among relationships/edges.
+ * 
+ * <pre>
+ * Network network = ...;
+ * Comparator&lt;Relationship&gt; edgeComparator = ...;
+ * ToIntBiFunction&lt;Relationship, Relationship&gt; matchingCost = ...;
+ * NetworkView&lt;Relationship, Relationship&gt; outgoingView =
+ *   NetworkView.fromNetworkRelation(network, Direction.OUTGOING);
+ * Operator&lt;ConstMapping.OfInt, IntDistanceMatrix&gt; regularDistanceOp =
+ *   DistanceOperators.EQUIVALENCE.regular().of(outgoingView)
+ *     .comp(edgeComparator).substCost(matchingCost).make();
+ * </pre>
  */
 public class DistanceOperators {
 

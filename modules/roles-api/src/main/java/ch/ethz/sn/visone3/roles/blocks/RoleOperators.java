@@ -33,8 +33,30 @@ import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
 
 /**
- * Provides factories to produce instances of {@link RoleOperator} for common role notions.
- *
+ * Provides factories to produce instances of {@link RoleOperator} for common
+ * role notions.
+ * 
+ * <p>
+ * {@link #BINARYRELATION}, {@link #RANKING} and {@link #EQUIVALENCE} provide
+ * factories to produce role operators on binary relations, rankings and
+ * equivalences, respectively. Their respective basic() method can be used to
+ * construct role operators that represent basic operations on the respective
+ * structure, independent of a particular definition of role or network
+ * structure. The other methods allow to specify role operators according to a
+ * common notion of role and and network structure.
+ * 
+ * For example, a regular role equivalence notion, defined in outgoing direction
+ * and obeying a particular weak ordering among the edges or neighbors, can be
+ * defined as follows:
+ * 
+ * <pre>
+ * Network network = ...;
+ * Comparator&lt;Relationship&gt; edgeComparator = ...;
+ * NetworkView&lt;Relationship, Relationship&gt; outgoingView =
+ *   NetworkView.fromNetworkRelation(network, Direction.OUTGOING);
+ * RoleOperator&lt;ConstMapping.OfInt&gt; regularRoleOp =
+ *   RoleOperators.EQUIVALENCE.regular().of(outgoingView).comp(edgeComparator).make();
+ * </pre>
  */
 public class RoleOperators {
 
