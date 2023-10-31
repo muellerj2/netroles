@@ -85,12 +85,10 @@ If you would like to work directly on the library's source code, fork this repos
 
 ## Scientific background and design
 
-
 The design document [DESIGN.md](./docs/DESIGN.md) explains:
 
 * The theoretical background of this library, including the relevant ideas from the role analysis literature, in the area of Social Network Analysis.
 * The library's design principles.
-* An overview of the Java packages included in the netroles modules. 
 
 ## Example usage
 
