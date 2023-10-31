@@ -57,6 +57,7 @@ subprojects {
   jar {
     from ("$rootDir") {
       include "LICENSE"
+      include "NOTICE"
 	  into "META-INF"
     }
   }
@@ -64,6 +65,7 @@ subprojects {
   sourcesJar {
     from ("$rootDir") {
       include "LICENSE"
+      include "NOTICE"
 	  into "META-INF"
     }
   }
@@ -80,6 +82,7 @@ subprojects {
   javadocJar {
     from ("$rootDir") {
       include "LICENSE"
+      include "NOTICE"
 	  into "META-INF"
     }
   }
