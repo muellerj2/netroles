@@ -22,6 +22,10 @@ import java.util.ServiceLoader;
 /**
  * Provides registered IO services.
  *
+ * @implNote The default implementation of the IO package provides services for
+ *           GraphML (file type "graphml"), Node list and edge list CSV (file
+ *           type "nodelist.csv" and "edgelist.csv") as well as a JSON-based
+ *           format (file type "json").
  */
 public final class IoProvider {
   private static IoProvider INSTANCE;
@@ -46,11 +50,10 @@ public final class IoProvider {
   /**
    * Searches a service supporting the specified file type.
    * 
-   * @param fileType
-   *          the file type.
+   * @param fileType the file type.
    * @return the service supporting the file type.
-   * @throws UnsupportedOperationException
-   *           if no service supporting this file type is registered.
+   * @throws UnsupportedOperationException if no service supporting this file type
+   *                                       is registered.
    */
   public static synchronized IoService getService(final String fileType) {
     for (final IoService io : getInstance().loader) {
