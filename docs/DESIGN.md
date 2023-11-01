@@ -1,10 +1,9 @@
 # Design overview
 
-This document presents an overview of the design of the netroles library. It is organized in three sections:
+This document presents an overview of the design of the netroles library. It is organized in two parts:
 
-* The first section covers the underlying theory on role equivalences in the area of Social Network Analysis.
-* Then, the dataflow-driven design of the library is explained on a high level.
-* Finally, an outline of the packages in the library is given, including their general purpose, functionality and composition. 
+* The first part covers the underlying theory on role equivalences in the area of Social Network Analysis.
+* The second part explains the dataflow-driven design of the library on a high level.
 
 ## Theoretical background
 
