@@ -54,5 +54,6 @@
  * }
  * </pre>
  * 
+ * @see ch.ethz.sn.visone3.io.IoProvider IOProvider class description for a list of file formats supported by the default implementation
  */
 package ch.ethz.sn.visone3.io;
