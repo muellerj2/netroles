@@ -23,7 +23,7 @@ import java.util.ServiceLoader;
  * Provides registered IO services.
  *
  * @implNote The default implementation of the IO package provides services for
- *           GraphML (file type "graphml"), Node list and edge list CSV (file
+ *           GraphML (file type "graphml"), node and edge list CSV (file
  *           type "nodelist.csv" and "edgelist.csv") as well as a JSON-based
  *           format (file type "json").
  */
