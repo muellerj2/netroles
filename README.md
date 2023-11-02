@@ -93,7 +93,7 @@ The [design document](./docs/DESIGN.md) explains:
 
 ## API Documentation
 
-For each release, corresponding Javadoc documentation is made available on Maven Central and can be accessed on the external website [javadoc.io](javadoc.io/doc/io.github.muellerj2).
+For each release, corresponding Javadoc documentation is made available on Maven Central and can be accessed on the external website [javadoc.io](https://javadoc.io/doc/io.github.muellerj2).
 
 You can follow the links below to view the Javadoc of each API module on javadoc.io:
 * [netroles-lang-api](https://javadoc.io/doc/io.github.muellerj2/netroles-lang-api/)
