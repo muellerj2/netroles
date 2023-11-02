@@ -19,13 +19,13 @@ Netroles is available in Maven Central. You can add it by using your preferred d
     <groupId>io.github.muellerj2</groupId>
     <artifactId>netroles-api</artifactId>
     <version>x.y</version>
-	<scope>compile</scope>
+    <scope>compile</scope>
 </dependency>
 <dependency>
     <groupId>io.github.muellerj2</groupId>
     <artifactId>netroles-engine</artifactId>
     <version>x.y</version>
-	<scope>runtime</scope>
+    <scope>runtime</scope>
 </dependency>
 ```
 
@@ -37,13 +37,13 @@ Netroles includes its own implementation of network structures. Optionally, you 
     <groupId>io.github.muellerj2</groupId>
     <artifactId>netroles-io-api</artifactId>
     <version>x.y</version>
-	<scope>compile</scope>
+    <scope>compile</scope>
 </dependency>
 <dependency>
     <groupId>io.github.muellerj2</groupId>
     <artifactId>netroles-io-engine</artifactId>
     <version>x.y</version>
-	<scope>runtime</scope>
+    <scope>runtime</scope>
 </dependency>
 ```
 
