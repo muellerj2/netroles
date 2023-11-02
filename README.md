@@ -81,14 +81,14 @@ In addition, netroles uses [SLF4J](https://www.slf4j.org/) for logging purposes,
 
 ## Tutorial
 
-You can find a tutorial on the library presenting some usage examples [here](./docs/USAGE.md).
+The [tutorial](./docs/USAGE.md) presents common usage examples step by step.
 
 ## Scientific background and design
 
-The design document [DESIGN.md](./docs/DESIGN.md) explains:
+The [design document](./docs/DESIGN.md) explains:
 
-* The theoretical background of this library, including the relevant ideas from the role analysis literature, in the area of Social Network Analysis.
-* The library's design principles.
+* the theoretical background of this library in the area of Social Network Analysis, including the relevant ideas from the role analysis literature.
+* the library's design principles.
 
 
 ## API Documentation
