@@ -93,7 +93,7 @@ which prints:
 {size=9,[0,0,1,2,3,4,0,5,5]}
 ```
 
-This is the process depicted in Figure 4 of Müller and Brandes (2022), and the last of these equivalences is a perfect [(Borgatti and Everett, 1994)](https://doi.org/10.1016/0378-8733(94)90010-8) and thus also regular equivalence. 
+This is the process depicted in Figure 4 of [Müller and Brandes (2022)](https://doi.org/10.1016/j.socnet.2021.02.001), and the last of these equivalences is a perfect [(Borgatti and Everett, 1994)](https://doi.org/10.1016/0378-8733(94)90010-8) and thus also regular equivalence. 
 
 Even more easily, we can compute the regular interior of the initial equivalence, as follows:
 ```java
@@ -241,7 +241,7 @@ System.out.println(bidiRankedOp.relative(initialRanking).toString().replace("],"
 
 This prints:
 ```
-{18, [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+{domain size=18, [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
  [0,0,0,1,1,1,0,0,0,1,1,0,1,0,1,1,0,0],
@@ -274,7 +274,7 @@ System.out.println(bidiRankedOp.interior(initialRanking).toString().replace("],"
 
 This again prints the same ranking:
 ```
-{18, [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+{domain size=18, [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
  [0,0,0,1,1,1,0,0,0,1,1,0,1,0,1,1,0,0],
@@ -400,7 +400,7 @@ do {
 } while (!prevEq.equals(currEq));
 ```
 
-Which now prints the following interpretable equivalences in accordance with Figure 8 in Müller and Brandes (2022):
+Which now prints the following interpretable equivalences in accordance with Figure 8 in [Müller and Brandes (2022)](https://doi.org/10.1016/j.socnet.2021.02.001):
 ```
 {size=14,[0,1,2,2,0,2,0,1,1,1,3,1,1,0]}
 {size=14,[0,1,0,0,0,0,0,1,1,1,2,3,1,0]}
@@ -532,7 +532,7 @@ for (ConstMapping.OfInt stableUnderRestriction : StableRolesEnumeration.EQUIVALE
   }
 }
 ```
-This prints the following stable role equivalences, which are depicted in Figure 11 of Müller and Brandes (2022):
+This prints the following stable role equivalences, which are depicted in Figure 11 of [Müller and Brandes (2022)](https://doi.org/10.1016/j.socnet.2021.02.001):
 ```
 {size=16,[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0]}
 {size=16,[0,0,0,1,1,0,2,0,3,0,4,5,6,0,7,0]}
@@ -700,6 +700,6 @@ This prints
 ```
 {size=16,[0,0,1,2,2,0,2,2,0,0,2,3,0,0,4,0]}
 ```
-Thus, this is a stable role equivalence. It is depicted in Figure 12 of Müller and Brandes (2002).
+Thus, this is a stable role equivalence. It is depicted in Figure 12 of [Müller and Brandes (2022)](https://doi.org/10.1016/j.socnet.2021.02.001).
 
 To find all the other stable role equivalences, we can follow the steps of the previous section again to apply the lattice search algorithm.
