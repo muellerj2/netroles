@@ -84,7 +84,7 @@ public class Relations {
   public static String toString(RelationBase relation) {
     StringBuilder builder = new StringBuilder();
     final int size = relation.domainSize();
-    builder.append('{');
+    builder.append("{domain size=");
     builder.append(size);
     builder.append(", [");
     if (size > 0) {
