@@ -19,7 +19,7 @@ publishing {
       
       pom {
         name = 'netroles Lang API'
-        description = 'API specifying fundamental utility classes used by netroles'
+        description = 'API module of netroles library providing fundamental utility classes'
         url = 'https://github.com/muellerj2/netroles'
         licenses {
           license {
