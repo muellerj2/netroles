@@ -1,4 +1,6 @@
-archivesBaseName='netroles-io-api'
+base {
+  archivesName = 'netroles-io-api'
+}
 
 dependencies {
   api project(':core-api')
