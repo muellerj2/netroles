@@ -1,4 +1,6 @@
-archivesBaseName='netroles-engine'
+base {
+  archivesName = 'netroles-engine'
+}
 
 dependencies {
   api project(':roles-api')

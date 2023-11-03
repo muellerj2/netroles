@@ -1,5 +1,6 @@
-apply plugin: "java"
-apply plugin: 'maven-publish'
+base {
+  archivesName = 'netroles-lang-api'
+}
 
 dependencies {
 }
