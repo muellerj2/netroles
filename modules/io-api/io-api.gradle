@@ -22,7 +22,7 @@ publishing {
       from components.java
       pom {
         name = 'netroles IO API'
-        description = 'API of network file IO for netroles library'
+        description = 'API module of netroles library for network file IO'
         url = 'https://github.com/muellerj2/netroles'
         licenses {
           license {

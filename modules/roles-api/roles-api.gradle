@@ -20,7 +20,7 @@ publishing {
       
       pom {
         name = 'netroles API'
-        description = 'API of netroles library for role analysis in networks'
+        description = 'API module of netroles library for role equivalence analysis in networks'
         url = 'https://github.com/muellerj2/netroles'
         licenses {
           license {

@@ -51,7 +51,7 @@ jobs:
     - name: Create publication artifacts using Gradle
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: publish
+        arguments: clean publish
     - name: Gather release binaries
       run: |
         shopt -s globstar

@@ -35,7 +35,7 @@ publishing {
 
       pom {
         name = 'netroles Engine'
-        description = 'netroles role analysis engine'
+        description = 'netroles role equivalence analysis engine'
         url = 'https://github.com/muellerj2/netroles'
         licenses {
           license {

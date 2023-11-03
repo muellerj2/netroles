@@ -21,7 +21,7 @@ publishing {
       
       pom {
         name = 'netroles Networks API'
-        description = 'API for networks used in netroles library'
+        description = 'API module of netroles library providing network representations'
         url = 'https://github.com/muellerj2/netroles'
         licenses {
           license {
