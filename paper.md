@@ -23,7 +23,7 @@ An important problem in the analysis of networks is structural similarity. It ha
 
 # Statement of need
 
-The general-purpose network analysis software `UCINET` [@bef-uw-02], `visone` [@bbbcgklw-vsvsna-02], and the R package `sna` [@b-snas-08] provide some methods to compute structural, regular or regular equitable [@eb-ecgd-96] equivalence as specific notions of role. More wide-spread are software tools that implement two kinds of relaxations of role equivalence:
+The general-purpose network analysis software `UCINET` [@bef-uw-02], `visone` [@bbbcgklw-vsvsna-02; @bw-vavsn-04], and the R package `sna` [@b-snas-08] provide some methods to compute structural, regular or regular equitable [@eb-ecgd-96] equivalence as specific notions of role. More wide-spread are software tools that implement two kinds of relaxations of role equivalence:
 
 * Distance or similarity measures based on structural, regular or equitable equivalence are offered by software such as `blockmodeling` [@zc-pb-23], `Pajek` [@bm-pavln-04], `sna` [@b-snas-08] or `UCINET` [@bef-uw-02].
 * *Blockmodeling* aims to find equivalences that globally approximate a notion of role equivalence best on a given network. Software like `graph-tool` [@p-gpl-14], `sbm` [@cdb-s-23], `blockmodels` [@lbc-b-21], `StochBlock` [@sz-sbln-22; @zt-sboln-23] or `dynsbm` [@mm-d-20] offer *stochastic blockmodeling* methods derived from stochastic versions of structural equivalence. Packages such as `blockmodeling` [@z-gbvn-07; @zc-pb-23], `dBlockmodeling` [@bds-dbstmn-21; @b-d-23], `Pajek` [@bm-pavln-04] or `signnet` [@s-s-23] implement *optimizational blockmodeling* minimizing some criterion function based on one or more role equivalence concepts.
