@@ -60,7 +60,7 @@ jobs:
         cp build/repository/**/*.pom build/release-binaries
         shopt -u globstar
     - name: Upload release binaries
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: release-binaries
         path: build/release-binaries
@@ -75,7 +75,7 @@ jobs:
           unzip -d build/javadoc/${module} $f
         done
     - name: Upload Javadoc artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: release-javadoc
         path: build/javadoc
