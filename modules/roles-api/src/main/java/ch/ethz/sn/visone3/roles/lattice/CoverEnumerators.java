@@ -24,6 +24,7 @@ import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.IntPair;
 import ch.ethz.sn.visone3.lang.Mapping;
 import ch.ethz.sn.visone3.lang.Mappings;
+import ch.ethz.sn.visone3.lang.Pair;
 import ch.ethz.sn.visone3.lang.PrimitiveCollections;
 import ch.ethz.sn.visone3.lang.PrimitiveList;
 import ch.ethz.sn.visone3.roles.blocks.Converters;
@@ -50,8 +51,7 @@ public class CoverEnumerators {
    * @param rel the binary relation.
    * @return an enumerator of upper covers of {@code rel}.
    */
-  public static CoverEnumerator<BinaryRelation, BinaryRelation> upperCoversBinaryRelations(
-      BinaryRelation rel) {
+  public static CoverEnumerator<BinaryRelation, BinaryRelation> upperCoversBinaryRelations(BinaryRelation rel) {
     return new CoverEnumerator<BinaryRelation, BinaryRelation>() {
 
       BinaryRelation nextRelation = null;
@@ -81,8 +81,7 @@ public class CoverEnumerators {
           return;
         }
         int n = rel.domainSize();
-        RelationBuilder<? extends BinaryRelation> builder = RelationBuilders
-            .denseRelationBuilder(n);
+        RelationBuilder<? extends BinaryRelation> builder = RelationBuilders.denseRelationBuilder(n);
         int count = 0;
         for (int i = 0; i < n; ++i) {
           for (int j = 0; j < n; ++j) {
@@ -141,8 +140,7 @@ public class CoverEnumerators {
    * @param rel the binary relation.
    * @return an enumerator of lower covers of {@code rel}.
    */
-  public static CoverEnumerator<BinaryRelation, BinaryRelation> lowerCoversBinaryRelations(
-      BinaryRelation rel) {
+  public static CoverEnumerator<BinaryRelation, BinaryRelation> lowerCoversBinaryRelations(BinaryRelation rel) {
     return new CoverEnumerator<BinaryRelation, BinaryRelation>() {
 
       BinaryRelation nextRelation = null;
@@ -172,8 +170,7 @@ public class CoverEnumerators {
           return;
         }
         int n = rel.domainSize();
-        RelationBuilder<? extends BinaryRelation> builder = RelationBuilders
-            .denseRelationBuilder(n);
+        RelationBuilder<? extends BinaryRelation> builder = RelationBuilders.denseRelationBuilder(n);
         int count = 0;
         for (int i = 0; i < n; ++i) {
           for (int j : rel.iterateInRelationFrom(i)) {
@@ -228,8 +225,7 @@ public class CoverEnumerators {
    * @param parent the equivalence.
    * @return an enumerator of upper covers of {@code parent}.
    */
-  public static CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt> upperCoversEquivalences(
-      ConstMapping.OfInt parent) {
+  public static CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt> upperCoversEquivalences(ConstMapping.OfInt parent) {
     return new CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt>() {
 
       private int[] nextEquivalence = null;
@@ -338,8 +334,7 @@ public class CoverEnumerators {
    * @param parent the equivalence.
    * @return an enumerator of lower covers of {@code parent}.
    */
-  public static CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt> lowerCoversEquivalences(
-      ConstMapping.OfInt parent) {
+  public static CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt> lowerCoversEquivalences(ConstMapping.OfInt parent) {
     return new CoverEnumerator<ConstMapping.OfInt, Mapping.OfInt>() {
 
       private int[] nextEquivalence = null;
@@ -488,8 +483,7 @@ public class CoverEnumerators {
           maxClassParent = Math.max(classParent, maxClassParent);
           int leastImmediatePredecessorValue;
           if (adoptedClassVal != classVal) {
-            leastImmediatePredecessorValue = classParent < adoptedClassParent ? classParent
-                : classParent + 1;
+            leastImmediatePredecessorValue = classParent < adoptedClassParent ? classParent : classParent + 1;
           } else {
             if (adoptedClassParent > n) {
               adoptedClassParent = maxClassParent + 1;
@@ -534,9 +528,9 @@ public class CoverEnumerators {
         }
         Mapping.OfInt offsets = Mappings.wrapModifiableInt(new int[maxclass + 1]);
         classStartOffsets = offsets;
-        vertsOrderedByClass = PrimitiveCollections.countingSort(equivalence, 0, offsets, 0,
-            equivalence.size());
-        // we need to maintain information on whether a new ordering between two indifference
+        vertsOrderedByClass = PrimitiveCollections.countingSort(equivalence, 0, offsets, 0, equivalence.size());
+        // we need to maintain information on whether a new ordering between two
+        // indifference
         // classes results in additional transitive links
         // this could be done on the fly during enumeration
         // however, doing it on the fly during the cover test would seriously deter
@@ -556,10 +550,8 @@ public class CoverEnumerators {
                   continue;
                 }
                 int closeRep = vertsOrderedByClass.getInt(classStartOffsets.getInt(closeClass));
-                if ((ranking.lessEqualThan(closeRep, rep1)
-                    && !ranking.lessEqualThan(closeRep, rep2))
-                    || (ranking.lessEqualThan(rep2, closeRep)
-                        && !ranking.lessEqualThan(rep1, closeRep))) {
+                if ((ranking.lessEqualThan(closeRep, rep1) && !ranking.lessEqualThan(closeRep, rep2))
+                    || (ranking.lessEqualThan(rep2, closeRep) && !ranking.lessEqualThan(rep1, closeRep))) {
                   linkClosesTransitively[pos] = true;
                   break;
                 }
@@ -616,19 +608,17 @@ public class CoverEnumerators {
           if (wouldCloseTransitively(mergeClass1, mergeClass2)) {
             continue loop;
           }
-          RelationBuilder<? extends Ranking> builder = RelationBuilders
-              .denseUnsafeRankingBuilder(n);
+          RelationBuilder<? extends Ranking> builder = RelationBuilders.denseUnsafeRankingBuilder(n);
           for (int i = 0; i < n; ++i) {
             for (int j : ranking.iterateGreaterEqualThan(i)) {
               builder.add(i, j);
             }
           }
-          for (int ipos = classStartOffsets.getInt(mergeClass1), iend = mergeClass1 == maxclass ? n
-              : classStartOffsets.getInt(mergeClass1 + 1); ipos < iend; ++ipos) {
+          for (int ipos = classStartOffsets.getInt(mergeClass1),
+              iend = mergeClass1 == maxclass ? n : classStartOffsets.getInt(mergeClass1 + 1); ipos < iend; ++ipos) {
             int i = vertsOrderedByClass.getInt(ipos);
             for (int jpos = classStartOffsets.getInt(mergeClass2),
-                jend = mergeClass2 == maxclass ? n
-                    : classStartOffsets.getInt(mergeClass2 + 1); jpos < jend; ++jpos) {
+                jend = mergeClass2 == maxclass ? n : classStartOffsets.getInt(mergeClass2 + 1); jpos < jend; ++jpos) {
               int j = vertsOrderedByClass.getInt(jpos);
               builder.add(i, j);
             }
@@ -639,13 +629,11 @@ public class CoverEnumerators {
       }
 
       private boolean wouldCloseTransitively(int firstClass, int secondClass) {
-        return linkClosesTransitively[firstClass * maxclass + secondClass
-            + (firstClass <= secondClass ? -1 : 0)];
+        return linkClosesTransitively[firstClass * maxclass + secondClass + (firstClass <= secondClass ? -1 : 0)];
       }
 
       @Override
-      public boolean isThereAncestorWhichIsCoverProducedBefore(Ranking val,
-          Ranking mustBeProducedBefore) {
+      public boolean isThereAncestorWhichIsCoverProducedBefore(Ranking val, Ranking mustBeProducedBefore) {
         final int n = ranking.domainSize();
         for (int i = 0; i < n; ++i) {
           for (int j = 0; j < n; ++j) {
@@ -665,8 +653,7 @@ public class CoverEnumerators {
             boolean valLessEqualThan = val.lessEqualThan(rep1, rep2);
             boolean producedBeforeLessEqualThan = mustBeProducedBefore.lessEqualThan(rep1, rep2);
 
-            if (valLessEqualThan != producedBeforeLessEqualThan
-                && !wouldCloseTransitively(firstClass, secondClass)) {
+            if (valLessEqualThan != producedBeforeLessEqualThan && !wouldCloseTransitively(firstClass, secondClass)) {
               return valLessEqualThan;
             }
           }
@@ -685,7 +672,70 @@ public class CoverEnumerators {
    * @return an enumerator of lower covers of {@code ranking}.
    */
   public static CoverEnumerator<Ranking, Ranking> lowerCoversRankings(Ranking ranking) {
+    CoverEnumerator<Pair<Ranking, Boolean>, Pair<Ranking, Boolean>> innerEnumerator = lowerCoversRankingsImpl(ranking,
+        true);
     return new CoverEnumerator<Ranking, Ranking>() {
+
+      @Override
+      public Ranking next() {
+        return innerEnumerator.next().getFirst();
+      }
+
+      @Override
+      public boolean hasNext() {
+        return innerEnumerator.hasNext();
+      }
+
+      @Override
+      public boolean isThereAncestorWhichIsCoverProducedBefore(Ranking val, Ranking mustBeProducedBefore) {
+        return innerEnumerator.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(val, true),
+            new Pair<>(mustBeProducedBefore, true));
+      }
+    };
+  }
+
+  /**
+   * Returns an enumerator of lower covers of {@code ranking} on the lattice of
+   * rankings for an optimized iteration scheme in the depth-first search
+   * enumeration algorithm (which skips splitting indifference classes if at least
+   * non-transitive link was removed in a prior cover enumeration).
+   * 
+   * <p>
+   * The optimized iteration scheme has the following reasoning: First, any lower
+   * covers splitting indifference classes and then those removing an ordering
+   * between two indifference classes. This means that any predecessors of the
+   * latter kind of covers that also split an indifference class were already
+   * reached from the former kind of lower covers and thus all such fixed points
+   * were already output. This means lower covers splitting an indifference class
+   * do not have to be enumerated if they are derived from a lower cover removing
+   * an ordering between indifference classes.
+   * 
+   * <p>
+   * To achieve this, the rankings are augmented by a flag which has two
+   * interpretations simultaneously: If true, it means that the ranking is not
+   * derived from a lower cover removing an ordering between two indifference
+   * classes and that lower covers splitting indifference classes should be
+   * enumerated. If false, the ranking is derived from a lower cover removing an
+   * ordering between two indifference classes and lower covers splitting
+   * indifference classes are not enumerated.
+   * 
+   * <p>
+   * This optimized iteration scheme, avoiding the enumeration of many lower
+   * covers, reduces the running time from O(2^nn^2) to O(2^n).
+   * 
+   * @param ranking the ranking plus a boolean declaring whether no non-transitive
+   *                link was removed/indifference classes can be split.
+   * @return an enumerator of lower covers of {@code ranking}.
+   */
+  public static CoverEnumerator<Pair<Ranking, Boolean>, Pair<Ranking, Boolean>> lowerCoversRankingsEx(
+      Pair<Ranking, Boolean> ranking) {
+    return lowerCoversRankingsImpl(ranking.getFirst(), ranking.getSecond());
+  }
+
+  private static CoverEnumerator<Pair<Ranking, Boolean>, Pair<Ranking, Boolean>> lowerCoversRankingsImpl(
+      Ranking ranking, boolean splitIndifferenceClasses) {
+
+    return new CoverEnumerator<Pair<Ranking, Boolean>, Pair<Ranking, Boolean>>() {
 
       private ConstMapping.OfInt equivalence;
       private ConstMapping.OfInt classStartOffsets;
@@ -712,8 +762,7 @@ public class CoverEnumerators {
         }
         Mapping.OfInt offsets = Mappings.wrapModifiableInt(new int[maxclass + 1]);
         classStartOffsets = offsets;
-        vertsOrderedByClass = PrimitiveCollections.countingSort(equivalence, 0, offsets, 0,
-            equivalence.size());
+        vertsOrderedByClass = PrimitiveCollections.countingSort(equivalence, 0, offsets, 0, equivalence.size());
         for (int k = 0; k < maxclass; ++k) {
           classCounts[k] = offsets.getInt(k + 1) - offsets.getInt(k);
         }
@@ -727,8 +776,7 @@ public class CoverEnumerators {
           loop: for (int j : classReps) {
             if (i != j && ranking.lessEqualThan(i, j)) {
               for (int k : classReps) {
-                if (i != k && j != k && ranking.lessEqualThan(i, k)
-                    && ranking.lessEqualThan(k, j)) {
+                if (i != k && j != k && ranking.lessEqualThan(i, k) && ranking.lessEqualThan(k, j)) {
                   continue loop;
                 }
               }
@@ -742,7 +790,7 @@ public class CoverEnumerators {
       private boolean[] splitAssignment = null;
       private boolean splitDirection = false;
       private int nontransitivePos = 0;
-      private Ranking nextRanking = null;
+      private Pair<Ranking, Boolean> nextRanking = null;
 
       @Override
       public boolean hasNext() {
@@ -753,25 +801,112 @@ public class CoverEnumerators {
       }
 
       @Override
-      public Ranking next() {
+      public Pair<Ranking, Boolean> next() {
         if (!hasNext()) {
           throw new NoSuchElementException();
         }
-        Ranking result = nextRanking;
+        Pair<Ranking, Boolean> result = nextRanking;
         nextRanking = null;
         return result;
       }
 
       private void generateNext() {
         final int n = ranking.domainSize();
-        // first generate by removing one non-transitive ordering
+        // first, split each of the classes as often as possible
+        // if this was demanded
+        boolean doSplitClass = splitIndifferenceClasses && splitClass >= 0;
+
+        // skip all classes of size one (nothing to split)
+        while (doSplitClass && classCounts[splitClass] == 1) {
+          --splitClass;
+          doSplitClass = splitClass >= 0;
+        }
+
+        // if there is some split to do and it is demanded, we do that
+        if (doSplitClass) {
+          if (splitAssignment == null) {
+            splitAssignment = new boolean[classCounts[splitClass] - 1];
+            splitAssignment[classCounts[splitClass] - 2] = true;
+          }
+
+          RelationBuilder<? extends Ranking> builder = RelationBuilders.denseUnsafeRankingBuilder(ranking.domainSize());
+          // first construct without ordering within splitClass
+          for (int i = 0; i < ranking.domainSize(); ++i) {
+            if (equivalence.getInt(i) != splitClass) {
+              for (int j : ranking.iterateGreaterEqualThan(i)) {
+                builder.add(i, j);
+              }
+            } else {
+              for (int j : ranking.iterateGreaterEqualThan(i)) {
+                if (equivalence.getInt(j) != splitClass) {
+                  builder.add(i, j);
+                }
+              }
+            }
+          }
+          // then construct within splitClass
+          // first, handle first vertex (with implicit splitAssignment value false)
+          {
+            int i = vertsOrderedByClass.getInt(classStartOffsets.getInt(splitClass));
+            for (int jpos = classStartOffsets.getInt(splitClass) + 1,
+                end = splitClass == maxclass ? n : classStartOffsets.getInt(splitClass + 1),
+                splitPos = 0; jpos < end; ++jpos, ++splitPos) {
+              int j = vertsOrderedByClass.getInt(jpos);
+              if (!splitAssignment[splitPos]) {
+                builder.add(i, j);
+                builder.add(j, i);
+              } else if (splitDirection) {
+                builder.add(j, i);
+              } else {
+                builder.add(i, j);
+              }
+            }
+          }
+          // then handle the others
+          for (int ipos = classStartOffsets.getInt(splitClass) + 1,
+              end = splitClass == maxclass ? n : classStartOffsets.getInt(splitClass + 1),
+              iSplitPos = 0; ipos < end; ++ipos, ++iSplitPos) {
+            int i = vertsOrderedByClass.getInt(ipos);
+            for (int jpos = ipos + 1, jSplitPos = iSplitPos + 1; jpos < end; ++jpos, ++jSplitPos) {
+              int j = vertsOrderedByClass.getInt(jpos);
+              if (splitAssignment[iSplitPos] == splitAssignment[jSplitPos]) {
+                builder.add(i, j);
+                builder.add(j, i);
+                // splitAssignment[i] == false -> handling like first element
+                // which means: if splitDirection is true, it has to be greater
+                // than j in the result ranking, else it has to be less
+                // it is the other way around when splitAssignment[i] == true
+              } else if (splitAssignment[iSplitPos] != splitDirection) {
+                builder.add(j, i);
+              } else {
+                builder.add(i, j);
+              }
+            }
+          }
+          nextRanking = new Pair<>(builder.build(), true);
+
+          splitDirection = !splitDirection;
+          if (!splitDirection) {
+            for (int i = splitAssignment.length - 1; i >= 0; --i) {
+              splitAssignment[i] = !splitAssignment[i];
+              if (splitAssignment[i]) {
+                return;
+              }
+            }
+            splitAssignment = null;
+            --splitClass;
+          }
+          return;
+        }
+
+        // if there was nothing to split,
+        // generate next ranking by removing one non-transitive ordering
         // between equivalence classes one at a time
         if (nontransitivePos < nontransitiveLinks.size()) {
           long link = nontransitiveLinks.getLong(nontransitivePos);
           int leftClass = equivalence.getInt(IntPair.first(link));
           int rightClass = equivalence.getInt(IntPair.second(link));
-          RelationBuilder<? extends Ranking> builder = RelationBuilders
-              .denseUnsafeRankingBuilder(ranking.domainSize());
+          RelationBuilder<? extends Ranking> builder = RelationBuilders.denseUnsafeRankingBuilder(ranking.domainSize());
           // remove ordering leftClass <= rightClass
           for (int i = 0; i < n; ++i) {
             if (equivalence.getInt(i) != leftClass) {
@@ -787,98 +922,20 @@ public class CoverEnumerators {
             }
           }
           ++nontransitivePos;
-          nextRanking = builder.build();
+          nextRanking = new Pair<>(builder.build(), false);
           return;
         }
 
-        // next, split each of the classes as often as possible
-        if (splitClass < 0) {
-          return;
-        }
-        while (classCounts[splitClass] == 1) {
-          --splitClass;
-          if (splitClass < 0) {
-            return;
-          }
-        }
-        if (splitAssignment == null) {
-          splitAssignment = new boolean[classCounts[splitClass] - 1];
-          splitAssignment[classCounts[splitClass] - 2] = true;
-        }
-
-        RelationBuilder<? extends Ranking> builder = RelationBuilders
-            .denseUnsafeRankingBuilder(ranking.domainSize());
-        // first construct without ordering within splitClass
-        for (int i = 0; i < ranking.domainSize(); ++i) {
-          if (equivalence.getInt(i) != splitClass) {
-            for (int j : ranking.iterateGreaterEqualThan(i)) {
-              builder.add(i, j);
-            }
-          } else {
-            for (int j : ranking.iterateGreaterEqualThan(i)) {
-              if (equivalence.getInt(j) != splitClass) {
-                builder.add(i, j);
-              }
-            }
-          }
-        }
-        // then construct within splitClass
-        // first, handle first vertex (with implicit splitAssignment value false)
-        {
-          int i = vertsOrderedByClass.getInt(classStartOffsets.getInt(splitClass));
-          for (int jpos = classStartOffsets.getInt(splitClass) + 1,
-              end = splitClass == maxclass ? n : classStartOffsets.getInt(splitClass + 1),
-              splitPos = 0; jpos < end; ++jpos, ++splitPos) {
-            int j = vertsOrderedByClass.getInt(jpos);
-            if (!splitAssignment[splitPos]) {
-              builder.add(i, j);
-              builder.add(j, i);
-            } else if (splitDirection) {
-              builder.add(j, i);
-            } else {
-              builder.add(i, j);
-            }
-          }
-        }
-        // then handle the others
-        for (int ipos = classStartOffsets.getInt(splitClass) + 1,
-            end = splitClass == maxclass ? n : classStartOffsets.getInt(splitClass + 1),
-            iSplitPos = 0; ipos < end; ++ipos, ++iSplitPos) {
-          int i = vertsOrderedByClass.getInt(ipos);
-          for (int jpos = ipos + 1, jSplitPos = iSplitPos + 1; jpos < end; ++jpos, ++jSplitPos) {
-            int j = vertsOrderedByClass.getInt(jpos);
-            if (splitAssignment[iSplitPos] == splitAssignment[jSplitPos]) {
-              builder.add(i, j);
-              builder.add(j, i);
-              // splitAssignment[i] == false -> handling like first element
-              // which means: if splitDirection is true, it has to be greater
-              // than j in the result ranking, else it has to be less
-              // it is the other way around when splitAssignment[i] == true
-            } else if (splitAssignment[iSplitPos] != splitDirection) {
-              builder.add(j, i);
-            } else {
-              builder.add(i, j);
-            }
-          }
-        }
-        nextRanking = builder.build();
-
-        splitDirection = !splitDirection;
-        if (!splitDirection) {
-          for (int i = splitAssignment.length - 1; i >= 0; --i) {
-            splitAssignment[i] = !splitAssignment[i];
-            if (splitAssignment[i]) {
-              return;
-            }
-          }
-          splitAssignment = null;
-          --splitClass;
-        }
       }
 
       @Override
-      public boolean isThereAncestorWhichIsCoverProducedBefore(Ranking val,
-          Ranking mustBeProducedBefore) {
+      public boolean isThereAncestorWhichIsCoverProducedBefore(Pair<Ranking, Boolean> outerVal,
+          Pair<Ranking, Boolean> outerMustBeProducedBefore) {
+        Ranking val = outerVal.getFirst();
+        Ranking mustBeProducedBefore = outerMustBeProducedBefore.getFirst();
+
+        // check that val refines ranking
+        // if not -> reject
         final int n = ranking.domainSize();
         for (int i = 0; i < n; ++i) {
           for (int j = 0; j < n; ++j) {
@@ -887,37 +944,9 @@ public class CoverEnumerators {
             }
           }
         }
-        for (long link : nontransitiveLinks) {
-          int leftClass = equivalence.getInt(IntPair.first(link));
-          int rightClass = equivalence.getInt(IntPair.second(link));
-          boolean valSomeExisting = false;
-          int istart = classStartOffsets.getInt(leftClass);
-          int jstart = classStartOffsets.getInt(rightClass);
-          loop: for (int ipos = istart, iend = leftClass == maxclass ? n
-              : classStartOffsets.getInt(leftClass + 1); ipos < iend; ++ipos) {
-            int i = vertsOrderedByClass.getInt(ipos);
-            for (int jpos = jstart, jend = rightClass == maxclass ? n
-                : classStartOffsets.getInt(rightClass + 1); jpos < jend; ++jpos) {
-              int j = vertsOrderedByClass.getInt(jpos);
-              boolean ijLinkExists = val.lessEqualThan(i, j);
-              valSomeExisting |= ijLinkExists;
-              if (ijLinkExists) {
-                valSomeExisting = true;
-                break loop;
-              }
-            }
-          }
-          boolean producedBeforeLinkExists = mustBeProducedBefore.lessEqualThan(
-              vertsOrderedByClass.getInt(istart), vertsOrderedByClass.getInt(jstart));
-          if (producedBeforeLinkExists && !valSomeExisting) {
-            return true;
-          } else if (!producedBeforeLinkExists) {
-            return !valSomeExisting;
-          }
-        }
 
-        ConstMapping.OfInt valEquivalence = indifferenceClassesEquivalenceConverter
-            .apply(val.asBinaryRelation());
+        // compute indifference classes
+        ConstMapping.OfInt valEquivalence = indifferenceClassesEquivalenceConverter.apply(val.asBinaryRelation());
 
         final int[] classSizeParent = new int[n];
         final int[] classSizeVal = new int[n];
@@ -933,7 +962,12 @@ public class CoverEnumerators {
           if (supposedParentClass == -1) {
             valToParent[classVal] = classParent;
           } else if (supposedParentClass != classParent) {
-            return false;
+            // we have checked that val refines ranking
+            // thus valEquivalence should refine equivalence
+            // so it should never happen that a class of valEquivalence
+            // overlaps with two classes of equivalence
+            throw new IllegalStateException("internal logic error: a class of one equivalence "
+                + "overlaps with two classes of an equivalence coarsening it");
           }
           ++classSizeVal[classVal];
           ++classSizeParent[classParent];
@@ -941,12 +975,10 @@ public class CoverEnumerators {
             maxParentClassDiffering = Math.max(maxParentClassDiffering, classParent);
           }
         }
-        if (maxParentClassDiffering == -1) {
-          return false;
-        }
 
         ConstMapping.OfInt mustBeProducedBeforeEquivalence = indifferenceClassesEquivalenceConverter
             .apply(mustBeProducedBefore.asBinaryRelation());
+
         int splitParentClassMustBeProducedBefore = -1;
         for (int i = 0; i < n; ++i) {
           if (mustBeProducedBeforeEquivalence.getInt(i) != equivalence.getInt(i)) {
@@ -954,12 +986,60 @@ public class CoverEnumerators {
             break;
           }
         }
+
+        // compare the index of the maximum split indifference class
+        // as the generated equivalences are produced by splitting from larger
+        // to smaller index (to no split at all), val was produced before
+        // mustBeProducedBefore if split index for val > split index for
+        // mustBeProducedBefore and after if split index for val < split index
+        // for mustBeProducedBefore
+        // in case of equality, we cannot tell yet
         if (splitParentClassMustBeProducedBefore > maxParentClassDiffering) {
           return false;
         } else if (splitParentClassMustBeProducedBefore < maxParentClassDiffering) {
           return true;
         }
 
+        if (maxParentClassDiffering == -1) {
+          // in this case, val, mustBeProducedBefore and ranking have the same
+          // indifference class structure, so the difference must be in the
+          // non-transitive links
+
+          for (long link : nontransitiveLinks) {
+            int leftClass = equivalence.getInt(IntPair.first(link));
+            int rightClass = equivalence.getInt(IntPair.second(link));
+            boolean valSomeExisting = false;
+            int istart = classStartOffsets.getInt(leftClass);
+            int jstart = classStartOffsets.getInt(rightClass);
+            loop: for (int ipos = istart,
+                iend = leftClass == maxclass ? n : classStartOffsets.getInt(leftClass + 1); ipos < iend; ++ipos) {
+              int i = vertsOrderedByClass.getInt(ipos);
+              for (int jpos = jstart,
+                  jend = rightClass == maxclass ? n : classStartOffsets.getInt(rightClass + 1); jpos < jend; ++jpos) {
+                int j = vertsOrderedByClass.getInt(jpos);
+                boolean ijLinkExists = val.lessEqualThan(i, j);
+                valSomeExisting |= ijLinkExists;
+                if (ijLinkExists) {
+                  valSomeExisting = true;
+                  break loop;
+                }
+              }
+            }
+            boolean producedBeforeLinkExists = mustBeProducedBefore.lessEqualThan(vertsOrderedByClass.getInt(istart),
+                vertsOrderedByClass.getInt(jstart));
+            if (producedBeforeLinkExists && !valSomeExisting) {
+              return true;
+            } else if (!producedBeforeLinkExists) {
+              return !valSomeExisting;
+            }
+          }
+
+          // at this point, they are also equal in the non-transitive links
+          // so val must equal mustBeProducedBefore
+          return true;
+        }
+
+        // we now have to compare the partitioning within the maximal split class
         int adoptedClassVal = -1;
         for (int i = maxClassVal; i > 0; --i) {
           if (valToParent[i] == maxParentClassDiffering) {
@@ -976,8 +1056,7 @@ public class CoverEnumerators {
           maxClassParent = Math.max(classParent, maxClassParent);
           int leastImmediatePredecessorValue;
           if (adoptedClassVal != classVal) {
-            leastImmediatePredecessorValue = classParent < adoptedClassParent ? classParent
-                : classParent + 1;
+            leastImmediatePredecessorValue = classParent < adoptedClassParent ? classParent : classParent + 1;
           } else {
             if (adoptedClassParent > n) {
               adoptedClassParent = maxClassParent + 1;
@@ -992,13 +1071,13 @@ public class CoverEnumerators {
           }
         }
 
-        // at this point, we know: same indifference class structure in mustBeProducedBefore and the
-        // least cover succeeding val and
-        // what remains to test is the ordering between the one added class compared to the parent
-        // ranking
+        // at this point, we know: same indifference class structure in
+        // mustBeProducedBefore and the
+        // least cover succeeding val and preceding ranking
+        // what remains to test is the ordering between the one added class compared to
+        // the parent ranking
         int parentStart = classStartOffsets.getInt(maxParentClassDiffering);
-        int parentEnd = maxParentClassDiffering == maxclass ? n
-            : classStartOffsets.getInt(maxParentClassDiffering + 1);
+        int parentEnd = maxParentClassDiffering == maxclass ? n : classStartOffsets.getInt(maxParentClassDiffering + 1);
         boolean valAdoptedClassLessThan = false;
         boolean valAdoptedClassGreaterThan = false;
         boolean beforeAdoptedClassLessThan = false;
@@ -1012,8 +1091,7 @@ public class CoverEnumerators {
               continue;
             }
 
-            beforeAdoptedClassLessThan = mustBeProducedBefore.lessEqualThan(k,
-                l) == kIsAdoptedClass;
+            beforeAdoptedClassLessThan = mustBeProducedBefore.lessEqualThan(k, l) == kIsAdoptedClass;
             boolean kLessThanl = val.lessEqualThan(k, l);
             if (kLessThanl) {
               if (kIsAdoptedClass) {
@@ -1042,5 +1120,7 @@ public class CoverEnumerators {
         return true;
       }
     };
+
+
   }
 }

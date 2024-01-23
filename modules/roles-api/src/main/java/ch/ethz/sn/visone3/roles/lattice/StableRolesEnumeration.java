@@ -21,7 +21,9 @@ import java.util.function.Predicate;
 
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.ConstMapping.OfInt;
+import ch.ethz.sn.visone3.lang.Iterators;
 import ch.ethz.sn.visone3.lang.Mappings;
+import ch.ethz.sn.visone3.lang.Pair;
 import ch.ethz.sn.visone3.roles.blocks.RoleOperator;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
@@ -170,8 +172,11 @@ public class StableRolesEnumeration {
     @Override
     public Iterable<Ranking> stableRolesUnderRestriction(RoleOperator<Ranking> roleOp, Ranking initial,
         Predicate<Ranking> skipElement) {
-      return DepthFirstSearchEnumerator.enumerateLattice(roleOp::interior, () -> initial,
-          CoverEnumerators::lowerCoversRankings, skipElement);
+      // uses the optimized iteration scheme provided by lowerCoversRankingEx
+      return Iterators.map(DepthFirstSearchEnumerator.enumerateLattice(
+          ranking -> new Pair<>(roleOp.interior(ranking.getFirst()), ranking.getSecond()),
+          () -> new Pair<>(initial, true), CoverEnumerators::lowerCoversRankingsEx,
+          ranking -> skipElement.test(ranking.getFirst())), Pair::getFirst);
     }
   };
 
