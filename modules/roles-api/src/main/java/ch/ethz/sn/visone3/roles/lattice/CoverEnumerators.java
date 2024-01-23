@@ -721,7 +721,8 @@ public class CoverEnumerators {
    * 
    * <p>
    * This optimized iteration scheme, avoiding the enumeration of many lower
-   * covers, reduces the running time from O(2^nn^2) to O(2^n).
+   * covers, reduces the worst-case delay of the depth-first search enumeration
+   * algorithm from O(2^nn^2) to O(2^n).
    * 
    * @param ranking the ranking plus a boolean declaring whether no non-transitive
    *                link was removed/indifference classes can be split.

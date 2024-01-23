@@ -377,15 +377,17 @@ public class LatticeTest {
   public void testRankingPredAndSuccessorIterators() {
 
     final int elemsPerClass = 6;
-    final int numClasses = 15;
+    final int numNonsingletonClasses = 15;
+    final int numClasses = numNonsingletonClasses + 2;
     IntStream stream = IntStream.empty();
     for (int i = 0; i < elemsPerClass; ++i) {
-      stream = IntStream.concat(stream, IntStream.range(0, numClasses));
+      stream = IntStream.concat(stream, IntStream.range(1, numNonsingletonClasses + 1));
     }
+    stream = IntStream.concat(stream, IntStream.of(numNonsingletonClasses + 1));
     ConstMapping.OfInt equivalence = Equivalences.normalizePartition(Mappings.wrapUnmodifiableInt(
         stream.boxed().collect(Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> {
           Collections.shuffle(list);
-          return list.stream();
+          return Stream.concat(Stream.of(0), list.stream());
         })).mapToInt(x -> x).toArray()));
 
     boolean[][] relArray = new boolean[numClasses][numClasses];
@@ -578,7 +580,7 @@ public class LatticeTest {
       assertFalse(predEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking1, predecessor));
       assertFalse(predEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking2, predecessor));
     }
-    assertEquals(numClasses * ((1 << elemsPerClass) - 2) + nontransitivePairs, count);
+    assertEquals(numNonsingletonClasses * ((1 << elemsPerClass) - 2) + nontransitivePairs, count);
     assertThrows(NoSuchElementException.class, () -> predEnumerator.next());
 
     CoverEnumerator<Pair<Ranking, Boolean>, Pair<Ranking, Boolean>> predEnumerator2 = CoverEnumerators
@@ -639,7 +641,7 @@ public class LatticeTest {
       assertFalse(
           predEnumerator2.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(coarsenedRanking2, false), predecessor));
     }
-    assertEquals(numClasses * ((1 << elemsPerClass) - 2) + nontransitivePairs, count);
+    assertEquals(numNonsingletonClasses * ((1 << elemsPerClass) - 2) + nontransitivePairs, count);
     assertThrows(NoSuchElementException.class, () -> predEnumerator2.next());
 
     CoverEnumerator<Pair<Ranking, Boolean>, Pair<Ranking, Boolean>> predEnumerator3 = CoverEnumerators
