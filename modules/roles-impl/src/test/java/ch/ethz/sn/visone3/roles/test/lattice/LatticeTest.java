@@ -18,6 +18,7 @@ package ch.ethz.sn.visone3.roles.test.lattice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,6 +43,7 @@ import org.junit.jupiter.api.Test;
 import ch.ethz.sn.visone3.lang.ConstMapping;
 import ch.ethz.sn.visone3.lang.Mapping;
 import ch.ethz.sn.visone3.lang.Mappings;
+import ch.ethz.sn.visone3.lang.Pair;
 import ch.ethz.sn.visone3.networks.Direction;
 import ch.ethz.sn.visone3.networks.MatrixSource;
 import ch.ethz.sn.visone3.networks.Network;
@@ -570,13 +572,135 @@ public class LatticeTest {
       }
       previouslyIteratedAncestor2 |= isRefiningCurrentPredecessor;
       hasIteratedAncestor = predEnumerator.isThereAncestorWhichIsCoverProducedBefore(refinedRanking2, predecessor);
-      assertEquals(previouslyIteratedAncestor2, hasIteratedAncestor);
+      assertEquals(previouslyIteratedAncestor2, hasIteratedAncestor,
+          "check failed for " + refinedRanking2 + " and " + predecessor);
 
       assertFalse(predEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking1, predecessor));
       assertFalse(predEnumerator.isThereAncestorWhichIsCoverProducedBefore(coarsenedRanking2, predecessor));
     }
     assertEquals(numClasses * ((1 << elemsPerClass) - 2) + nontransitivePairs, count);
     assertThrows(NoSuchElementException.class, () -> predEnumerator.next());
+
+    CoverEnumerator<Pair<Ranking, Boolean>, Pair<Ranking, Boolean>> predEnumerator2 = CoverEnumerators
+        .lowerCoversRankingsEx(new Pair<>(ranking, true));
+    count = 0;
+    previouslyIteratedAncestor1 = false;
+    previouslyIteratedAncestor2 = false;
+    Set<Pair<Ranking, Boolean>> foundPredecessors2 = new HashSet<>();
+
+    while (predEnumerator2.hasNext()) {
+      Pair<Ranking, Boolean> predecessor = predEnumerator2.next();
+      assertEquals(ranking.domainSize(), predecessor.getFirst().domainSize());
+      assertNotEquals(
+          equivalence
+              .equals(Converters.strongComponentsAsEquivalence().apply(predecessor.getFirst().asBinaryRelation())),
+          predecessor.getSecond());
+
+      assertTrue(foundPredecessors2.add(predecessor));
+      for (int i = 0; i < ranking.domainSize(); ++i) {
+        for (int j = 0; j < ranking.domainSize(); ++j) {
+          assertTrue(ranking.contains(i, j) || !predecessor.getFirst().contains(i, j));
+        }
+      }
+      ++count;
+      boolean isRefiningCurrentPredecessor = true;
+      for (int i = 0; i < ranking.domainSize(); ++i) {
+        for (int j = 0; j < ranking.domainSize(); ++j) {
+          if (!predecessor.getFirst().contains(i, j) && refinedRanking1.contains(i, j)) {
+            isRefiningCurrentPredecessor = false;
+            break;
+          }
+        }
+      }
+      previouslyIteratedAncestor1 |= isRefiningCurrentPredecessor;
+      boolean hasIteratedAncestor = predEnumerator2
+          .isThereAncestorWhichIsCoverProducedBefore(new Pair<>(refinedRanking1, true), predecessor);
+      assertEquals(previouslyIteratedAncestor1, hasIteratedAncestor);
+      assertEquals(hasIteratedAncestor,
+          predEnumerator2.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(refinedRanking1, false), predecessor));
+
+      isRefiningCurrentPredecessor = true;
+      for (int i = 0; i < ranking.domainSize(); ++i) {
+        for (int j = 0; j < ranking.domainSize(); ++j) {
+          if (!predecessor.getFirst().contains(i, j) && refinedRanking2.contains(i, j)) {
+            isRefiningCurrentPredecessor = false;
+            break;
+          }
+        }
+      }
+      previouslyIteratedAncestor2 |= isRefiningCurrentPredecessor;
+      hasIteratedAncestor = predEnumerator2.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(refinedRanking2, true),
+          predecessor);
+      assertEquals(previouslyIteratedAncestor2, hasIteratedAncestor,
+          "check failed for " + refinedRanking2 + " and " + predecessor);
+
+      assertFalse(
+          predEnumerator2.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(coarsenedRanking1, true), predecessor));
+      assertFalse(
+          predEnumerator2.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(coarsenedRanking2, false), predecessor));
+    }
+    assertEquals(numClasses * ((1 << elemsPerClass) - 2) + nontransitivePairs, count);
+    assertThrows(NoSuchElementException.class, () -> predEnumerator2.next());
+
+    CoverEnumerator<Pair<Ranking, Boolean>, Pair<Ranking, Boolean>> predEnumerator3 = CoverEnumerators
+        .lowerCoversRankingsEx(new Pair<>(ranking, false));
+    count = 0;
+    previouslyIteratedAncestor1 = false;
+    previouslyIteratedAncestor2 = true;
+    Set<Pair<Ranking, Boolean>> foundPredecessors3 = new HashSet<>();
+
+    while (predEnumerator3.hasNext()) {
+      Pair<Ranking, Boolean> predecessor = predEnumerator3.next();
+      assertEquals(ranking.domainSize(), predecessor.getFirst().domainSize());
+      assertEquals(equivalence,
+          Converters.strongComponentsAsEquivalence().apply(predecessor.getFirst().asBinaryRelation()));
+      assertFalse(predecessor.getSecond());
+
+      assertTrue(foundPredecessors3.add(predecessor));
+      for (int i = 0; i < ranking.domainSize(); ++i) {
+        for (int j = 0; j < ranking.domainSize(); ++j) {
+          assertTrue(ranking.contains(i, j) || !predecessor.getFirst().contains(i, j));
+        }
+      }
+      ++count;
+      boolean isRefiningCurrentPredecessor = true;
+      for (int i = 0; i < ranking.domainSize(); ++i) {
+        for (int j = 0; j < ranking.domainSize(); ++j) {
+          if (!predecessor.getFirst().contains(i, j) && refinedRanking1.contains(i, j)) {
+            isRefiningCurrentPredecessor = false;
+            break;
+          }
+        }
+      }
+      previouslyIteratedAncestor1 |= isRefiningCurrentPredecessor;
+      boolean hasIteratedAncestor = predEnumerator3
+          .isThereAncestorWhichIsCoverProducedBefore(new Pair<>(refinedRanking1, true), predecessor);
+      assertEquals(previouslyIteratedAncestor1, hasIteratedAncestor);
+      assertEquals(hasIteratedAncestor,
+          predEnumerator3.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(refinedRanking1, false), predecessor));
+
+      isRefiningCurrentPredecessor = true;
+      for (int i = 0; i < ranking.domainSize(); ++i) {
+        for (int j = 0; j < ranking.domainSize(); ++j) {
+          if (!predecessor.getFirst().contains(i, j) && refinedRanking2.contains(i, j)) {
+            isRefiningCurrentPredecessor = false;
+            break;
+          }
+        }
+      }
+      assertFalse(isRefiningCurrentPredecessor);
+      hasIteratedAncestor = predEnumerator3.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(refinedRanking2, true),
+          predecessor);
+      assertEquals(previouslyIteratedAncestor2, hasIteratedAncestor,
+          "check failed for " + refinedRanking2 + " and " + predecessor);
+
+      assertFalse(
+          predEnumerator3.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(coarsenedRanking1, true), predecessor));
+      assertFalse(
+          predEnumerator3.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(coarsenedRanking2, false), predecessor));
+    }
+    assertEquals(nontransitivePairs, count);
+    assertThrows(NoSuchElementException.class, () -> predEnumerator3.next());
 
     Set<Ranking> foundSuccessors = new HashSet<>();
     CoverEnumerator<Ranking, Ranking> succEnumerator = CoverEnumerators.upperCoversRankings(ranking);
