@@ -649,7 +649,15 @@ public class LatticeTest {
         .lowerCoversRankingsEx(new Pair<>(ranking, false));
     count = 0;
     previouslyIteratedAncestor1 = false;
-    previouslyIteratedAncestor2 = true;
+
+    // if equivalence==refinedEquivalence, then refinedRanking2==ranking
+    // so isThereAncestorWhichIsCoverProducedBefore() should always return false
+    // otherwise, refinedRanking2 only splits equivalence classes of equivalence
+    // and does not add additional orderings between existing equivalence classes,
+    // so isThereAncestorWhichIsCoverProducedBefore() should always return true
+    // for all enumerated rankings here (which are obtained by removing orderings
+    // between existing equivalence classes only)
+    previouslyIteratedAncestor2 = !equivalence.equals(refinedEquivalence);
     Set<Pair<Ranking, Boolean>> foundPredecessors3 = new HashSet<>();
 
     while (predEnumerator3.hasNext()) {
