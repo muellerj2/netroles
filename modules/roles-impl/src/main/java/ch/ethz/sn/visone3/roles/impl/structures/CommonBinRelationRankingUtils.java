@@ -94,8 +94,8 @@ public class CommonBinRelationRankingUtils {
 
       @Override
       public boolean equals(Object rhs) {
-        if (rhs instanceof BinaryRelation) {
-          return equals((BinaryRelation) rhs);
+        if (rhs instanceof RelationBase) {
+          return equals((RelationBase) rhs);
         }
         return false;
       }
@@ -199,8 +199,8 @@ public class CommonBinRelationRankingUtils {
 
       @Override
       public boolean equals(Object rhs) {
-        if (rhs instanceof BinaryRelation) {
-          return equals((BinaryRelation) rhs);
+        if (rhs instanceof RelationBase) {
+          return equals((RelationBase) rhs);
         }
         return false;
       }
@@ -434,8 +434,8 @@ public class CommonBinRelationRankingUtils {
 
       @Override
       public boolean equals(Object rhs) {
-        if (rhs instanceof BinaryRelation) {
-          return equals((BinaryRelation) rhs);
+        if (rhs instanceof RelationBase) {
+          return equals((RelationBase) rhs);
         }
         return false;
       }
