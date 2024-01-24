@@ -1199,7 +1199,6 @@ public class LatticeTest {
     }
     assertEquals(1, count);
     assertThrows(NoSuchElementException.class, () -> iterator.next());
-
   }
 
   @Test
