@@ -165,8 +165,24 @@ public class StableRolesEnumeration {
     @Override
     public Iterable<Ranking> stableRolesUnderExtension(RoleOperator<Ranking> roleOp, Ranking initial,
         Predicate<Ranking> skipElement) {
-      return DepthFirstSearchEnumerator.enumerateLattice(roleOp::closure, () -> initial,
-          CoverEnumerators::upperCoversRankings, skipElement);
+      int domainSize = initial.domainSize();
+      int dimensions = domainSize * domainSize;
+      return BacktrackSearchEnumerator.enumerateLattice(
+          roleOp::closure,
+          () -> ProjectionEnumerators.createZeroDimProjectionRanking(domainSize), dimensions,
+          ProjectionEnumerators::generateWideningsRankings,
+          (proj, projdim) -> ProjectionEnumerators.minimalExtensionRankings(proj, projdim, dimensions),
+          ProjectionEnumerators::projectionToRanking, ProjectionEnumerators::projectRanking,
+          ProjectionEnumerators::projectionEquals, (proj, projdim) -> {
+            if (initial != null && !ProjectionEnumerators.someExtensionSucceedsRanking(initial, proj, projdim)) {
+              return true;
+            }
+            if (skipElement != null && projdim == dimensions
+                && skipElement.test(ProjectionEnumerators.projectionToRanking(proj, dimensions))) {
+              return true;
+            }
+            return false;
+          });
     }
 
     @Override

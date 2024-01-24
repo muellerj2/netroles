@@ -26,6 +26,8 @@ import ch.ethz.sn.visone3.lang.ConstMapping.OfInt;
 import ch.ethz.sn.visone3.lang.Mappings;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelations;
+import ch.ethz.sn.visone3.roles.structures.Ranking;
+import ch.ethz.sn.visone3.roles.structures.Rankings;
 
 /**
  * Enumerators and other methods related to the projections of lattice elements
@@ -234,6 +236,19 @@ public class ProjectionEnumerators {
   }
 
   /**
+   * Returns true if two projections of rankings are equal.
+   * 
+   * @param proj1         the first projection.
+   * @param proj2         the second projection.
+   * @param numDimensions the number of dimensions of both projections.
+   * @return true if the projections are equal, false otherwise.
+   */
+  public static boolean projectionEquals(RankingProjectionState proj1, RankingProjectionState proj2,
+      int numDimensions) {
+    return RankingProjectionState.projectionEquals(proj1, proj2, numDimensions);
+  }
+
+  /**
    * Generates all extensions of a projection by a single dimension for
    * equivalences.
    * 
@@ -341,4 +356,264 @@ public class ProjectionEnumerators {
     }
     return true;
   }
+
+  /**
+   * Internal representation of the projection of a ranking.
+   * 
+   * <p>
+   * Internally maintains the reflexive-transitive closure of the projection for
+   * two reasons: to check efficiently whether a pair must exist or must not exist
+   * due to transitivity or reflexivity, and to produce the minimum extension
+   * (=closure).
+   */
+  public static class RankingProjectionState {
+    private boolean[][] projection;
+    private boolean[][] reflexiveTransitiveClosure;
+    private int numDimension;
+
+    private RankingProjectionState(int numDimension, boolean[][] currentProjection, boolean[][] currentClosure) {
+      this.projection = currentProjection;
+      this.reflexiveTransitiveClosure = currentClosure;
+      this.numDimension = numDimension;
+    }
+
+    private RankingProjectionState(int size) {
+      this.projection = new boolean[size][size];
+      this.reflexiveTransitiveClosure = new boolean[size][size];
+      this.numDimension = 0;
+      for (int i = 0; i < size; ++i) {
+        this.reflexiveTransitiveClosure[i][i] = true;
+      }
+    }
+
+    private Iterable<RankingProjectionState> generateNextWidenings(int nextDimension) {
+      if (nextDimension != numDimension) {
+        throw new IllegalArgumentException(
+            "requested number of dimensions does not match with widening by one dimension");
+      }
+      final int row = nextDimension / projection.length;
+      final int col = nextDimension - row * projection.length;
+
+      return () -> new Iterator<RankingProjectionState>() {
+        private int count = 0;
+        private boolean alreadyChecked = false;
+
+        @Override
+        public boolean hasNext() {
+
+          if (!alreadyChecked) {
+            if (count == 0 && reflexiveTransitiveClosure[row][col]) {
+              ++count;
+            }
+
+            if (count == 1 && !reflexiveTransitiveClosure[row][col]) {
+
+              boolean skip = false;
+              if (col <= row) {
+                for (int k = 0; k < col; ++k) {
+                  if (!projection[row][k] && projection[col][k]) {
+                    skip = true;
+                    break;
+                  }
+                }
+              }
+              if (!skip) {
+                for (int k = 0; k < row; ++k) {
+                  if (!projection[k][col] && projection[k][row]) {
+                    skip = true;
+                    break;
+                  }
+                }
+              }
+              if (skip) {
+                ++count;
+              }
+            }
+            alreadyChecked = true;
+          }
+          return count < 2;
+        }
+
+        @Override
+        public RankingProjectionState next() {
+          if (!hasNext()) {
+            throw new NoSuchElementException();
+          }
+          alreadyChecked = false;
+          if (count == 0) {
+            projection[row][col] = false;
+            ++count;
+            return new RankingProjectionState(nextDimension + 1, projection, reflexiveTransitiveClosure);
+          } else if (count == 1) {
+            projection[row][col] = true;
+            boolean[][] extendedClosure = reflexiveTransitiveClosure;
+            if (!reflexiveTransitiveClosure[row][col]) {
+              // update transitive closure if new ordering added
+              int n = projection.length;
+              extendedClosure = new boolean[n][n];
+              for (int i = 0; i < n; ++i) {
+                System.arraycopy(reflexiveTransitiveClosure[i], 0, extendedClosure[i], 0, n);
+              }
+
+              for (int k = 0; k < n; ++k) {
+                if (extendedClosure[k][row] && !extendedClosure[k][col]) {
+                  for (int l = 0; l < n; ++l) {
+                    if (!extendedClosure[k][l] && extendedClosure[col][l]) {
+                      extendedClosure[k][l] = true;
+                    }
+                  }
+                }
+              }
+            }
+            ++count;
+            return new RankingProjectionState(nextDimension + 1, projection, extendedClosure);
+          } else {
+            // no element to return, but hasNext() returned true
+            throw new IllegalStateException();
+          }
+        }
+      };
+    }
+
+    private Iterable<Ranking> minimalExtension(int numDimProjection, int numDimRanking) {
+      return Collections.singletonList(Rankings.fromMatrixUnsafe(reflexiveTransitiveClosure));
+    }
+
+    private Ranking toRanking(int numDimEquivalence) {
+      if (numDimEquivalence != this.numDimension) {
+        throw new IllegalStateException("projection is missing some dimensions");
+      }
+      return Rankings.fromMatrixUnsafe(projection);
+    }
+
+    private static RankingProjectionState toProjection(Ranking ranking, int numDimensions) {
+      boolean[][] rankMat = new boolean[ranking.domainSize()][ranking.domainSize()];
+      for (int i = 0; i < rankMat.length; ++i) {
+        for (int j : ranking.iterateGreaterEqualThan(i)) {
+          rankMat[i][j] = true;
+        }
+      }
+      return new RankingProjectionState(numDimensions, rankMat, null);
+    }
+
+    private static boolean projectionEquals(RankingProjectionState state1, RankingProjectionState state2,
+        int numDimensions) {
+      if (state1.numDimension < numDimensions || state2.numDimension < numDimensions) {
+        throw new IllegalArgumentException(
+            "projections do not include the number of dimensions requested for comparison");
+      }
+      int maxRow = numDimensions / state1.projection.length;
+      int numColsInMaxRow = numDimensions - maxRow * state1.projection.length;
+      for (int i = 0; i < maxRow; ++i) {
+        for (int j = 0; j < state1.projection.length; ++j) {
+          if (state1.projection[i][j] != state2.projection[i][j]) {
+            return false;
+          }
+        }
+      }
+      for (int j = 0; j < numColsInMaxRow; ++j) {
+        if (state1.projection[maxRow][j] != state2.projection[maxRow][j]) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    private boolean someExtensionSucceedsRanking(Ranking ranking, int numDimProjection) {
+      if (numDimProjection > this.numDimension) {
+        throw new IllegalArgumentException("mismatch in number of dimensions");
+      }
+
+      int n = ranking.domainSize();
+      int count = 0;
+      for (int i = 0; i < n && count < numDimProjection; ++i) {
+        for (int j = 0; j < n && count < numDimProjection; ++j) {
+          if (ranking.contains(i, j) && !projection[i][j]) {
+            return false;
+          }
+          ++count;
+        }
+      }
+      return true;
+    }
+  }
+
+  /**
+   * Returns a zero-dimensional projection of a ranking with the specified domain
+   * size.
+   * 
+   * @param domainSize the domain size of the ranking (which is the square root of
+   *                   the number of dimensions)
+   * @return the zero-dimensional projection
+   */
+  public static RankingProjectionState createZeroDimProjectionRanking(int domainSize) {
+    return new RankingProjectionState(domainSize);
+  }
+
+  /**
+   * Generates all widenings of a projection by a single dimension for rankings.
+   * 
+   * @param projection    the projection.
+   * @param nextDimension the ordinal of the next dimension.
+   * @return an iterable over all projections when widening by another dimension.
+   */
+  public static Iterable<RankingProjectionState> generateWideningsRankings(RankingProjectionState projection,
+      int nextDimension) {
+    return projection.generateNextWidenings(nextDimension);
+  }
+
+  /**
+   * Produces the minimal full extension of the given projection to a ranking
+   * according to the refinement ordering.
+   * 
+   * @param projection       the projection.
+   * @param numDimProjection the number of dimensions in the projection.
+   * @param numDimRanking    the number of dimensions of the ranking (number of
+   *                         elements in the base set squared).
+   * @return an iterable producing the only minimal extension.
+   */
+  public static Iterable<Ranking> minimalExtensionRankings(RankingProjectionState projection, int numDimProjection,
+      int numDimRanking) {
+    return projection.minimalExtension(numDimProjection, numDimRanking);
+  }
+
+  /**
+   * Converts a (full) projection representation to a ranking.
+   * 
+   * @param projection    the projection.
+   * @param numDimensions the number of dimensions in the projection (which must
+   *                      equal the squared domain size).
+   * @return the conversion of the projection representation to a ranking
+   */
+  public static Ranking projectionToRanking(RankingProjectionState projection, int numDimensions) {
+    return projection.toRanking(numDimensions);
+  }
+
+  /**
+   * Projects a given ranking to the given number of dimensions.
+   * 
+   * @param ranking       the ranking.
+   * @param numDimensions the number of dimensions of the projection.
+   * @return the representation of the projection of the ranking on the given
+   *         number of dimensions.
+   */
+  public static RankingProjectionState projectRanking(Ranking ranking, int numDimensions) {
+    return RankingProjectionState.toProjection(ranking, numDimensions);
+  }
+
+  /**
+   * Returns true if the given ranking is succeeded by some ranking that has the
+   * given projection.
+   * 
+   * @param ranking          the ranking.
+   * @param projection       the projection.
+   * @param numDimProjection the number of dimensions of the projection.
+   * @return True if the ranking is succeeded by some ranking that projects to the
+   *         given projection, false otherwise.
+   */
+  public static boolean someExtensionSucceedsRanking(Ranking ranking, RankingProjectionState projection,
+      int numDimProjection) {
+    return projection.someExtensionSucceedsRanking(ranking, numDimProjection);
+  }
+
 }

@@ -61,6 +61,7 @@ import ch.ethz.sn.visone3.roles.position.NetworkView;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelation;
 import ch.ethz.sn.visone3.roles.structures.BinaryRelations;
 import ch.ethz.sn.visone3.roles.structures.Ranking;
+import ch.ethz.sn.visone3.roles.structures.Rankings;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilder;
 import ch.ethz.sn.visone3.roles.structures.RelationBuilders;
 
@@ -634,7 +635,7 @@ public class LatticeTest {
       hasIteratedAncestor = predEnumerator2.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(refinedRanking2, true),
           predecessor);
       assertEquals(previouslyIteratedAncestor2, hasIteratedAncestor,
-          "check failed for " + refinedRanking2 + " and " + predecessor);
+          "check failed for " + refinedRanking2 + " and " + predecessor.getFirst());
 
       assertFalse(
           predEnumerator2.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(coarsenedRanking1, true), predecessor));
@@ -694,7 +695,7 @@ public class LatticeTest {
       hasIteratedAncestor = predEnumerator3.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(refinedRanking2, true),
           predecessor);
       assertEquals(previouslyIteratedAncestor2, hasIteratedAncestor,
-          "check failed for " + refinedRanking2 + " and " + predecessor);
+          "check failed for " + refinedRanking2 + " and " + predecessor.getFirst() + " when enumerating " + ranking);
 
       assertFalse(
           predEnumerator3.isThereAncestorWhichIsCoverProducedBefore(new Pair<>(coarsenedRanking1, true), predecessor));
@@ -977,6 +978,208 @@ public class LatticeTest {
     assertTrue(ProjectionEnumerators.someExtensionSucceedsEquivalence(
         Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 4, 5, 1, 6, 7),
         Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2), 7));
+  }
+
+  private int recursivelyEnumerateProjections(ProjectionEnumerators.RankingProjectionState projection,
+      int numDimProjection, int numDimTotal) {
+
+    // check minimum extension
+    Iterable<Ranking> minExtensionItable = ProjectionEnumerators.minimalExtensionRankings(projection, numDimProjection,
+        numDimTotal);
+    Iterator<Ranking> minExtensionItator = minExtensionItable.iterator();
+    assertTrue(minExtensionItator.hasNext());
+    Ranking minExtension = minExtensionItator.next();
+    assertFalse(minExtensionItator.hasNext());
+    assertThrows(NoSuchElementException.class, () -> minExtensionItator.next());
+    int domainSize = minExtension.domainSize();
+    assertEquals(numDimTotal, domainSize * domainSize);
+
+    // check that minimum extension is reflexive and transitive
+    for (int i = 0; i < domainSize; ++i) {
+      for (int j = 0; j < domainSize; ++j) {
+        for (int k = 0; k < domainSize; ++k) {
+          assertTrue(!minExtension.contains(i, j) || !minExtension.contains(j, k) || minExtension.contains(i, k));
+        }
+      }
+      assertTrue(minExtension.contains(i, i));
+    }
+
+    // if all dimensions are set, the minimum extension must equal the projection
+    // since the minimum extension is the reflexive-transitive closure of the latter
+    if (numDimProjection ==  numDimTotal) {
+      Ranking ranking = ProjectionEnumerators.projectionToRanking(projection, numDimTotal);
+      assertEquals(minExtension, ranking);
+      return 1;
+    } else {
+      assertThrows(RuntimeException.class, () -> ProjectionEnumerators.projectionToRanking(projection, numDimTotal));
+
+      // there must always be at least one valid widening
+      Iterable<ProjectionEnumerators.RankingProjectionState> wideningsItable = ProjectionEnumerators
+          .generateWideningsRankings(projection, numDimProjection);
+      Iterator<ProjectionEnumerators.RankingProjectionState> wideningsItator = wideningsItable.iterator();
+      assertTrue(wideningsItator.hasNext());
+      int count = 0;
+
+      // make sure that the value set at the next dimension is not repeated,
+      // the minimum extension of the widening coarsens the original minimum extension
+      // and the minimum extension must not change for the dimensions that were
+      // already set
+      boolean[] projectionSet = new boolean[2];
+      while (wideningsItator.hasNext()) {
+        ProjectionEnumerators.RankingProjectionState widening = wideningsItator.next();
+        Ranking minExtensionWidening = ProjectionEnumerators
+            .minimalExtensionRankings(widening, numDimProjection + 1, numDimTotal).iterator().next();
+        assertEquals(minExtension, Rankings.infimum(minExtension, minExtensionWidening));
+        int dimCount = 0;
+        int i = 0;
+        int j = 0;
+        for (i = 0; dimCount < numDimProjection && i < domainSize; ++i) {
+          for (j = 0; dimCount < numDimProjection && j < domainSize; ++j) {
+            assertEquals(minExtension.contains(i, j), minExtensionWidening.contains(i, j));
+            ++dimCount;
+          }
+          if (dimCount >= numDimProjection) {
+            break;
+          }
+        }
+        if (j == domainSize) {
+          ++i;
+          j = 0;
+        }
+
+        assertFalse(projectionSet[minExtensionWidening.contains(i, j) ? 1 : 0]);
+
+        projectionSet[minExtensionWidening.contains(i, j) ? 1 : 0] = true;
+        count += recursivelyEnumerateProjections(widening, numDimProjection + 1, numDimTotal);
+      }
+      assertFalse(wideningsItator.hasNext());
+      assertThrows(NoSuchElementException.class, () -> wideningsItator.next());
+      return count;
+    }
+  }
+  @Test
+  public void testRankingProjections() {
+    final int domainSize = 5;
+    ProjectionEnumerators.RankingProjectionState zeroState = ProjectionEnumerators
+        .createZeroDimProjectionRanking(domainSize);
+
+    assertEquals(Collections.singletonList(Rankings.identity(domainSize)),
+        StreamSupport
+            .stream(ProjectionEnumerators.minimalExtensionRankings(zeroState, 0, domainSize * domainSize).spliterator(),
+                false)
+            .collect(Collectors.toList()));
+
+    assertThrows(IllegalArgumentException.class, () -> ProjectionEnumerators.generateWideningsRankings(zeroState, 2));
+
+    // 6th element of sequence A000798 in OEIS
+    assertEquals(6942, recursivelyEnumerateProjections(zeroState, 0, domainSize * domainSize));
+
+    assertTrue(ProjectionEnumerators.projectionEquals(
+        ProjectionEnumerators.projectRanking(
+            Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2, 3, 2, 2, 4, 3)), 64),
+        ProjectionEnumerators.projectRanking(
+            Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 3, 2, 3, 4, 2)), 64),
+        64));
+    assertTrue(ProjectionEnumerators.projectionEquals(
+        ProjectionEnumerators.projectRanking(
+            Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2, 3, 2, 2, 4, 3)), 72),
+        ProjectionEnumerators.projectRanking(
+            Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 3, 2, 3, 4, 2)), 72),
+        72));
+    assertFalse(ProjectionEnumerators.projectionEquals(
+        ProjectionEnumerators.projectRanking(
+            Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2, 3, 2, 2, 4, 3)), 73),
+        ProjectionEnumerators.projectRanking(
+            Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 3, 2, 3, 4, 2)), 73),
+        73));
+    assertFalse(ProjectionEnumerators.projectionEquals(
+        ProjectionEnumerators.projectRanking(
+            Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2, 3, 2, 2, 4, 3)), 78),
+        ProjectionEnumerators.projectRanking(
+            Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 3, 2, 3, 4, 2)), 78),
+        78));
+    assertThrows(IllegalArgumentException.class,
+        () -> ProjectionEnumerators.projectionEquals(
+            ProjectionEnumerators.projectRanking(
+                Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2, 3, 2, 2, 4, 3)), 78),
+            ProjectionEnumerators.projectRanking(
+                Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 3, 2, 3, 4, 2)), 78),
+            79));
+    assertThrows(IllegalArgumentException.class,
+        () -> ProjectionEnumerators.projectionEquals(
+            ProjectionEnumerators.projectRanking(
+                Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 2, 3, 2, 2, 4, 3)), 79),
+            ProjectionEnumerators.projectRanking(
+                Rankings.fromEquivalence(Mappings.wrapUnmodifiableInt(0, 1, 0, 0, 1, 2, 2, 3, 3, 2, 3, 4, 2)), 78),
+            79));
+
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, true, true, false }, //
+        { false, false, true, false }, //
+        { false, false, true, true }, //
+    }), ProjectionEnumerators.projectRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, true, true, false }, //
+        { false, false, true, false }, //
+        { false, false, true, true }, //
+    }), 12), 8));
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, true, true, false }, //
+        { false, false, true, false }, //
+        { false, false, true, true }, //
+    }), ProjectionEnumerators.projectRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, true, true, false }, //
+        { false, false, true, false }, //
+        { false, false, true, true }, //
+    }), 16), 16));
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, true, true, false }, //
+        { false, false, true, false }, //
+        { false, false, false, true }, //
+    }), ProjectionEnumerators.projectRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, true, true, false }, //
+        { false, false, true, false }, //
+        { false, false, true, true }, //
+    }), 12), 8));
+    assertTrue(ProjectionEnumerators.someExtensionSucceedsRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+        { true, false, true, false }, //
+        { false, true, false, true }, //
+        { false, false, true, false }, //
+        { false, false, true, true }, //
+    }), ProjectionEnumerators.projectRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, true, true, false }, //
+        { false, false, true, false }, //
+        { false, false, true, true }, //
+    }), 12), 7));
+    assertFalse(ProjectionEnumerators.someExtensionSucceedsRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+        { true, false, true, false }, //
+        { false, true, false, true }, //
+        { false, false, true, false }, //
+        { false, false, true, true }, //
+    }), ProjectionEnumerators.projectRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+        { true, false, true, false }, //
+        { true, true, true, false }, //
+        { false, false, true, false }, //
+        { false, false, true, true }, //
+    }), 12), 8));
+    assertThrows(IllegalArgumentException.class,
+        () -> ProjectionEnumerators.someExtensionSucceedsRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+            { true, false, true, false }, //
+            { false, true, false, true }, //
+            { false, false, true, false }, //
+            { false, false, true, true }, //
+        }), ProjectionEnumerators.projectRanking(Rankings.fromMatrixUnsafe(new boolean[][] { //
+            { true, false, true, false }, //
+            { true, true, true, false }, //
+            { false, false, true, false }, //
+            { false, false, true, true }, //
+        }), 7), 8));
   }
 
   @Test
