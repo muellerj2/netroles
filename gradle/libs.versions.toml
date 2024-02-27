@@ -1,7 +1,7 @@
 [versions]
 junit = "5.10.2"
 slf4j = "2.0.12"
-log4j2 = "2.22.1"
+log4j2 = "2.23.0"
 
 [libraries]
 junit-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
