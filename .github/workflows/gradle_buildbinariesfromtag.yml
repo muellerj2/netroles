@@ -48,10 +48,10 @@ jobs:
       with:
         java-version: '8'
         distribution: 'temurin'
-    - name: Create publication artifacts using Gradle
+    - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
-      with:
-        arguments: clean publish
+    - name: Create publication artifacts using Gradle
+      run: ./gradlew clean publish
     - name: Gather release binaries
       run: |
         shopt -s globstar
