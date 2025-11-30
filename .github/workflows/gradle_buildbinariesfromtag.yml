@@ -38,7 +38,7 @@ jobs:
         echo "tag=$TAG" >> "$GITHUB_OUTPUT"
         echo "VERSION=${TAG#v}" >> "$GITHUB_ENV"
         echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         ref: "refs/tags/${{env.TAG}}"
     - name: Validate Gradle Wrapper
@@ -88,7 +88,7 @@ jobs:
       # contents: write
     # steps:
     # - name: Checkout javadoc branch
-      # uses: actions/checkout@v5
+      # uses: actions/checkout@v6
       # with:
         # ref: 'refs/heads/javadoc'
         # path: repository
